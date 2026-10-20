@@ -1,0 +1,17 @@
+{
+  "name": "RacconPay",
+  "description": "Non-custodial USDC payment suite on Arc Mainnet. Batch payouts to 100 recipients, linear vesting streams, group bill splitting, multi-sig disbursements, and USDC invoicing. No backend, no admin keys, audited smart contracts.",
+  "url": "https://www.racconpay.xyz",
+  "chains": [5042],
+  "category": "payments",
+  "tags": ["usdc", "payments", "vesting", "multisig", "invoicing", "arc", "non-custodial"],
+  "audit": true,
+  "openSource": true,
+  "contracts": [
+    { "name": "BatchPayout",    "address": "0x1Da442B6cd376cBaDA9F86E5F88643ea6Ac8bBC9", "chainId": 5042 },
+    { "name": "ReceiptNFT",     "address": "0x97BBF37EAd1f3Dd3AF0a2c397085bF35cacf71D1", "chainId": 5042 },
+    { "name": "VestingStream",  "address": "0x712c4C15c2d395c4EAa3377751afACfb14eFff03", "chainId": 5042 },
+    { "name": "BillSplitter",   "address": "0x25D67caa97eda46B4b13Ba5512268f24734855D8",  "chainId": 5042 },
+    { "name": "MultiSigPayout", "address": "0xD640F1C79930Be01ABCa41a28A89eDe9F93380d9", "chainId": 5042 }
+  ]
+}
