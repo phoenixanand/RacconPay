@@ -945,37 +945,37 @@ function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; r
     )
   }
 
-  const myProposals    = proposals.filter(p => [p.proposer, p.coSigner1, p.coSigner2].some(a => a.toLowerCase() === connectedAddr.toLowerCase()))
-  const otherProposals = proposals.filter(p => ![p.proposer, p.coSigner1, p.coSigner2].some(a => a.toLowerCase() === connectedAddr.toLowerCase()))
+  const myProposals = proposals.filter(p =>
+    [p.proposer, p.coSigner1, p.coSigner2].some(a => a.toLowerCase() === connectedAddr.toLowerCase())
+  )
+
+  if (myProposals.length === 0) {
+    return (
+      <Card>
+        <div className="flex flex-col items-center gap-3 py-12 text-center">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'var(--surface-strong)' }}>
+            <ShieldCheck size={28} style={{ color: 'var(--muted)' }} />
+          </div>
+          <div>
+            <p className="font-semibold" style={{ color: 'var(--ink)' }}>No proposals for your wallet</p>
+            <p className="text-sm mt-1 max-w-xs" style={{ color: 'var(--muted)' }}>
+              Proposals you create or are invited to co-sign will appear here. Create one using the "+ New Proposal" tab above, or ask someone to add your wallet as a co-signer.
+            </p>
+          </div>
+        </div>
+      </Card>
+    )
+  }
 
   return (
-    <div className="space-y-6">
-      {myProposals.length > 0 && (
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--muted)' }}>
-            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--accent)' }} />
-            Your proposals
-          </p>
-          <div className="space-y-3">
-            {myProposals.map(p => (
-              <ProposalCard key={String(p.id)} p={p} connectedAddr={connectedAddr} onRefresh={handleRefresh} highlighted={highlightId === p.id} />
-            ))}
-          </div>
-        </div>
-      )}
-      {otherProposals.length > 0 && (
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--muted)' }}>
-            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--border)' }} />
-            All proposals
-          </p>
-          <div className="space-y-3">
-            {otherProposals.map(p => (
-              <ProposalCard key={String(p.id)} p={p} connectedAddr={connectedAddr} onRefresh={handleRefresh} highlighted={highlightId === p.id} />
-            ))}
-          </div>
-        </div>
-      )}
+    <div className="space-y-3">
+      <p className="text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-2" style={{ color: 'var(--muted)' }}>
+        <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--accent)' }} />
+        Your proposals ({myProposals.length})
+      </p>
+      {myProposals.map(p => (
+        <ProposalCard key={String(p.id)} p={p} connectedAddr={connectedAddr} onRefresh={handleRefresh} highlighted={highlightId === p.id} />
+      ))}
     </div>
   )
 }
@@ -985,7 +985,7 @@ function HowItWorks() {
   const steps = [
     { icon: <Send size={18} />,        title: 'Propose',      desc: 'Any wallet creates a proposal with a recipient list and two co-signer addresses.' },
     { icon: <ShieldCheck size={18} />, title: 'Both approve', desc: 'Both named co-signers approve on-chain. No approval = no payout.' },
-    { icon: <Play size={18} />,        title: 'Execute',      desc: 'Once both approved, any of the three wallets can execute.' },
+    { icon: <Play size={18} />,        title: 'Execute',      desc: 'Once both co-signers approve, only the proposer can execute the payout.' },
     { icon: <Clock size={18} />,       title: 'Auto-expires', desc: 'Proposals expire after 7 days. Anyone can cancel an expired proposal.' },
   ]
   return (
