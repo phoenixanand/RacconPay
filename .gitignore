@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+.circle/
+*recovery*
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/contract-metadata/
+arc-studio-plans/
+AGENTS.md
