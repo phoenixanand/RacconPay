@@ -1,4 +1,3 @@
-
 version: 1
 frontend:
   phases:
@@ -9,10 +8,6 @@ frontend:
     build:
       commands:
         - bun run build
-        - echo "=== DIST CONTENTS ==="
-        - ls -la dist
-        - echo "=== ASSET CONTENTS ==="
-        - ls -la dist/assets
   artifacts:
     baseDirectory: dist
     files:
@@ -20,4 +15,3 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-
