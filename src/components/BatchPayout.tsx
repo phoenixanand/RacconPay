@@ -31,10 +31,11 @@ const emptyRow = (): Row => ({ addr: '', amount: '' })
 type Step = 'idle' | 'approving' | 'approved' | 'paying'
 
 export default function BatchPayoutPage() {
-  return <ChainGuard><Inner /></ChainGuard>
+  const [key, setKey] = useState(0)
+  return <ChainGuard><Inner key={key} onReset={() => setKey(k => k + 1)} /></ChainGuard>
 }
 
-function Inner() {
+function Inner({ onReset }: { onReset: () => void }) {
   const { address } = useAccount()
   const [rows, setRows]         = useState<Row[]>([emptyRow()])
   const [errors, setErrors]     = useState<string[]>([])
@@ -42,7 +43,7 @@ function Inner() {
   const [isDone, setIsDone]     = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [receiptId, setReceiptId]       = useState<bigint | null>(null)
-  const [processedHash, setProcessedHash] = useState<string | null>(null)
+
   const fileRef = useRef<HTMLInputElement>(null)
 
   const { data: balance } = useReadContract({
@@ -55,7 +56,7 @@ function Inner() {
   const { writeContract: writeBatchPay, data: batchHash,   isPending: isPaying   } = useWriteContract()
   const { isSuccess: batchConfirmed, data: batchReceipt, isLoading: batchLoading } = useWaitForTransactionReceipt({ hash: batchHash })
 
-  if (batchConfirmed && batchReceipt && batchHash && batchHash !== processedHash) {
+  if (batchConfirmed && batchReceipt && batchHash && !isDone) {
     try {
       const log = batchReceipt.logs.find(l => l.address.toLowerCase() === BATCH_PAYOUT_ADDRESS.toLowerCase())
       if (log && log.data.length >= 194) {
@@ -63,7 +64,6 @@ function Inner() {
         setReceiptId(BigInt('0x' + tokenIdHex))
       }
     } catch { /* ignore */ }
-    setProcessedHash(batchHash)
     setIsDone(true)
     setShowSuccess(true)
   }
@@ -149,14 +149,7 @@ function Inner() {
     }
   }
 
-  function reset() {
-    setRows([emptyRow()])
-    setErrors([])
-    setStep('idle')
-    setIsDone(false)
-    setReceiptId(null)
-    setProcessedHash(null)
-  }
+
 
   let displayTotal = '—'; let totalRaw = 0n
   try { totalRaw = rows.reduce((acc, r) => acc + parseUsdc(r.amount), 0n); displayTotal = formatUsdc(totalRaw) } catch { /* leave */ }
@@ -217,7 +210,7 @@ function Inner() {
                 <ExternalLink size={14} /> View on explorer
               </a>
             )}
-            <button onClick={reset}
+            <button onClick={onReset}
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white/5"
                     style={{ color: 'var(--ink-2)', border: '1px solid var(--border-strong)' }}>
               New batch <ArrowRight size={13} />

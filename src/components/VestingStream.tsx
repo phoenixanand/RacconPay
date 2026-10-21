@@ -62,6 +62,7 @@ type Tab = 'create' | 'streams'
 function Inner() {
   const { address } = useAccount()
   const [tab, setTab] = useState<Tab>('create')
+  const [createKey, setCreateKey] = useState(0)
 
   return (
     <div className="flex flex-col gap-6">
@@ -85,7 +86,7 @@ function Inner() {
         ))}
       </div>
 
-      {tab === 'create'  && <CreateStream  address={address!} />}
+      {tab === 'create'  && <CreateStream key={createKey} address={address!} onReset={() => setCreateKey(k => k + 1)} />}
       {tab === 'streams' && <MyStreams      address={address!} />}
     </div>
   )
@@ -94,7 +95,7 @@ function Inner() {
 // ── Create Stream ─────────────────────────────────────────────────────
 type CreateStep = 'idle' | 'approving' | 'approved' | 'creating'
 
-function CreateStream({ address }: { address: `0x${string}` }) {
+function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: () => void }) {
   const [beneficiary, setBeneficiary] = useState('')
   const [amount, setAmount]           = useState('')
   const [duration, setDuration]       = useState('')
@@ -166,7 +167,7 @@ function CreateStream({ address }: { address: `0x${string}` }) {
     }
   }
 
-  function reset() { setBeneficiary(''); setAmount(''); setDuration(''); setStep('idle'); setIsDone(false); setNewStreamId(null); setErrors([]) }
+
 
   // Success
   if (isDone) {
@@ -193,7 +194,7 @@ function CreateStream({ address }: { address: `0x${string}` }) {
               <ExternalLink size={14} /> View tx
             </a>
           )}
-          <GhostButton onClick={reset}>New Stream</GhostButton>
+          <GhostButton onClick={onReset}>New Stream</GhostButton>
         </div>
       </Card>
     )
