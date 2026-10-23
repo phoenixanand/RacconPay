@@ -1,8 +1,6 @@
 # RacconPay
 
-> USDC money tools on Arc Mainnet
 
-This is the project memory file.
 
 ---
 
