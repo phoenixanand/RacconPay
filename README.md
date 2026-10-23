@@ -32,24 +32,6 @@ RacconPay is a USDC money-tools dApp for small groups and freelancers on Arc Mai
 - `src/components/` - UI components
 - `src/config.ts` - wagmi config (chains, connectors, transports)
 
-## Deployed Contracts — Arc Mainnet (chain ID 5042)
-
-| Contract | Address |
-|---|---|
-| BatchPayout v3 (active) | `0x1Da442B6cd376cBaDA9F86E5F88643ea6Ac8bBC9` |
-| BatchPayout v2 (archived, receiptNFT mismatch) | `0xAc13856F0238be40b4802ad1203411cA45c90C36` |
-| BatchPayout v1 (archived) | `0xfB74B13bac51fb826D1c43bD7Ba013C94E10751B` |
-| ReceiptNFT v2 (active, minter=BatchPayout v3) | `0x97BBF37EAd1f3Dd3AF0a2c397085bF35cacf71D1` |
-| ReceiptNFT v1 (archived) | `0x2a3681D762376A41676fE5f5C139d21dC5398321` |
-| VestingStream | `0x712c4C15c2d395c4EAa3377751afACfb14eFff03` |
-| BillSplitter v3 (active, H-1 fix) | `0x1362beC447F1350Eb4b072F2De92FBD29Abb72d3` |
-| BillSplitter v2 (archived) | `0xC7A598C67E611F581554DE8b5bAD679f70ef6224` |
-| BillSplitter v1 (archived) | `0x25D67caa97eda46B4b13Ba5512268f24734855D8` |
-| MultiSigPayout v4 (active, reject()+proposer-only execute) | `0xF5ae83341dfd707f55F8f3818f9B6EACceC3f45e` |
-| MultiSigPayout v3 (archived, batchPayout=v3) | `0xD640F1C79930Be01ABCa41a28A89eDe9F93380d9` |
-| MultiSigPayout v2 (archived, batchPayout=v1) | `0x2C9626c40E34Bd42DA1068302849F89936E5a2C7` |
-| SimplePayRequest | `0x836E39506E0872Fb4B6CCd52cd2538bB7B580b46` |
-
 ## Deployed Contracts — Arc Testnet (chain ID 5042002, archived) (Arc Testnet)
 
 | Contract | Address | Explorer |
