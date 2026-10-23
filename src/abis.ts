@@ -457,6 +457,13 @@ export const ERC20_ABI = [
     ],
     outputs: [{ name: '', type: 'bool' }],
   },
+  {
+    type: 'function',
+    name: 'isBlacklisted',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
 ] as const
 
 export const MULTISIG_ABI = [

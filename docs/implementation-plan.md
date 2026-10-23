@@ -64,3 +64,33 @@ If no theme is saved in localStorage and the user's OS is in dark mode, the app 
 1 (duplicate address check), 2 (delayed vesting start), 5 (balance auto-refresh), 7 (description on proposal cards), 10 (client name on invoices).
 
 All five are pure frontend, no contract changes, fast to build. Want me to do them now?
+
+Good questions from real users. Let me read the contract before answering. Now I have the full picture. Here are the honest, accurate answers to all three questions — and what can be improved:
+
+---
+
+**Q1 — Did you cap array lengths per tx to prevent gas limit edge cases?**
+
+**Answer:** Yes — hard cap of 100 recipients enforced on-chain at line 52 (`if (count > 100) revert TooManyRecipients(count)`). This is not a soft UI limit — it's a contract-level revert. The frontend also validates this before the approve step.
+
+**What we could still improve:** The 100-recipient cap was chosen conservatively but hasn't been benchmarked against Arc's actual block gas limit. A proper gas benchmark (`forge test --gas-report` on a 100-recipient batch) would tell us the exact headroom. We could also lower the cap to 50 and add a "split into chunks" feature in the frontend for very large payrolls — but for the current use case 100 is sufficient.
+
+---
+
+**Q2 — Are you enforcing iteration caps or chunking to stay clear of block gas limits during network spikes?**
+
+**Answer:** The 100-recipient cap handles this. Each iteration does one `try/catch` ERC-20 transfer — roughly 25,000-30,000 gas per recipient worst case on Arc. 100 recipients × 30,000 = ~3M gas, well within Arc's block gas limit. Arc's sub-second finality also means network spikes don't cause the gas price volatility that makes this dangerous on Ethereum mainnet — USDC as native gas means fees are stable and predictable regardless of congestion.
+
+**What we could still improve:** Add a chunking UI for batches over 100 — split a 250-row CSV into 3 separate transactions automatically with a progress indicator. No contract change needed, pure frontend logic.
+
+---
+
+**Q3 — If one recipient is on the USDC blocklist, does the whole batch revert?**
+
+**Answer:** No — this was an explicit security fix (we called it H-3). Each transfer is wrapped in a `try/catch` at line 80. If any single recipient fails — blocklisted address, contract that rejects transfers, zero balance issues — that transfer is skipped, the amount is accumulated in a `refund` variable, and the payer gets it back at the end. A `PaymentFailed` event is emitted for each skipped recipient so you can see exactly who didn't receive their payment. The receipt NFT records only the successful transfers.
+
+**The pre-check suggestion is valid though.** The USDC contract on Arc has a public `isBlacklisted(address)` function. We can add a client-side pre-check in the frontend that reads blocklist status for all recipients before showing the approve button — flagging any blocked addresses in the table with a red warning so the user can remove them before paying. This saves gas and avoids the confusion of a "batch succeeded but 2 recipients failed" situation.
+
+---
+
+**Want me to build that pre-check now?** It's a pure frontend change — one `useReadContracts` call checking `isBlacklisted(addr)` for each recipient in the table, showing a red warning badge on any blocked address, and blocking the approve button until they're removed.

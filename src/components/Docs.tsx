@@ -33,12 +33,12 @@ const SECTIONS: Section[] = [
     accent: 'var(--accent)',
     title: 'Getting Started',
     intro:
-      'RacconPay is a USDC money toolkit built on Arc Mainnet, a blockchain where USDC is the gas token, so you never need ETH. Everything runs on-chain: your money, your receipts, your agreements.',
+      'RacconPay is a USDC money toolkit built on Arc Mainnet, a blockchain where USDC is the gas token, so you never need ETH. Everything runs on-chain where your money, your receipts, your agreements.',
     steps: [
       {
         num: 1,
         title: 'Get a wallet',
-        body: 'Install MetaMask (metamask.io). This is your on-chain identity think of it as your bank account + ID card in one.',
+        body: 'Install MetaMask (metamask.io). This is your on-chain identity and think of it as your bank account + ID card in one.',
       },
       {
         num: 2,
@@ -69,6 +69,14 @@ const SECTIONS: Section[] = [
         q: 'What happens if I make a mistake?',
         a: 'Blockchain transactions are irreversible. If you send to the wrong address, the funds cannot be recovered. Always verify addresses and amounts carefully before confirming.',
       },
+      {
+        q: 'Does it work in Brave browser?',
+        a: 'Yes. If transaction confirmations seem slow with Brave Shields enabled, the app uses HTTP polling instead of WebSockets to detect confirmations, so it works correctly with Shields on. If you still see issues, click the Brave Shields icon and set fingerprinting to Standard.',
+      },
+      {
+        q: 'Why does MetaMask show a phishing warning?',
+        a: 'New dapps sometimes trigger MetaMask\'s phishing detector until they are whitelisted. RacconPay is a non-custodial app with no admin keys and it cannot move funds without your explicit MetaMask approval. If you see the warning, click "Connect anyway" so it is safe.',
+      },
     ],
   },
   {
@@ -77,27 +85,32 @@ const SECTIONS: Section[] = [
     accent: 'var(--pay-accent)',
     title: 'Batch Pay',
     intro:
-      'Send USDC to up to 100 people in a single transaction. Instead of sending one payment at a time, you upload a list and pay everyone at once. A soul-bound receipt NFT is minted to your wallet as permanent proof.',
+      'Send USDC to any number of recipients in one flow. Upload a CSV, run a blocklist check, approve once, and pay automatically splits large lists into chunks of 100 per transaction. A soul-bound receipt NFT is minted to your wallet as permanent on-chain proof.',
     steps: [
       {
         num: 1,
         title: 'Prepare your recipient list',
-        body: 'Each recipient needs a wallet address and an amount. You can type them manually or upload a CSV file with two columns: "address" and "amount".',
+        body: 'Each recipient needs a wallet address and an amount. Type them manually, upload a CSV (two columns: address, amount), or click "Download template" to get a pre-formatted example file.',
       },
       {
         num: 2,
-        title: 'Approve USDC',
-        body: 'Before spending USDC, you must give the contract permission to pull it from your wallet. Click "Approve USDC" and confirm in MetaMask. This is a one-time step per session.',
+        title: 'Run the blocklist check',
+        body: 'Click "Check blocklist" before approving. The app reads the Arc USDC contract\'s isBlacklisted() function for every address. Any blocked address is flagged in red and remove it before proceeding. This prevents a failed transaction before it happens.',
       },
       {
         num: 3,
-        title: 'Send the batch',
-        body: 'Click "Send Batch". The contract pulls the total USDC from your wallet in one go and distributes it to each recipient. One transaction, one gas fee.',
+        title: 'Approve USDC',
+        body: 'Click "Approve USDC" and confirm in MetaMask. This gives the BatchPayout contract permission to pull the exact total from your wallet and never more.',
       },
       {
         num: 4,
+        title: 'Send the batch',
+        body: 'Click "Send Batch". For lists over 100, the app automatically splits into chunks and shows a progress indicator (Chunk 1/3, Chunk 2/3…). Each chunk is a separate transaction. One approve covers all chunks.',
+      },
+      {
+        num: 5,
         title: 'Check your receipt',
-        body: 'After confirmation, a soul-bound NFT is minted to your wallet. It records every recipient, every amount, and the transaction hash — permanently on-chain. Visit the Receipts page to view it.',
+        body: 'After all chunks confirm, a soul-bound NFT is minted to your wallet recording every recipient, every amount, and the transaction hash and permanently on-chain. View it in Dashboard → Receipts.',
       },
     ],
     faqs: [
@@ -107,15 +120,19 @@ const SECTIONS: Section[] = [
       },
       {
         q: 'What is the CSV format?',
-        a: 'Two columns, comma-separated: address,amount. Example row: 0x1234...abcd,50.00. The first row can be a header (address,amount) — it is skipped automatically.',
+        a: 'Two columns, comma-separated: address,amount. Example row: 0x1234...abcd,50.00. The first row can be a header and it is skipped automatically. Click "Download template" for a ready-made example.',
       },
       {
-        q: 'What is the max recipients?',
-        a: 'The contract enforces a maximum of 100 recipients per batch to prevent gas limit issues.',
+        q: 'Is there a recipient limit?',
+        a: 'No hard UI limit. The contract processes up to 100 recipients per transaction. For larger lists the app splits automatically into multiple transactions. One approve covers the full amount.',
+      },
+      {
+        q: 'What if one recipient is on the USDC blocklist?',
+        a: 'Use the "Check blocklist" button before approving. Blocked addresses are flagged in red and the approve button is disabled until they are removed. If you skip the check, blocked recipients are skipped on-chain (try/catch) and the amount is refunded to you.',
       },
       {
         q: 'Can I send to myself?',
-        a: 'Yes. There are no restrictions on who the recipients are any valid wallet address works.',
+        a: 'Yes. There are no restrictions on who the recipients are and any valid wallet address works.',
       },
     ],
     link: '/pay',
@@ -125,35 +142,44 @@ const SECTIONS: Section[] = [
     id: 'multisig',
     icon: ShieldCheck,
     accent: 'var(--pay-accent)',
-    title: 'Multi-approval payout',
+    title: 'Multi-Sig Payout',
     intro:
-      'A safety layer for large payrolls. Any wallet can create a payout proposal and nominate two co-signers who must both approve before the money moves. No single person can execute a large payment alone.',
+      'A safety layer for large payrolls. The proposer nominates two co-signers who must both approve before any funds move. Only the proposer can execute the co-signers can approve or reject but cannot trigger the payout themselves. Proposals are only visible to the three participants.',
     steps: [
       {
         num: 1,
         title: 'Create a proposal',
-        body: 'Go to Multi-Sig, fill in a description, add two co-signer wallet addresses, and upload your recipient list. Click "Create Proposal" this records the proposal on-chain.',
+        body: 'Go to Multi-Sig, fill in a description, add two co-signer wallet addresses, and upload your recipient list. Click "Create Proposal" and this records the proposal on-chain. Use "Copy invite link" to share the proposal URL directly with each co-signer.',
       },
       {
         num: 2,
-        title: 'Co-signers review and approve',
-        body: 'The two co-signers open the app, find the proposal in the list, review the recipients and total, and click "Approve". Each approval is a separate transaction.',
+        title: 'Co-signers review the recipient list',
+        body: 'Co-signers open the app (or the invite link), find the proposal card, and expand it to see the full recipient list with amounts. They verify the payment is correct before acting.',
       },
       {
         num: 3,
-        title: 'Execute once quorum is reached',
-        body: 'When both co-signers have approved, an "Execute" button appears. The proposer can execute the payout.',
+        title: 'Co-signers approve or reject',
+        body: 'Each co-signer clicks "Approve" to sign off, or "Reject" to cancel the proposal immediately. A rejection cancels the proposal and notifies the proposer with a red banner on their card.',
       },
       {
         num: 4,
-        title: 'Cancel if needed',
-        body: 'The proposer or co-signers can cancel a proposal at any time before execution. Proposals also expire automatically after 7 days if not executed.',
+        title: 'Proposer executes',
+        body: 'Once both co-signers have approved, an "Execute Payout" button appears only for the proposer. The proposer approves USDC and confirms the transaction. Funds are distributed via BatchPayout.',
+      },
+      {
+        num: 5,
+        title: 'Expiry and cancellation',
+        body: 'Proposals expire automatically after 7 days if not executed. The proposer can also cancel at any time before execution. Expired proposals are shown with a red countdown badge.',
       },
     ],
     faqs: [
       {
-        q: 'Why do I need co-signers?',
-        a: 'Co-signers act as a second set of eyes. If your wallet is compromised or you make a mistake in the recipient list, a co-signer can refuse to approve, stopping the payment.',
+        q: 'Why can only the proposer execute?',
+        a: 'This prevents a co-signer from triggering a payment at an unexpected time. The proposer controls when the funds actually move the co-signers only provide authorisation.',
+      },
+      {
+        q: 'Who can see my proposals?',
+        a: 'Only wallets that are the proposer, co-signer 1, or co-signer 2 of a proposal can see it in the list. Other users\' proposals are never shown.',
       },
       {
         q: 'Can I be my own co-signer?',
@@ -161,11 +187,11 @@ const SECTIONS: Section[] = [
       },
       {
         q: 'What if a co-signer never approves?',
-        a: 'The proposal expires after 7 days and anyone can cancel it. The proposer\'s USDC is never locked — it stays in their wallet until execution.',
+        a: 'The proposal expires after 7 days. The proposer\'s USDC is never locked and it stays in their wallet until execution.',
       },
       {
-        q: 'Who chooses the co-signers?',
-        a: 'The proposer picks the co-signers per proposal. There is no global admin or fixed signer list. You have full flexibility for each payout.',
+        q: 'What happens when a proposal is rejected?',
+        a: 'The proposal is cancelled immediately and the proposer sees a red "Rejected by co-signer" banner on their proposal card. The proposer can create a new proposal with corrected details.',
       },
     ],
     link: '/multisig',
@@ -231,22 +257,27 @@ const SECTIONS: Section[] = [
     accent: 'var(--vest-accent)',
     title: 'My Streams',
     intro:
-      'A personal dashboard showing all vesting streams where your wallet is the recipient. See your total incoming USDC, how much you\'ve claimed, and how much is claimable right now.',
+      'Found inside Dashboard → My Streams. Shows all vesting streams connected to your wallet and both streams you are receiving (Receiving tab) and streams you created for others (Sent tab).',
     steps: [
       {
         num: 1,
-        title: 'Connect your wallet',
-        body: 'Your wallet address is used to filter streams. Only streams where you are the beneficiary are shown.',
+        title: 'Switch between Receiving and Sent',
+        body: 'The "Receiving" tab shows streams where your wallet is the beneficiary. The "Sent" tab shows streams you created as the grantor. Both counts are shown on the tab labels.',
       },
       {
         num: 2,
-        title: 'Review your streams',
-        body: 'Each stream card shows: the grantor\'s address, total USDC, vested percentage, claimed so far, and claimable now.',
+        title: 'Review your incoming streams',
+        body: 'Each stream card shows: the grantor\'s address, total USDC, vested percentage, claimed so far, and claimable right now.',
       },
       {
         num: 3,
         title: 'Claim your vested USDC',
-        body: 'Click "Claim" on any stream that has a claimable balance. Confirm the transaction in MetaMask. The USDC lands in your wallet immediately.',
+        body: 'Click "Claim" on any stream with a claimable balance. Confirm in MetaMask. The USDC transfers to your wallet immediately.',
+      },
+      {
+        num: 4,
+        title: 'Completed streams',
+        body: 'When 100% of a stream is claimed, the grantor\'s Cancel button is replaced with a green "Closed and fully claimed" badge. The stream is done.',
       },
     ],
     faqs: [
@@ -269,17 +300,17 @@ const SECTIONS: Section[] = [
       {
         num: 1,
         title: 'Create a bill with expenses in one form',
-        body: 'Click "New Bill". Enter a bill name (e.g. "Weekend Trip"), add all group member wallet addresses, then add your expenses directly description, amount, and who paid for each one. A live settlement preview shows each member\'s net balance (who owes who, and how much) before you submit.',
+        body: 'Click "New Bill". Enter a bill name (e.g. "Weekend Trip"), add all group member wallet addresses, then add your expenses directly — description, amount, and who paid for each one. A live settlement preview shows each member\'s net balance (who owes who, and how much) before you submit.',
       },
       {
         num: 2,
-        title: 'Submit one flow, multiple confirmations',
+        title: 'Submit — one flow, multiple confirmations',
         body: 'Click "Create Bill & Log N Expenses". The app calls the contract once to create the bill, then once per expense to log it. A progress bar shows "Adding expense 2 of 3…". Each step needs a MetaMask confirmation.',
       },
       {
         num: 3,
         title: 'Share the bill with your group',
-        body: 'Each bill has a QR code and a copy-link button. The share link pre-fills the recipient\'s owed amount. Send it in your group chat members open the link, connect their wallet, and see exactly what they owe.',
+        body: 'Each bill has a QR code and a copy-link button. The share link pre-fills the recipient\'s owed amount. Send it in your group chat — members open the link, connect their wallet, and see exactly what they owe.',
       },
       {
         num: 4,
@@ -320,13 +351,13 @@ const SECTIONS: Section[] = [
       },
       {
         q: 'What is a "claimable balance"?',
-        a: 'When a debtor settles, the contract does not push USDC directly to creditors (that could fail if a creditor\'s address is a smart contract). Instead it accumulates a claimable balance. Creditors pull it out themselves using "Withdraw Claim" this is called a pull-withdrawal pattern.',
+        a: 'When a debtor settles, the contract does not push USDC directly to creditors (that could fail if a creditor\'s address is a smart contract). Instead it accumulates a claimable balance. Creditors pull it out themselves using "Withdraw Claim" — this is called a pull-withdrawal pattern.',
       },
     ],
     notes: [
       'Bill data is stored on-chain — it persists even if you close the app.',
       'Share the ?bill=N URL to let other members jump directly to their bill.',
-      'The settlement preview updates live as you add members and expenses check it before submitting.',
+      'The settlement preview updates live as you add members and expenses — check it before submitting.',
     ],
     link: '/split',
     linkLabel: 'Open Bill Splitter →',
@@ -352,13 +383,13 @@ const SECTIONS: Section[] = [
       {
         num: 3,
         title: 'Expand for full details',
-        body: 'Click a receipt card to see the complete recipient list every address and amount, plus a link to the transaction on the Arc Mainnet explorer.',
+        body: 'Click a receipt card to see the complete recipient list — every address and amount — plus a link to the transaction on the Arc Mainnet explorer.',
       },
     ],
     faqs: [
       {
         q: 'Can I transfer or sell a receipt?',
-        a: 'No. Receipts are soul-bound permanently attached to the wallet that sent the payout. The contract overrides all transfer functions to always revert.',
+        a: 'No. Receipts are soul-bound — permanently attached to the wallet that sent the payout. The contract overrides all transfer functions to always revert.',
       },
       {
         q: 'What if I lose my wallet?',
@@ -374,50 +405,59 @@ const SECTIONS: Section[] = [
     accent: 'var(--receipt-accent)',
     title: 'Invoices',
     intro:
-      'Create a USDC payment request and share it as a link or QR code. The payer opens the link, connects their wallet, and pays in two clicks. The Invoice Stats page gives you a dashboard view of all your invoices.',
+      'Create a USDC payment request and share it as a link or QR code. The payer opens the link, connects their wallet, and pays in one click — no approve step needed. Both parties can download a PDF receipt. The Dashboard → Invoices tab gives you analytics across all your invoices.',
     steps: [
       {
         num: 1,
         title: 'Create an invoice',
-        body: 'Enter a title, amount, due date, and optional memo. Click "Create Invoice". The invoice is saved locally in your browser with a unique sequential ID (INV-000001, INV-000002, …).',
+        body: 'Enter your name or company, a title, amount, due date, client name (optional), and memo. Click "Create Invoice". Each invoice gets a sequential ID (INV-0001, INV-0002…) saved locally in your browser.',
       },
       {
         num: 2,
         title: 'Share the link or QR code',
-        body: 'Each invoice has a "Share" button that copies a payment link to your clipboard and shows a QR code. A pre-written message is also generated — paste it straight into WhatsApp, Telegram, or email.',
+        body: 'Click "Share" to copy a payment link or show a QR code. A pre-written message is also generated — paste it into WhatsApp, Telegram, or email.',
       },
       {
         num: 3,
-        title: 'Payer opens the link and pays',
-        body: 'The payer opens your link, sees the invoice title, amount, memo, and your wallet address. They connect their wallet, approve USDC, and confirm the transfer. Done in two clicks.',
+        title: 'Payer opens the link and pays in one click',
+        body: 'The payer sees your name, invoice details, amount, and your wallet address. They connect their wallet and click "Pay Now" — one transaction, direct transfer, no separate approve step.',
       },
       {
         num: 4,
-        title: 'Track status automatically',
-        body: 'The app polls Arc Mainnet for a USDC transfer matching the exact amount to your wallet. When found, the invoice is automatically marked "Paid". Overdue invoices (past due date, still unpaid) show a red badge.',
+        title: 'Payer downloads their receipt',
+        body: 'After payment confirms, the payer sees a receipt card with the invoice ID, amount, both wallet addresses, transaction hash, and timestamp. They can download it as a PDF for their records.',
       },
       {
         num: 5,
-        title: 'View your invoice dashboard',
-        body: 'The Invoice Stats page shows total invoiced, total paid, outstanding amount, overdue count, and a monthly bar chart. Accessible from the Dashboard under the Invoices tab.',
+        title: 'Invoice marked paid automatically',
+        body: 'The app scans Arc Mainnet for a USDC Transfer matching the exact amount to your wallet. When found, the invoice is automatically marked "Paid". Overdue invoices (past due date, unpaid) show a red badge.',
+      },
+      {
+        num: 6,
+        title: 'Export and import invoices',
+        body: 'Use "Export" to download all your invoices as a JSON file. Use "Import" to restore them on any device or browser. This is your backup — invoices are stored locally and not synced to a server.',
       },
     ],
     faqs: [
       {
         q: 'Where are invoices stored?',
-        a: 'In your browser\'s localStorage. They persist across page refreshes but are tied to this browser and device. If you clear browser data, invoices are lost there is no cloud backup.',
+        a: 'In your browser\'s localStorage. They persist across refreshes but are tied to this device and browser. Use the Export button to back them up — if you clear browser data without exporting, invoices are lost.',
       },
       {
         q: 'How does paid detection work?',
-        a: 'The app scans Arc Mainnet for USDC Transfer events to your wallet address matching the invoice amount. It is automatic but not instant — it checks when you load the page.',
+        a: 'The app scans Arc Mainnet for USDC Transfer events to your wallet matching the invoice amount. It checks when you load the page and auto-refreshes every 30 seconds.',
       },
       {
         q: 'Can I download the invoice as PDF?',
-        a: 'Yes. Each invoice card has a "Download PDF" button that generates a clean invoice document with your wallet address, the payer\'s address, amount, memo, due date, and a QR code.',
+        a: 'Yes. The invoice creator can download a seller PDF (invoice details + QR code). The payer can download a payment receipt PDF after paying (invoice ID, amount, both wallets, tx hash).',
       },
       {
         q: 'What if two invoices have the same amount?',
-        a: 'Paid detection matches on amount only, so both could get marked paid from one payment. For accuracy, use slightly different amounts (e.g. 100.00 and 100.01) or add unique memos.',
+        a: 'Paid detection matches on amount, so both could be marked paid from one payment. For accuracy use slightly different amounts (100.00 and 100.01) or unique memos.',
+      },
+      {
+        q: 'Can the payer see who sent the invoice?',
+        a: 'Yes. If you fill in the "Your name / company" field when creating the invoice, the payer\'s payment page shows "Invoice from [your name]" prominently.',
       },
     ],
     link: '/invoice',
@@ -663,7 +703,7 @@ export default function DocsPage() {
     <div className="max-w-5xl mx-auto px-3 sm:px-5 py-6 pb-24">
       <PageHeader
         title="Documentation"
-        subtitle="Everything you need to understand and use RacconPay — written for complete beginners."
+        subtitle="Everything you need to understand and use RacconPay and written for complete beginners."
       />
 
       <div className="flex gap-8 mt-6">
@@ -685,7 +725,7 @@ export default function DocsPage() {
               Built on Arc Mainnet
             </p>
             <p className="text-xs" style={{ color: 'var(--muted)' }}>
-              All contracts are deployed on Arc Mainnet (chain ID 5042). Real USDC is used — always verify addresses before transacting.
+              All contracts are deployed on Arc Mainnet (chain ID 5042). Real USDC is used always verify addresses before transacting.
               Verify transactions at{' '}
               <a
                 href="https://explorer.arc.io"
