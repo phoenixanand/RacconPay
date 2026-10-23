@@ -2,8 +2,6 @@
 
 
 
----
-
 ## What This App Does
 
 RacconPay is a USDC money-tools dApp for small groups and freelancers on Arc Mainnet (chain ID 5042).
@@ -24,9 +22,4 @@ RacconPay is a USDC money-tools dApp for small groups and freelancers on Arc Mai
 - Token: USDC ERC-20 (6 decimals, address: `0x3600000000000000000000000000000000000000`)
 - Toasts: Sonner
 
-## Key Files
-
-- `src/App.tsx` - Main application logic
-- `src/components/` - UI components
-- `src/config.ts` - wagmi config (chains, connectors, transports)
 
