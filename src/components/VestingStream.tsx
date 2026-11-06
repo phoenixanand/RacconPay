@@ -1,8 +1,8 @@
 /**
- * VestingStream page — Arc Dark redesign.
+ * VestingStream page, Arc Dark redesign.
  *
  * DECIMAL NOTE:
- *   All amounts are 6-decimal ERC-20 USDC. Arc native gas is 18-decimal — never used here.
+ *   All amounts are 6-decimal ERC-20 USDC. Arc native gas is 18-decimal, never used here.
  */
 
 import React, { useState, useCallback } from 'react'
@@ -154,7 +154,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
 
   if (approveConfirmed && step === 'approving') {
     setStep('approved')
-    toast.success('USDC allowed — confirm stream creation')
+    toast.success('USDC allowed, confirm stream creation')
   }
 
   if (createConfirmed && createReceipt && !isDone) {
@@ -236,7 +236,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
     )
   }
 
-  const balFmt = balance ? formatUsdc(balance) : '—'
+  const balFmt = balance ? formatUsdc(balance) : '-'
 
   if (showSuccess) {
     return (
@@ -316,7 +316,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
         </div>
       </Card>
 
-      {/* Right col — summary + actions */}
+      {/* Right col, summary + actions */}
       <div className="flex flex-col gap-4">
         <Card strong className="p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between">
@@ -536,7 +536,7 @@ function StreamCard({ streamId, data, address, onRefresh }: {
   const { isSuccess: cancelConfirmed } = useWaitForTransactionReceipt({ hash: cancelHash })
 
   if (claimConfirmed)  { onRefresh(); void refetchClaimable(); toast.success('Claimed!') }
-  if (cancelConfirmed) { onRefresh(); toast.success('Cancelled — funds in pending withdrawal') }
+  if (cancelConfirmed) { onRefresh(); toast.success('Cancelled, funds in pending withdrawal') }
 
   const handleClaim  = () => writeClaim({  address: VESTING_STREAM_ADDRESS, abi: VESTING_STREAM_ABI, functionName: 'claim',  args: [streamId], chainId: ARC_CHAIN_ID })
   const handleCancel = () => writeCancel({ address: VESTING_STREAM_ADDRESS, abi: VESTING_STREAM_ABI, functionName: 'cancel', args: [streamId], chainId: ARC_CHAIN_ID })
@@ -613,7 +613,7 @@ function StreamCard({ streamId, data, address, onRefresh }: {
                 disabled={claimable === 0n}
                 className="flex-1"
               >
-                {isClaiming ? 'Claiming…' : `Claim ${claimable !== undefined ? formatUsdc(claimable) : '—'} USDC`}
+                {isClaiming ? 'Claiming…' : `Claim ${claimable !== undefined ? formatUsdc(claimable) : '-'} USDC`}
               </PrimaryButton>
             )}
             {isGrantor && !data.cancelled && (
@@ -621,7 +621,7 @@ function StreamCard({ streamId, data, address, onRefresh }: {
                 <div className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium"
                      style={{ color: 'var(--success)', border: '1px solid rgba(94,207,138,0.25)', background: 'var(--success-muted)' }}>
                   <CheckCircle2 size={14} />
-                  Closed — fully claimed
+                  Closed, fully claimed
                 </div>
               ) : (
                 <button

@@ -1,5 +1,5 @@
 /**
- * Dashboard summary of your open escrows on Arc Testnet: what you have locked, what you can still
+ * Dashboard summary of your open escrows on Arc Mainnet: what you have locked, what you can still
  * collect, and what needs your action.
  */
 import { Link } from 'react-router-dom'
@@ -7,7 +7,7 @@ import { zeroAddress } from 'viem'
 import { GlowCard } from '../ui'
 import { useEscrows } from './useEscrows'
 import { symbolForAddress, TOKENS } from '../../tokens'
-import { ARC_TESTNET_CHAIN_ID } from '../../constants'
+import { ARC_CHAIN_ID } from '../../constants'
 import { formatToken } from '../../utils'
 
 export default function EscrowSummary({ address }: { address: `0x${string}` }) {
@@ -21,7 +21,7 @@ export default function EscrowSummary({ address }: { address: `0x${string}` }) {
     return (
       <GlowCard accentColor="var(--split-accent)" className="p-4">
         <p className="text-xs text-center py-2" style={{ color: 'var(--subtle)' }}>
-          No escrows on Arc Testnet.{' '}
+          No escrows on Arc Mainnet.{' '}
           <Link to="/escrow" className="underline" style={{ color: 'var(--split-accent)' }}>Create one →</Link>
         </p>
       </GlowCard>
@@ -34,7 +34,7 @@ export default function EscrowSummary({ address }: { address: `0x${string}` }) {
   let needsAction = 0
 
   for (const e of escrows) {
-    const symbol = symbolForAddress(e.token, ARC_TESTNET_CHAIN_ID)
+    const symbol = symbolForAddress(e.token, ARC_CHAIN_ID)
     if (!symbol) continue
     for (const m of e.milestones) {
       const open = m.status === 'Funded' || m.status === 'Submitted' || m.status === 'Disputed'

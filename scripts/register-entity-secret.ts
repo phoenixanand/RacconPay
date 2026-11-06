@@ -44,7 +44,7 @@ async function main() {
   await client.listWalletSets({ pageSize: 1 })
 
   console.log('Entity secret registered and verified. Recovery file written to:', recoveryPath)
-  console.log('CIRCLE_ENTITY_SECRET length check:', process.env.CIRCLE_ENTITY_SECRET?.length ?? '(not yet in env — written to .env file)')
+  console.log('CIRCLE_ENTITY_SECRET length check:', process.env.CIRCLE_ENTITY_SECRET?.length ?? '(not yet in env, written to .env file)')
 }
 
 main().catch((err: unknown) => {

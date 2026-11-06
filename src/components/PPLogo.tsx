@@ -1,5 +1,5 @@
 /**
- * RacconPay — Raccoon Face Logomark
+ * RacconPay, Raccoon Face Logomark
  *
  * A hand-crafted SVG raccoon face that works at any size.
  * Design elements:
@@ -12,9 +12,9 @@
  *  - Subtle whisker lines
  *
  * Props:
- *   size     — px dimension of the square (default 32)
- *   wordmark — show "RacconPay" text beside the mark (default false)
- *   className — extra classes on the wrapper
+ *   size    , px dimension of the square (default 32)
+ *   wordmark, show "RacconPay" text beside the mark (default false)
+ *   className, extra classes on the wrapper
  */
 
 interface PPLogoProps {
@@ -32,14 +32,14 @@ export default function PPLogo({ size = 32, wordmark = false, className = '' }: 
   // Face circle
   const faceR = s * 0.36
 
-  // Ear geometry — two pointed triangular ears
+  // Ear geometry, two pointed triangular ears
   const earW  = s * 0.17
   const earH  = s * 0.20
   const earLx = cx - s * 0.22
   const earRx = cx + s * 0.22
   const earY  = cy - faceR + s * 0.04
 
-  // Mask — wide ellipse across eye area
+  // Mask, wide ellipse across eye area
   const maskRx = s * 0.32
   const maskRy = s * 0.115
   const maskCy = cy - s * 0.055
@@ -104,7 +104,7 @@ export default function PPLogo({ size = 32, wordmark = false, className = '' }: 
         <g clipPath={`url(#raccClip${s})`}>
 
           {/* ── Ears (behind face) ── */}
-          {/* Left ear — triangle-ish */}
+          {/* Left ear, triangle-ish */}
           <polygon
             points={`
               ${earLx - earW * 0.5},${earY + earH}

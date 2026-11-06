@@ -1,12 +1,12 @@
 /**
- * RacconPay — Feature Scroll Home
+ * RacconPay, Feature Scroll Home
  *
  * Structure:
- *  1. Hero          — full-height opener, big catchphrase, CTA
- *  2. Stats strip   — 4 live numbers
- *  3. Feature sections (×5) — alternating left/right, each tool gets a full section
- *  4. Manifesto strip — bold single-line statements scrolling through
- *  5. Final CTA     — "Ready to pay?" section
+ *  1. Hero         , full-height opener, big catchphrase, CTA
+ *  2. Stats strip  , 4 live numbers
+ *  3. Feature sections (×5), alternating left/right, each tool gets a full section
+ *  4. Manifesto strip, bold single-line statements scrolling through
+ *  5. Final CTA    , "Ready to pay?" section
  */
 import { Link } from 'react-router-dom'
 import { useRef } from 'react'
@@ -61,7 +61,7 @@ const FEATURES = [
     eyebrow:   'Vesting Streams',
     headline:  'Pay your team\nover time,\nwith control.',
     sub:       'A vesting console for finance and HR teams. Lock USDC for employees and contractors and release it linearly. Handle leave with approvals, upload payees in bulk, and export streams and activity for your records. Every cancel pays out what was earned first.',
-    bullets:   ['Leave and pauses with approvals (pilot on Arc Testnet)', 'Bulk upload payees from a CSV', 'Overview, inbox and CSV reports for finance', 'Optional yield on locked funds, off by default'],
+    bullets:   ['Leave and pauses with approvals', 'Bulk upload payees from a CSV', 'Overview, inbox and CSV reports for finance', 'Optional yield on locked funds, off by default'],
     accent:    'var(--vest-accent)',
     glow:      'rgba(124,90,46,0.12)',
     mockBg:    'rgba(124,90,46,0.06)',
@@ -72,7 +72,7 @@ const FEATURES = [
     to:        '/escrow',
     audience:  'enterprise',
     icon:      Handshake,
-    eyebrow:   'Milestone Escrow · Arc Testnet',
+    eyebrow:   'Milestone Escrow · Arc Mainnet',
     headline:  'Pay for work\nas it gets done,\nnot before.',
     sub:       'Lock USDC or EURC for a freelancer or supplier and split it into milestones. Each one is released when you approve it. Vesting pays out with time; escrow pays out on approval. If you disagree, an arbiter you chose decides the split.',
     bullets:   ['Up to 20 milestones, funded up front in one step', 'Release on approval, or the payee collects after the review window', 'Optional arbiter settles disputes; a silent arbiter means a 50/50 split after 30 days', 'Refund anything the payee never started once the deadline passes'],
@@ -114,10 +114,10 @@ const FEATURES = [
     to:        '/swap',
     audience:  'personal',
     icon:      Repeat,
-    eyebrow:   'Swap · Arc Testnet',
-    headline:  'Switch between\ndollars and euros\nin seconds.',
-    sub:       'Swap USDC and EURC straight from your wallet. You see the estimated amount, the minimum you will receive and the fees before you confirm, and the swap fails rather than filling below that minimum.',
-    bullets:   ['Quote review before anything is sent', 'You choose the maximum slippage', 'Minimum received shown up front', 'Swaps run on Arc Testnet for now'],
+    eyebrow:   'Swap · Arc Mainnet',
+    headline:  'Switch between\ndollars, euros\nand bitcoin.',
+    sub:       'Swap USDC, EURC and cirBTC straight from your wallet. You see the estimated amount, the minimum you will receive and the fees before you confirm, and the swap fails rather than filling below that minimum.',
+    bullets:   ['Quote review before anything is sent', 'You choose the maximum slippage', 'Minimum received shown up front', 'Arc Mainnet uses real funds, so start small'],
     accent:    'var(--vest-accent)',
     glow:      'rgba(124,90,46,0.12)',
     mockBg:    'rgba(124,90,46,0.06)',
@@ -410,7 +410,7 @@ function ReceiptMock({ accent, mockBg }: { accent: string; mockBg: string }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   COUNT-UP hook — animates a number from 0 to target when visible
+   COUNT-UP hook, animates a number from 0 to target when visible
    ══════════════════════════════════════════════════════════════════════ */
 function useCountUp(target: number, duration = 1200) {
   const [count, setCount] = useState(0)
@@ -535,7 +535,7 @@ function FeatureSection({
             </span>
           </div>
 
-          {/* Headline — each line large */}
+          {/* Headline, each line large */}
           <h2
             className="font-display font-bold leading-[1.06]"
             style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', letterSpacing: '-0.03em', color: 'var(--ink)' }}
@@ -813,7 +813,7 @@ export default function HomePage() {
         <div className="absolute top-1/4 right-1/4 w-60 h-60 rounded-full pointer-events-none"
              style={{ background: 'radial-gradient(circle, rgba(176,74,46,0.10) 0%, transparent 70%)', filter: 'blur(50px)' }} />
 
-        {/* Logo mark — large in hero */}
+        {/* Logo mark, large in hero */}
         <PPLogo size={72} />
 
         {/* Eyebrow badge */}
@@ -826,7 +826,7 @@ export default function HomePage() {
                   style={{ background: 'var(--success)', animation: 'pulse-ring 1.8s ease-out infinite' }} />
             <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'var(--success)' }} />
           </span>
-          Live on Arc Mainnet · USDC and EURC (Swap and Escrow on Arc Testnet)
+          Live on Arc Mainnet · USDC, EURC and cirBTC
         </div>
 
         {/* Headline */}

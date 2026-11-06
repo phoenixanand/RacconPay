@@ -1,6 +1,6 @@
 /**
  * USDC and EURC balances for the connected wallet on Arc Mainnet and Arc Testnet.
- * Reads the ERC-20 interface only (6 decimals) — never the 18-decimal native view.
+ * Reads the ERC-20 interface only (6 decimals), never the 18-decimal native view.
  */
 import { useAccount, useReadContracts } from 'wagmi'
 import { erc20Abi } from 'viem'
@@ -58,7 +58,7 @@ export default function StablecoinBalances({ address }: { address: `0x${string}`
             {calls.map((c, i) => {
               if (c.chainId !== chainId) return null
               const r = data?.[i]
-              const value = r?.status === 'success' ? formatToken(r.result, c.decimals) : isLoading ? '…' : '—'
+              const value = r?.status === 'success' ? formatToken(r.result, c.decimals) : isLoading ? '…' : '-'
               return (
                 <div key={c.symbol} className="flex items-center justify-between text-sm">
                   <span style={{ color: 'var(--muted)' }}>{c.symbol}</span>

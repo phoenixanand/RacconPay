@@ -1,5 +1,5 @@
 /**
- * RacconPay — Terms of Service
+ * RacconPay, Terms of Service
  */
 import { ScrollText } from 'lucide-react'
 import { Card } from './ui'

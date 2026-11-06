@@ -1,5 +1,5 @@
 /**
- * RacconPay — Privacy Policy
+ * RacconPay, Privacy Policy
  */
 import { Shield } from 'lucide-react'
 import { Card } from './ui'

@@ -6,7 +6,7 @@
  *
  * DECIMAL NOTE:
  *   All amounts are 6-decimal ERC-20 USDC.
- *   Arc native gas is 18-decimal — never used here.
+ *   Arc native gas is 18-decimal, never used here.
  */
 
 import { useState, useRef, useCallback } from 'react'
@@ -64,7 +64,7 @@ function Inner({ onReset }: { onReset: () => void }) {
   const [chunkHashes, setChunkHashes]     = useState<string[]>([])
   const isChunked = chunks.length > 1
 
-  // Blocklist state — set of lowercased blocked addresses found during pre-check
+  // Blocklist state, set of lowercased blocked addresses found during pre-check
   const [blocklisted, setBlocklisted]     = useState<Set<string>>(new Set())
   const [checkDone, setCheckDone]         = useState(false)
 
@@ -124,7 +124,7 @@ function Inner({ onReset }: { onReset: () => void }) {
       } else {
         setCurrentChunk(next)
         setStep('approved') // ready to send next chunk
-        toast.success(`Chunk ${currentChunk + 1}/${chunks.length} sent — confirm next chunk`)
+        toast.success(`Chunk ${currentChunk + 1}/${chunks.length} sent, confirm next chunk`)
       }
     }
   }
@@ -132,8 +132,8 @@ function Inner({ onReset }: { onReset: () => void }) {
   if (approveConfirmed && step === 'approving') {
     setStep('approved')
     toast.success(isChunked
-      ? `USDC approved — confirm chunk 1/${chunks.length}`
-      : 'USDC allowed — confirm the batch send')
+      ? `USDC approved, confirm chunk 1/${chunks.length}`
+      : 'USDC allowed, confirm the batch send')
   }
 
   // ── Validation ────────────────────────────────────────────────────
@@ -182,7 +182,7 @@ function Inner({ onReset }: { onReset: () => void }) {
           setBlocklisted(new Set())
           setCheckDone(false)
           if (newRows.length > CHUNK_SIZE) {
-            toast.info(`${newRows.length} recipients detected — will split into ${Math.ceil(newRows.length / CHUNK_SIZE)} chunks of ${CHUNK_SIZE}`)
+            toast.info(`${newRows.length} recipients detected, will split into ${Math.ceil(newRows.length / CHUNK_SIZE)} chunks of ${CHUNK_SIZE}`)
           }
         } else {
           toast.error('CSV had no valid rows (expected: address,amount)')
@@ -211,13 +211,13 @@ function Inner({ onReset }: { onReset: () => void }) {
       setCheckDone(true)
       setStep('idle')
       if (blocked.size > 0) {
-        toast.warning(`${blocked.size} address${blocked.size > 1 ? 'es are' : ' is'} USDC-blocklisted — remove them before continuing`)
+        toast.warning(`${blocked.size} address${blocked.size > 1 ? 'es are' : ' is'} USDC-blocklisted, remove them before continuing`)
       } else {
-        toast.success('All addresses clear — no blocklisted recipients')
+        toast.success('All addresses clear, no blocklisted recipients')
       }
     } catch {
       setStep('idle')
-      toast.error('Blocklist check failed — proceeding without check')
+      toast.error('Blocklist check failed, proceeding without check')
       setCheckDone(true)
     }
   }, [refetchBlacklist, validAddrs]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -273,10 +273,10 @@ function Inner({ onReset }: { onReset: () => void }) {
   }
 
   // ── Derived values ────────────────────────────────────────────────
-  let displayTotal = '—'; let totalRaw = 0n
+  let displayTotal = '-'; let totalRaw = 0n
   try { totalRaw = rows.reduce((acc, r) => acc + parseUsdc(r.amount), 0n); displayTotal = formatUsdc(totalRaw) } catch { /* leave */ }
 
-  const balanceFormatted     = balance ? formatUsdc(balance) : '—'
+  const balanceFormatted     = balance ? formatUsdc(balance) : '-'
   const insufficientFunds    = balance !== undefined && totalRaw > 0n && balance < totalRaw
   const hasBlocklisted       = blocklisted.size > 0
   const needsCheck           = !checkDone && rows.some(r => /^0x[0-9a-fA-F]{40}$/.test(r.addr.trim()))
@@ -372,7 +372,7 @@ function Inner({ onReset }: { onReset: () => void }) {
              style={{ background: 'rgba(var(--accent-rgb,245,158,11),0.08)', border: '1px solid rgba(245,158,11,0.25)', color: 'var(--ink-2)' }}>
           <Layers size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
           <span>
-            <strong>{rows.length} recipients</strong> detected — this will be split into{' '}
+            <strong>{rows.length} recipients</strong> detected, this will be split into{' '}
             <strong>{numChunks} transactions</strong> of up to {CHUNK_SIZE} each.
             You'll approve the total once, then confirm each chunk separately.
           </span>
@@ -380,7 +380,7 @@ function Inner({ onReset }: { onReset: () => void }) {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6 items-start">
-        {/* Left col — recipient table */}
+        {/* Left col, recipient table */}
         <div className="flex flex-col gap-4">
 
           {/* CSV drop zone */}
@@ -394,7 +394,7 @@ function Inner({ onReset }: { onReset: () => void }) {
             >
               <Upload size={20} style={{ color: 'var(--subtle)' }} />
               <span className="text-sm font-medium" style={{ color: 'var(--muted)' }}>Drop a CSV or click to upload</span>
-              <span className="text-xs" style={{ color: 'var(--subtle)' }}>Format: address,amount — no limit on rows</span>
+              <span className="text-xs" style={{ color: 'var(--subtle)' }}>Format: address,amount, no limit on rows</span>
               <input ref={fileRef} type="file" accept=".csv,text/csv" className="hidden"
                      onChange={e => { const f = e.target.files?.[0]; if (f) loadCsv(f) }} />
             </button>
@@ -497,7 +497,7 @@ function Inner({ onReset }: { onReset: () => void }) {
           )}
         </div>
 
-        {/* Right col — summary + actions */}
+        {/* Right col, summary + actions */}
         <div className="flex flex-col gap-4">
           <Card strong className="p-5 flex flex-col gap-4">
             {/* Balance */}
@@ -551,7 +551,7 @@ function Inner({ onReset }: { onReset: () => void }) {
                 <p className="text-xs" style={{ color: 'var(--subtle)' }}>
                   {isDone
                     ? 'All chunks complete'
-                    : `Chunk ${currentChunk + 1} of ${chunks.length} — ${chunks[currentChunk]?.length ?? 0} recipients`}
+                    : `Chunk ${currentChunk + 1} of ${chunks.length}, ${chunks[currentChunk]?.length ?? 0} recipients`}
                 </p>
               </div>
             )}

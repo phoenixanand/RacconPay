@@ -1,5 +1,5 @@
 /**
- * Minimal ABIs for RacconPay contracts — only the functions the frontend calls.
+ * Minimal ABIs for RacconPay contracts, only the functions the frontend calls.
  */
 
 

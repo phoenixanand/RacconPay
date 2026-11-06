@@ -165,7 +165,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
                 </span>
                 <span className="block text-xs mt-0.5 text-pretty" style={{ color: 'var(--muted)' }}>
                   Optional, off by default, and fixed once the stream is created. 70% of the amount is deposited into{' '}
-                  {chainId === ARC_TESTNET_CHAIN_ID ? 'the Arc Testnet Earn vault' : 'the lending vault this contract was deployed with'} (USDC). 30% stays in the contract so claims can be paid. Any yield belongs to you.
+                  {chainId === ARC_TESTNET_CHAIN_ID ? 'the Arc Testnet Earn vault' : 'the Aave V4 USDC vault on Arc'} (USDC). 30% stays in the contract so claims can be paid. Any yield belongs to you.
                 </span>
               </span>
             </label>
@@ -198,7 +198,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
           <div className="flex items-center justify-between">
             <Label>Your balance</Label>
             <span className="font-mono text-sm tabular-nums" style={{ color: 'var(--muted)' }}>
-              {balance !== undefined ? formatUsdc(balance) : '—'} <span style={{ color: 'var(--subtle)' }}>USDC</span>
+              {balance !== undefined ? formatUsdc(balance) : '-'} <span style={{ color: 'var(--subtle)' }}>USDC</span>
             </span>
           </div>
           {insufficient && (

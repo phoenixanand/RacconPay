@@ -1,5 +1,5 @@
 /**
- * RacconPay — Documentation Page
+ * RacconPay, Documentation Page
  * A beginner-friendly, scrollable in-app docs page.
  */
 import { useState, useEffect, useRef } from 'react'
@@ -203,7 +203,7 @@ const SECTIONS: Section[] = [
     accent: 'var(--vest-accent)',
     title: 'Vesting Stream',
     intro:
-      'Lock USDC and release it to an employee or contractor linearly over time. The vesting console (pilot, Arc Testnet) adds an overview, an inbox for approvals, bulk CSV upload, address-book names and CSV reports. The payee can claim their vested amount at any time.',
+      'Lock USDC and release it to an employee or contractor linearly over time. The vesting console (Arc Mainnet and Arc Testnet) adds an overview, an inbox for approvals, bulk CSV upload, address-book names and CSV reports. The payee can claim their vested amount at any time.',
     steps: [
       {
         num: 1,
@@ -228,7 +228,7 @@ const SECTIONS: Section[] = [
       {
         num: 5,
         title: 'Leave and pauses (vesting console)',
-        body: 'On a stream created in the console, the payee can request leave and the payer approves it. Only the dates are recorded on-chain; any note stays in your browser. Vesting pauses during the break and the end date moves back by the same time, so no pay is lost. The grantor can also schedule a break with at least 1 day of notice. This version is currently available on Arc Testnet.',
+        body: 'On a stream created in the console, the payee can request leave and the payer approves it. Only the dates are recorded on-chain; any note stays in your browser. Vesting pauses during the break and the end date moves back by the same time, so no pay is lost. The grantor can also schedule a break with at least 1 day of notice. This version is available on Arc Mainnet and Arc Testnet.',
       },
     ],
     faqs: [
@@ -254,7 +254,7 @@ const SECTIONS: Section[] = [
       },
       {
         q: 'Can the locked USDC earn yield?',
-        a: 'Optionally, when the payer creates a stream in the console (off by default, and fixed once created). 70% of the amount is deposited into the Arc Testnet Earn vault and 30% stays in the contract so claims can be paid. Yield belongs to the grantor, the beneficiary is always paid their vested amount first, and any loss comes out of the grantor\'s unvested part first. The vault can delay payouts, in which case a claim waits until it can pay. Either side can stop yield at any time.',
+        a: 'Optionally, when the payer creates a stream in the console (off by default, and fixed once created). 70% of the amount is deposited into the Aave V4 USDC vault on Arc Mainnet (or the Arc Testnet Earn vault on Arc Testnet) and 30% stays in the contract so claims can be paid. Yield belongs to the grantor, the beneficiary is always paid their vested amount first, and any loss comes out of the grantor\'s unvested part first. The vault can delay payouts, in which case a claim waits until it can pay. Either side can stop yield at any time.',
       },
       {
         q: 'Are there limits on breaks?',
@@ -321,17 +321,17 @@ const SECTIONS: Section[] = [
       {
         num: 1,
         title: 'Create a bill with expenses in one form',
-        body: 'Click "New Bill". Enter a bill name (e.g. "Weekend Trip"), add all group member wallet addresses, then add your expenses directly — description, amount, and who paid for each one. A live settlement preview shows each member\'s net balance (who owes who, and how much) before you submit.',
+        body: 'Click "New Bill". Enter a bill name (e.g. "Weekend Trip"), add all group member wallet addresses, then add your expenses directly, description, amount, and who paid for each one. A live settlement preview shows each member\'s net balance (who owes who, and how much) before you submit.',
       },
       {
         num: 2,
-        title: 'Submit — one flow, multiple confirmations',
+        title: 'Submit, one flow, multiple confirmations',
         body: 'Click "Create Bill & Log N Expenses". The app calls the contract once to create the bill, then once per expense to log it. A progress bar shows "Adding expense 2 of 3…". Each step needs a MetaMask confirmation.',
       },
       {
         num: 3,
         title: 'Share the bill with your group',
-        body: 'Each bill has a QR code and a copy-link button. The share link pre-fills the recipient\'s owed amount. Send it in your group chat — members open the link, connect their wallet, and see exactly what they owe.',
+        body: 'Each bill has a QR code and a copy-link button. The share link pre-fills the recipient\'s owed amount. Send it in your group chat, members open the link, connect their wallet, and see exactly what they owe.',
       },
       {
         num: 4,
@@ -368,17 +368,17 @@ const SECTIONS: Section[] = [
       },
       {
         q: 'Are the debts enforced?',
-        a: 'No. This is trust-based — like Splitwise. The contract tracks balances but cannot force anyone to pay. Members settle voluntarily.',
+        a: 'No. This is trust-based, like Splitwise. The contract tracks balances but cannot force anyone to pay. Members settle voluntarily.',
       },
       {
         q: 'What is a "claimable balance"?',
-        a: 'When a debtor settles, the contract does not push USDC directly to creditors (that could fail if a creditor\'s address is a smart contract). Instead it accumulates a claimable balance. Creditors pull it out themselves using "Withdraw Claim" — this is called a pull-withdrawal pattern.',
+        a: 'When a debtor settles, the contract does not push USDC directly to creditors (that could fail if a creditor\'s address is a smart contract). Instead it accumulates a claimable balance. Creditors pull it out themselves using "Withdraw Claim", this is called a pull-withdrawal pattern.',
       },
     ],
     notes: [
-      'Bill data is stored on-chain — it persists even if you close the app.',
+      'Bill data is stored on-chain, it persists even if you close the app.',
       'Share the ?bill=N URL to let other members jump directly to their bill.',
-      'The settlement preview updates live as you add members and expenses — check it before submitting.',
+      'The settlement preview updates live as you add members and expenses, check it before submitting.',
     ],
     link: '/split',
     linkLabel: 'Open Bill Splitter →',
@@ -389,7 +389,7 @@ const SECTIONS: Section[] = [
     accent: 'var(--receipt-accent)',
     title: 'Receipts',
     intro:
-      'Every batch payout mints a soul-bound NFT receipt to your wallet. This page shows all your receipts with the full payout details — who received what, when, and the on-chain proof.',
+      'Every batch payout mints a soul-bound NFT receipt to your wallet. This page shows all your receipts with the full payout details, who received what, when, and the on-chain proof.',
     steps: [
       {
         num: 1,
@@ -404,13 +404,13 @@ const SECTIONS: Section[] = [
       {
         num: 3,
         title: 'Expand for full details',
-        body: 'Click a receipt card to see the complete recipient list — every address and amount — plus a link to the transaction on the Arc Mainnet explorer.',
+        body: 'Click a receipt card to see the complete recipient list, every address and amount, plus a link to the transaction on the Arc Mainnet explorer.',
       },
     ],
     faqs: [
       {
         q: 'Can I transfer or sell a receipt?',
-        a: 'No. Receipts are soul-bound — permanently attached to the wallet that sent the payout. The contract overrides all transfer functions to always revert.',
+        a: 'No. Receipts are soul-bound, permanently attached to the wallet that sent the payout. The contract overrides all transfer functions to always revert.',
       },
       {
         q: 'What if I lose my wallet?',
@@ -426,7 +426,7 @@ const SECTIONS: Section[] = [
     accent: 'var(--receipt-accent)',
     title: 'Invoices',
     intro:
-      'Create a USDC payment request and share it as a link or QR code. The payer opens the link, connects their wallet, and pays in one click — no approve step needed. Both parties can download a PDF receipt. The Dashboard → Invoices tab gives you analytics across all your invoices.',
+      'Create a USDC payment request and share it as a link or QR code. The payer opens the link, connects their wallet, and pays in one click, no approve step needed. Both parties can download a PDF receipt. The Dashboard → Invoices tab gives you analytics across all your invoices.',
     steps: [
       {
         num: 1,
@@ -436,12 +436,12 @@ const SECTIONS: Section[] = [
       {
         num: 2,
         title: 'Share the link or QR code',
-        body: 'Click "Share" to copy a payment link or show a QR code. A pre-written message is also generated — paste it into WhatsApp, Telegram, or email.',
+        body: 'Click "Share" to copy a payment link or show a QR code. A pre-written message is also generated, paste it into WhatsApp, Telegram, or email.',
       },
       {
         num: 3,
         title: 'Payer opens the link and pays in one click',
-        body: 'The payer sees your name, invoice details, amount, and your wallet address. They connect their wallet and click "Pay Now" — one transaction, direct transfer, no separate approve step.',
+        body: 'The payer sees your name, invoice details, amount, and your wallet address. They connect their wallet and click "Pay Now", one transaction, direct transfer, no separate approve step.',
       },
       {
         num: 4,
@@ -456,13 +456,13 @@ const SECTIONS: Section[] = [
       {
         num: 6,
         title: 'Export and import invoices',
-        body: 'Use "Export" to download all your invoices as a JSON file. Use "Import" to restore them on any device or browser. This is your backup — invoices are stored locally and not synced to a server.',
+        body: 'Use "Export" to download all your invoices as a JSON file. Use "Import" to restore them on any device or browser. This is your backup, invoices are stored locally and not synced to a server.',
       },
     ],
     faqs: [
       {
         q: 'Where are invoices stored?',
-        a: 'In your browser\'s localStorage. They persist across refreshes but are tied to this device and browser. Use the Export button to back them up — if you clear browser data without exporting, invoices are lost.',
+        a: 'In your browser\'s localStorage. They persist across refreshes but are tied to this device and browser. Use the Export button to back them up, if you clear browser data without exporting, invoices are lost.',
       },
       {
         q: 'How does paid detection work?',
@@ -488,16 +488,16 @@ const SECTIONS: Section[] = [
     id: 'swap',
     icon: TrendingUp,
     accent: 'var(--receipt-accent)',
-    title: 'Swap USDC and EURC',
+    title: 'Swap USDC, EURC and cirBTC',
     intro:
-      'Swap between USDC and EURC on Arc Testnet. You review a quote first, then confirm in your wallet. The swap fails instead of filling below the minimum you see.',
+      'Swap between USDC, EURC and cirBTC on Arc Mainnet, or on Arc Testnet with test tokens. Mainnet swaps use real funds, so start small. You review a quote first, then confirm in your wallet. The swap fails instead of filling below the minimum you see.',
     steps: [
-      { num: 1, title: 'Switch to Arc Testnet', body: 'The Swap page asks you to switch networks. Test tokens have no real value.' },
+      { num: 1, title: 'Choose a network', body: 'Arc Mainnet is selected by default and uses real funds. Pick Arc Testnet to practice with test tokens that have no real value. The Swap page asks you to switch your wallet if needed.' },
       { num: 2, title: 'Enter an amount and review the quote', body: 'Pick the direction, type an amount and choose a maximum slippage. The quote shows the estimated output, the minimum you will receive and the fees.' },
       { num: 3, title: 'Swap', body: 'Click Swap and confirm in your wallet. Nothing is sent until you do.' },
     ],
     faqs: [
-      { q: 'Which tokens can I swap?', a: 'USDC and EURC.' },
+      { q: 'Which tokens can I swap?', a: 'USDC, EURC and cirBTC (Circle wrapped Bitcoin, 8 decimals). Other tokens are not supported on Arc.' },
       { q: 'Who executes the swap?', a: 'It is routed through a swap service provider that can vary by route. The provider\'s terms apply.' },
     ],
     link: '/swap',
@@ -509,7 +509,7 @@ const SECTIONS: Section[] = [
     accent: 'var(--split-accent)',
     title: 'Milestone Escrow',
     intro:
-      'Lock USDC or EURC for someone and release it milestone by milestone. Runs on Arc Testnet and has not been audited for mainnet.',
+      'Lock USDC or EURC for someone and release it milestone by milestone. Runs on Arc Mainnet with real funds and has not had an independent audit, so start with small amounts.',
     steps: [
       { num: 1, title: 'Create and fund', body: 'Choose the currency, the payee, an optional arbiter, up to 20 milestone amounts, a review window and a refund deadline. You approve the total, then lock it.' },
       { num: 2, title: 'Payee submits a milestone', body: 'When work is done the payee submits the milestone, optionally with a link or note.' },

@@ -1,7 +1,7 @@
 /**
- * RacconPay — Dashboard page
+ * RacconPay, Dashboard page
  * Four tabs: Overview · My Streams · Receipts
- * All data from on-chain reads — nothing simulated.
+ * All data from on-chain reads, nothing simulated.
  */
 import React, { useState, useEffect, useCallback } from 'react'
 import { useAccount, useReadContract, useReadContracts, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
@@ -43,7 +43,7 @@ import {
    SHARED HELPERS
 ───────────────────────────────────────────────────────────────── */
 function fmt(v: bigint | undefined) {
-  return v !== undefined ? formatUsdc(v) : '—'
+  return v !== undefined ? formatUsdc(v) : '-'
 }
 
 function Shimmer({ h = 80 }: { h?: number }) {
@@ -102,7 +102,7 @@ function Section({
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   OVERVIEW TAB — sub-sections
+   OVERVIEW TAB, sub-sections
 ───────────────────────────────────────────────────────────────── */
 function VestingSection({ address }: { address: `0x${string}` }) {
   const { data: streamIds } = useReadContract({
@@ -529,7 +529,7 @@ function StreamCard({ stream, onClaimed }: { stream: Stream; onClaimed: () => vo
       )}
       {!stream.cancelled && claimable === 0n && (
         <p className="text-xs text-center py-1" style={{ color: 'var(--subtle)' }}>
-          {vestedNow(stream) >= stream.totalAmount ? '✓ Fully claimed' : 'Nothing claimable yet — check back later'}
+          {vestedNow(stream) >= stream.totalAmount ? '✓ Fully claimed' : 'Nothing claimable yet, check back later'}
         </p>
       )}
     </Card>
@@ -585,7 +585,7 @@ function MyStreamsTab({ address }: { address: `0x${string}` }) {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <p className="text-sm" style={{ color: 'var(--muted)' }}>
-          Streams where you are the beneficiary — claim your vested USDC.
+          Streams where you are the beneficiary, claim your vested USDC.
         </p>
         <button
           onClick={() => setTick(t => t + 1)}
@@ -871,7 +871,7 @@ export default function DashboardPage() {
           boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
         }}
       >
-        {/* Avatar circle — deterministic colour from address */}
+        {/* Avatar circle, deterministic colour from address */}
         <div
           className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 font-display font-bold text-xl text-white select-none"
           style={{ background: avatarBg }}
@@ -903,7 +903,7 @@ export default function DashboardPage() {
             </a>
           </div>
         </div>
-        {/* USDC balance — large */}
+        {/* USDC balance, large */}
         <div className="text-right shrink-0 hidden sm:block">
           <p className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: 'var(--subtle)' }}>Balance</p>
           <p className="font-display font-bold tabular-nums" style={{ fontSize: 28, color: 'var(--ink)', lineHeight: 1.1 }}>
@@ -1000,7 +1000,7 @@ export default function DashboardPage() {
             <Section icon={Send}        title="Batch Payouts"       accent="var(--receipt-accent)">
               <ReceiptsSummarySection address={address} />
             </Section>
-            <Section icon={Handshake}   title="Escrow (Arc Testnet)" accent="var(--split-accent)">
+            <Section icon={Handshake}   title="Escrow (Arc Mainnet)" accent="var(--split-accent)">
               <EscrowSummary address={address} />
             </Section>
           </div>

@@ -1,5 +1,5 @@
 /**
- * RacconPay — PageHero
+ * RacconPay, PageHero
  * Thin branded strip at the top of every inner page.
  * Props: icon, title, subtitle, accent color CSS var string, gradient CSS var string
  */

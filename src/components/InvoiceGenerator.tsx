@@ -1,5 +1,5 @@
 /**
- * Invoice Generator — create shareable USDC payment requests.
+ * Invoice Generator, create shareable USDC payment requests.
  * Features: fromName, sequential IDs, status tracking, due date, PDF export,
  *           paid detection via RPC, export/import JSON, single-tx payment.
  */
@@ -199,7 +199,7 @@ function exportPayerReceipt({
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
   const W = doc.internal.pageSize.getWidth()
 
-  // Header bar — green for receipt
+  // Header bar, green for receipt
   doc.setFillColor(39, 174, 96)
   doc.rect(0, 0, W, 60, 'F')
   doc.setTextColor(255, 255, 255)
@@ -311,7 +311,7 @@ function PayInvoiceView() {
   const wrongChain = !!address && walletChain !== invChain
   const [paidAtMs] = useState(() => Date.now())
 
-  // Single-step: direct ERC-20 transfer (no approve needed — payer sends to creator)
+  // Single-step: direct ERC-20 transfer (no approve needed, payer sends to creator)
   const { writeContract: transfer, data: transferHash } = useWriteContract()
   const { isSuccess: transferConfirmed, isLoading: transferConfirming } = useWaitForTransactionReceipt({ hash: transferHash })
 
@@ -319,7 +319,7 @@ function PayInvoiceView() {
     try { return parseToken(amountStr, tokenDecimals) } catch { return 0n }
   })()
 
-  // On payment confirmed — mark invoice paid in localStorage (only if opened by creator)
+  // On payment confirmed, mark invoice paid in localStorage (only if opened by creator)
   useEffect(() => {
     if (transferConfirmed && invoiceId && transferHash) {
       const list = loadInvoices()
@@ -361,7 +361,7 @@ function PayInvoiceView() {
             ['Invoice',     invoiceId],
             ['Amount',      `${formatToken(amountRaw, tokenDecimals)} ${token}`],
             ['Paid to',     fromName ? `${fromName} (${shortAddr(toAddr)})` : shortAddr(toAddr)],
-            ['Paid from',   address ? shortAddr(address) : '—'],
+            ['Paid from',   address ? shortAddr(address) : '-'],
             ['Date',        new Date(paidAtMs).toLocaleString()],
           ].map(([k, v]) => (
             <div key={k} className="flex items-center justify-between gap-4 text-sm">
@@ -722,14 +722,14 @@ export default function InvoiceGenerator() {
       <PageHeader
         icon={FileText}
         title="Invoices"
-        subtitle="Create a USDC or EURC payment request. Share the link — payer connects wallet and pays in one click."
+        subtitle="Create a USDC or EURC payment request. Share the link, payer connects wallet and pays in one click."
         accentColor="var(--receipt-accent)"
       />
 
       {/* Create form */}
       <Card className="p-5 flex flex-col gap-4">
         <h3 className="font-display font-semibold text-base" style={{ color: 'var(--ink)' }}>New Invoice</h3>
-        {!address && <AlertBox variant="info">Connect your wallet — your address becomes the payment destination.</AlertBox>}
+        {!address && <AlertBox variant="info">Connect your wallet, your address becomes the payment destination.</AlertBox>}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input label="Your name / company" value={form.fromName} onChange={v => setForm(f => ({ ...f, fromName: v }))} placeholder="Acme Ltd" />
           <Input label="Client name (optional)" value={form.clientName} onChange={v => setForm(f => ({ ...f, clientName: v }))} placeholder="John Smith" />
@@ -755,7 +755,7 @@ export default function InvoiceGenerator() {
           </div>
           <Input label={`Amount (${token})`} value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} placeholder="50.00" type="number" />
           <Input label="Due date (optional)" value={form.dueDate} onChange={v => setForm(f => ({ ...f, dueDate: v }))} type="date" />
-          <Input label="Memo / description" value={form.memo} onChange={v => setForm(f => ({ ...f, memo: v }))} placeholder="Design work — March 2026" className="sm:col-span-2" />
+          <Input label="Memo / description" value={form.memo} onChange={v => setForm(f => ({ ...f, memo: v }))} placeholder="Design work, March 2026" className="sm:col-span-2" />
         </div>
         {address && (
           <div className="text-xs font-mono px-1" style={{ color: 'var(--subtle)' }}>
@@ -820,7 +820,7 @@ export default function InvoiceGenerator() {
       {invoices.length === 0 && (
         <div className="flex flex-col items-center gap-4 py-12 text-center">
           <FileText size={32} style={{ color: 'var(--subtle)' }} />
-          <p className="text-sm" style={{ color: 'var(--muted)' }}>No invoices yet — create one above</p>
+          <p className="text-sm" style={{ color: 'var(--muted)' }}>No invoices yet, create one above</p>
           <button
             onClick={() => importRef.current?.click()}
             className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:opacity-80"

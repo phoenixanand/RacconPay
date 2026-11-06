@@ -8,7 +8,7 @@ import { keccak256, toBytes, zeroAddress, zeroHash } from 'viem'
 import { toast } from 'sonner'
 import { CheckCircle2, ExternalLink } from 'lucide-react'
 import { Badge, Card, GhostButton, Input, PrimaryButton, AlertBox } from '../ui'
-import { ARC_TESTNET_CHAIN_ID, ESCROW_TESTNET_ADDRESS, explorerTxFor } from '../../constants'
+import { ARC_CHAIN_ID, ESCROW_ADDRESS, explorerTxFor } from '../../constants'
 import { ESCROW_ABI } from '../../abisEscrow'
 import { symbolForAddress, TOKENS } from '../../tokens'
 import { formatToken, shortAddr } from '../../utils'
@@ -28,7 +28,7 @@ function errorText(e: unknown): string {
   return msg.length > 140 ? `${msg.slice(0, 140)}…` : msg
 }
 
-const ESC = { address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, chainId: ARC_TESTNET_CHAIN_ID } as const
+const ESC = { address: ESCROW_ADDRESS, abi: ESCROW_ABI, chainId: ARC_CHAIN_ID } as const
 
 function fmtDate(sec: bigint): string {
   return new Date(Number(sec) * 1000).toLocaleString()
@@ -167,7 +167,7 @@ function MilestoneRow({
 
       {tx.error && <AlertBox variant="danger">{tx.error}</AlertBox>}
       {tx.hash && (
-        <a href={explorerTxFor(ARC_TESTNET_CHAIN_ID, tx.hash)} target="_blank" rel="noreferrer"
+        <a href={explorerTxFor(ARC_CHAIN_ID, tx.hash)} target="_blank" rel="noreferrer"
           className="flex items-center gap-1 text-xs" style={{ color: 'var(--accent)' }}>
           <ExternalLink size={11} /> View transaction
         </a>
@@ -187,7 +187,7 @@ export default function EscrowCard({ escrow, onChanged }: { escrow: EscrowView; 
     payee: escrow.payee.toLowerCase() === me,
     arbiter: escrow.arbiter.toLowerCase() === me,
   }
-  const symbol = symbolForAddress(escrow.token, ARC_TESTNET_CHAIN_ID) ?? 'TOKEN'
+  const symbol = symbolForAddress(escrow.token, ARC_CHAIN_ID) ?? 'TOKEN'
   const decimals = symbol === 'TOKEN' ? 6 : TOKENS[symbol].decimals
   const total = escrow.milestones.reduce((s, m) => s + m.amount, 0n)
   const released = escrow.milestones.filter(m => m.status === 'Released').reduce((s, m) => s + m.amount, 0n)

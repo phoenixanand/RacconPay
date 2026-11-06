@@ -136,7 +136,7 @@ function send(entry: ConsoleLogEntry): void {
   try {
     window.parent.postMessage({ type: MESSAGE_TYPE, entry }, _parentOrigin);
   } catch {
-    /* ignore — postMessage can throw on cross-origin edge cases */
+    /* ignore, postMessage can throw on cross-origin edge cases */
   }
 }
 
@@ -225,7 +225,7 @@ for (const level of LEVELS) {
 }
 
 // ---------------------------------------------------------------------------
-// Uncaught errors & unhandled rejections — the signals a blank preview hides
+// Uncaught errors & unhandled rejections, the signals a blank preview hides
 // ---------------------------------------------------------------------------
 
 window.addEventListener('error', (e: ErrorEvent) => {

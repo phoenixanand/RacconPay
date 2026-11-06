@@ -1,6 +1,6 @@
 /**
- * Milestone Escrow — lock USDC or EURC for a payee, release per milestone, optional arbiter.
- * Arc Testnet only.
+ * Milestone Escrow, lock USDC or EURC for a payee, release per milestone, optional arbiter.
+ * Runs on Arc Mainnet.
  */
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
@@ -11,7 +11,7 @@ import CreateEscrow from './escrow/CreateEscrow'
 import EscrowCard from './escrow/EscrowCard'
 import EscrowCredits from './escrow/EscrowCredits'
 import { useEscrows } from './escrow/useEscrows'
-import { ARC_TESTNET_CHAIN_ID, ESCROW_TESTNET_ADDRESS } from '../constants'
+import { ARC_CHAIN_ID, ESCROW_ADDRESS, explorerAddr } from '../constants'
 
 type Filter = 'all' | 'payer' | 'payee' | 'arbiter'
 
@@ -44,7 +44,7 @@ function EscrowBoard({ address }: { address: `0x${string}` }) {
                 color:      filter === f ? '#fff' : 'var(--muted)',
               }}
             >
-              {f === 'all' ? 'All' : f === 'payer' ? 'I pay' : f === 'payee' ? 'I get paid' : 'I arbitrate'}
+              {f === 'all' ? 'All' : f === 'payer' ? 'Pay' : f === 'payee' ? 'Paid' : 'Arbitrate'}
             </button>
           ))}
         </div>
@@ -84,15 +84,16 @@ export default function EscrowPage() {
         accentColor="var(--split-accent)"
       />
       <AlertBox variant="info">
-        Arc Testnet only, and the escrow contract has not been audited for mainnet. Contract:{' '}
+        Arc Mainnet uses real USDC and EURC and every transaction is final. This escrow contract has not had an
+        independent audit, so start with a small test escrow. Contract:{' '}
         <a
-          href={`https://explorer.testnet.arc.io/address/${ESCROW_TESTNET_ADDRESS}`}
+          href={explorerAddr(ESCROW_ADDRESS)}
           target="_blank" rel="noreferrer" className="underline font-mono"
         >
-          {ESCROW_TESTNET_ADDRESS.slice(0, 10)}…{ESCROW_TESTNET_ADDRESS.slice(-6)}
+          {ESCROW_ADDRESS.slice(0, 10)}…{ESCROW_ADDRESS.slice(-6)}
         </a>
       </AlertBox>
-      <ChainGuard chainId={ARC_TESTNET_CHAIN_ID}>
+      <ChainGuard chainId={ARC_CHAIN_ID}>
         {address && <EscrowBoard address={address} />}
       </ChainGuard>
     </div>

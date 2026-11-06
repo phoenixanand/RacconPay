@@ -1,5 +1,5 @@
 /**
- * RacconPay — Warm Earth Layout
+ * RacconPay, Warm Earth Layout
  * Desktop: sticky full-width top navbar (logo · nav · wallet)
  * Mobile:  slim top bar + scrollable bottom tab nav
  */
@@ -17,7 +17,7 @@ import PPLogo from './PPLogo'
 const YEAR = new Date().getFullYear()
 
 /** Pages that run on Arc Testnet; every other page runs on Arc Mainnet. */
-const TESTNET_PATHS = ['/swap', '/escrow']
+const TESTNET_PATHS: string[] = []
 
 interface NavChild { to: string; label: string; hint: string; icon: React.ElementType; accent: string; alsoMatches?: string[] }
 interface NavLinkItem { to: string; label: string; icon: React.ElementType; accent: string }
@@ -32,14 +32,14 @@ const NAV: NavEntry[] = [
       { to: '/pay',     label: 'Batch Pay', hint: 'Pay up to 100 people at once',     icon: Send,        accent: 'var(--pay-accent)'     },
       { to: '/multisig', label: 'Multi-Sig', hint: 'Payouts that need co-signers',     icon: ShieldCheck, accent: 'var(--pay-accent)'     },
       { to: '/vesting', label: 'Vesting',   hint: 'Pays out over time',               icon: Clock,       accent: 'var(--vest-accent)'    },
-      { to: '/escrow',  label: 'Escrow',    hint: 'Milestone payments · Arc Testnet', icon: Handshake,   accent: 'var(--split-accent)'   },
+      { to: '/escrow',  label: 'Escrow',    hint: 'Milestone payments · Arc Mainnet', icon: Handshake,   accent: 'var(--split-accent)'   },
       { to: '/invoice', label: 'Invoices',  hint: 'Get paid in USDC or EURC',         icon: FileText,    accent: 'var(--receipt-accent)', alsoMatches: ['/pay-invoice'] },
     ],
   },
   {
     id: 'personal', label: 'Personal', icon: User, accent: 'var(--split-accent)',
     children: [
-      { to: '/swap',  label: 'Swap',       hint: 'USDC and EURC · Arc Testnet', icon: Repeat, accent: 'var(--receipt-accent)' },
+      { to: '/swap',  label: 'Swap',       hint: 'USDC, EURC and cirBTC · Arc Mainnet', icon: Repeat, accent: 'var(--receipt-accent)' },
       { to: '/split', label: 'Bill Split', hint: 'Split costs with friends',    icon: Users,  accent: 'var(--split-accent)'   },
     ],
   },

@@ -163,8 +163,8 @@ export default function BulkCreate({ address, chainId, vestingAddress, onCreated
                         <span style={{ color: 'var(--ink)' }}>{r.label || shortAddr(r.address)}</span>
                         {r.label && <span className="ml-2 font-mono text-xs" style={{ color: 'var(--subtle)' }}>{shortAddr(r.address)}</span>}
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums" style={{ color: 'var(--ink)' }}>{r.error ? '—' : formatUsdc(r.amount)}</td>
-                      <td className="px-4 py-2.5 text-right tabular-nums" style={{ color: 'var(--ink-2)' }}>{r.error ? '—' : r.days}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums" style={{ color: 'var(--ink)' }}>{r.error ? '-' : formatUsdc(r.amount)}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums" style={{ color: 'var(--ink-2)' }}>{r.error ? '-' : r.days}</td>
                       <td className="px-4 py-2.5 text-xs">
                         {r.error ? <span style={{ color: 'var(--danger)' }}>{r.error}</span>
                           : st?.phase === 'done' ? <span className="inline-flex items-center gap-1" style={{ color: 'var(--success)' }}><CheckCircle2 size={13} /> Created
@@ -187,7 +187,7 @@ export default function BulkCreate({ address, chainId, vestingAddress, onCreated
                 {valid.length} valid of {rows.length} rows{doneCount > 0 ? ` · ${doneCount} created` : ''}
               </span>
               <span className="tabular-nums font-semibold" style={{ color: 'var(--ink)' }}>
-                {formatUsdc(total)} USDC to lock <span className="font-normal" style={{ color: 'var(--subtle)' }}>· balance {balance !== undefined ? formatUsdc(balance) : '—'}</span>
+                {formatUsdc(total)} USDC to lock <span className="font-normal" style={{ color: 'var(--subtle)' }}>· balance {balance !== undefined ? formatUsdc(balance) : '-'}</span>
               </span>
             </div>
             {insufficient && (

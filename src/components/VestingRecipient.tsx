@@ -1,5 +1,5 @@
 /**
- * Vesting Recipient Dashboard — shows only streams where the connected wallet
+ * Vesting Recipient Dashboard, shows only streams where the connected wallet
  * is the BENEFICIARY. Focused pull-to-claim view with live progress.
  */
 import React, { useState, useEffect, useCallback } from 'react'
@@ -179,7 +179,7 @@ function StreamCard({ stream, onClaimed }: { stream: Stream; onClaimed: () => vo
       )}
       {!stream.cancelled && claimable === 0n && (
         <p className="text-xs text-center py-1" style={{ color: 'var(--subtle)' }}>
-          {vestedNow(stream) >= stream.totalAmount ? '✓ Fully claimed' : 'Nothing claimable yet — check back later'}
+          {vestedNow(stream) >= stream.totalAmount ? '✓ Fully claimed' : 'Nothing claimable yet, check back later'}
         </p>
       )}
     </Card>
@@ -261,7 +261,7 @@ export default function VestingRecipient() {
         <PageHeader
           icon={TrendingUp}
           title="My Vesting Streams"
-          subtitle="Streams where you are the beneficiary — claim your vested USDC."
+          subtitle="Streams where you are the beneficiary, claim your vested USDC."
           accentColor="var(--vest-accent)"
         />
         <button

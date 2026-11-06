@@ -1,5 +1,5 @@
 /**
- * MultiSigPayout v2 — per-proposal co-signer model.
+ * MultiSigPayout v2, per-proposal co-signer model.
  *
  * Any wallet can create a proposal naming two co-signers.
  * Both co-signers must approve before anyone executes.
@@ -59,11 +59,11 @@ function formatTimeLeft(diff: number): string {
   return remH > 0 ? `${d}d ${remH}h left` : `${d}d left`
 }
 
-/** Live-updating expiry countdown — re-renders every minute while pending. */
+/** Live-updating expiry countdown, re-renders every minute while pending. */
 function ExpiryCountdown({ createdAt, expired }: { createdAt: bigint; expired: boolean }) {
   const expiresAtMs = Number(createdAt) * 1000 + EXPIRY_MS
 
-  // Capture diff once on mount; interval keeps it fresh — avoids Date.now() in render body
+  // Capture diff once on mount; interval keeps it fresh, avoids Date.now() in render body
   const [diff, setDiff] = useState<number>(() => expiresAtMs - Date.now())
 
   useEffect(() => {
@@ -394,7 +394,7 @@ function ProposalCard({
       background: 'var(--surface)',
       boxShadow: highlighted ? '0 0 0 3px rgba(var(--accent-rgb, 180,120,60),0.15)' : undefined,
     }}>
-      {/* Card header — colored top strip */}
+      {/* Card header, colored top strip */}
       <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="flex items-start justify-between gap-3">
           {/* Left: id + badges */}
@@ -426,7 +426,7 @@ function ProposalCard({
           {p.description || <span style={{ color: 'var(--muted)' }}>No description</span>}
         </p>
 
-        {/* Rejected banner — shown to proposer when a co-signer rejected */}
+        {/* Rejected banner, shown to proposer when a co-signer rejected */}
         {isProposer && p.status === 2 && (
           <div className="mt-3 flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm"
                style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)', color: 'var(--danger)' }}>
@@ -587,7 +587,7 @@ function StepIndicator({ steps, current }: { steps: string[]; current: number })
               {label}
             </span>
           </div>
-          {/* Connector line — stretches between items */}
+          {/* Connector line, stretches between items */}
           {i < steps.length - 1 && (
             <div
               className="h-px mx-3 transition-all duration-300"
@@ -733,7 +733,7 @@ function CreateProposalForm({ onCreated }: { onCreated: () => void }) {
 
         {/* Co-signers */}
         <div>
-          <Label>Co-signers — both must approve before payout executes</Label>
+          <Label>Co-signers, both must approve before payout executes</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
             <div>
               <p className="text-xs mb-1" style={{ color: 'var(--muted)' }}>Co-signer 1</p>
@@ -787,7 +787,7 @@ function CreateProposalForm({ onCreated }: { onCreated: () => void }) {
             </label>
           </div>
 
-          {/* Table header — col widths match the row grid exactly */}
+          {/* Table header, col widths match the row grid exactly */}
           <div className="hidden sm:grid grid-cols-[1fr_160px_40px] gap-3 mb-2 px-0">
             <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Wallet address</span>
             <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Amount (USDC)</span>

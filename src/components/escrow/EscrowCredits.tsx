@@ -6,21 +6,21 @@ import { useEffect } from 'react'
 import { useReadContracts, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { toast } from 'sonner'
 import { Card, PrimaryButton } from '../ui'
-import { ARC_TESTNET_CHAIN_ID, ESCROW_TESTNET_ADDRESS } from '../../constants'
+import { ARC_CHAIN_ID, ESCROW_ADDRESS } from '../../constants'
 import { ESCROW_ABI } from '../../abisEscrow'
 import { TOKEN_LIST, tokenAddress } from '../../tokens'
 import { formatToken } from '../../utils'
 
 export default function EscrowCredits({ address }: { address: `0x${string}` }) {
   const tokens = TOKEN_LIST.flatMap(t => {
-    const addr = tokenAddress(t.symbol, ARC_TESTNET_CHAIN_ID)
+    const addr = tokenAddress(t.symbol, ARC_CHAIN_ID)
     return addr ? [{ ...t, addr }] : []
   })
 
   const { data, refetch } = useReadContracts({
     contracts: tokens.map(t => ({
-      address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, functionName: 'creditOf' as const,
-      args: [address, t.addr] as const, chainId: ARC_TESTNET_CHAIN_ID,
+      address: ESCROW_ADDRESS, abi: ESCROW_ABI, functionName: 'creditOf' as const,
+      args: [address, t.addr] as const, chainId: ARC_CHAIN_ID,
     })),
     query: { refetchInterval: 20_000 },
   })
@@ -54,8 +54,8 @@ export default function EscrowCredits({ address }: { address: `0x${string}` }) {
             <PrimaryButton
               loading={isPending || confirming}
               onClick={() => writeContract({
-                address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, functionName: 'withdraw',
-                args: [t.addr], chainId: ARC_TESTNET_CHAIN_ID,
+                address: ESCROW_ADDRESS, abi: ESCROW_ABI, functionName: 'withdraw',
+                args: [t.addr], chainId: ARC_CHAIN_ID,
               })}
             >
               Withdraw

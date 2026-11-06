@@ -137,8 +137,8 @@ export default function StreamTable({ streams, wallet, role, chainId, networkNam
                       <td className="px-4 py-3 text-right tabular-nums" style={{ color: 'var(--ink)' }}>{formatUsdc(s.stream.totalAmount)}</td>
                       <td className="px-4 py-3 text-right tabular-nums" style={{ color: 'var(--ink-2)' }}>
                         {role === 'paying'
-                          ? (s.hasYield && s.yieldInfo ? formatUsdc(s.yieldInfo.yieldEarned) : '—')
-                          : (s.stream.cancelled ? '—' : formatUsdc(s.metrics?.claimable ?? 0n))}
+                          ? (s.hasYield && s.yieldInfo ? formatUsdc(s.yieldInfo.yieldEarned) : '-')
+                          : (s.stream.cancelled ? '-' : formatUsdc(s.metrics?.claimable ?? 0n))}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap tabular-nums" style={{ color: 'var(--muted)' }}>
                         {fmtDate(s.metrics?.effectiveEnd ?? s.stream.endTime)}

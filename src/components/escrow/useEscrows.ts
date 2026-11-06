@@ -1,10 +1,10 @@
 /**
  * Reads every escrow an address takes part in (payer, payee or arbiter) from MilestoneEscrow
- * on Arc Testnet, together with each escrow's milestones. All values come from contract state.
+ * on Arc Mainnet, together with each escrow's milestones. All values come from contract state.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { useReadContract, useReadContracts } from 'wagmi'
-import { ARC_TESTNET_CHAIN_ID, ESCROW_TESTNET_ADDRESS } from '../../constants'
+import { ARC_CHAIN_ID, ESCROW_ADDRESS } from '../../constants'
 import { ESCROW_ABI } from '../../abisEscrow'
 
 export const MILESTONE_STATUS = ['Funded', 'Submitted', 'Released', 'Disputed', 'Resolved', 'Refunded'] as const
@@ -48,16 +48,16 @@ export function useNow(intervalMs = 15_000): bigint {
 
 export function useEscrows(address: `0x${string}`) {
   const idsQ = useReadContract({
-    address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, functionName: 'escrowsOf',
-    args: [address], chainId: ARC_TESTNET_CHAIN_ID,
+    address: ESCROW_ADDRESS, abi: ESCROW_ABI, functionName: 'escrowsOf',
+    args: [address], chainId: ARC_CHAIN_ID,
     query: { refetchInterval: 20_000 },
   })
   const ids = idsQ.data ?? []
 
   const escrowsQ = useReadContracts({
     contracts: ids.map(id => ({
-      address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, functionName: 'getEscrow' as const,
-      args: [id] as const, chainId: ARC_TESTNET_CHAIN_ID,
+      address: ESCROW_ADDRESS, abi: ESCROW_ABI, functionName: 'getEscrow' as const,
+      args: [id] as const, chainId: ARC_CHAIN_ID,
     })),
     query: { enabled: ids.length > 0, refetchInterval: 20_000 },
   })
@@ -71,8 +71,8 @@ export function useEscrows(address: `0x${string}`) {
 
   const msQ = useReadContracts({
     contracts: msCalls.map(c => ({
-      address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, functionName: 'getMilestone' as const,
-      args: [c.id, BigInt(c.index)] as const, chainId: ARC_TESTNET_CHAIN_ID,
+      address: ESCROW_ADDRESS, abi: ESCROW_ABI, functionName: 'getMilestone' as const,
+      args: [c.id, BigInt(c.index)] as const, chainId: ARC_CHAIN_ID,
     })),
     query: { enabled: msCalls.length > 0, refetchInterval: 20_000 },
   })

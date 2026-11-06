@@ -5,7 +5,7 @@
  * in one form. On submit it calls createBill() then addExpense() for each
  * expense in sequence, showing a live settlement preview before submitting.
  *
- * CONTRACT NOTE: no contract changes — same createBill + addExpense calls,
+ * CONTRACT NOTE: no contract changes, same createBill + addExpense calls,
  * just batched in one UX step.
  *
  * DECIMAL NOTE: All amounts are 6-decimal ERC-20 USDC.
@@ -109,7 +109,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
   const [memberInput, setMemberInput] = useState('')
   const [members, setMembers]         = useState<string[]>([])
 
-  // Expenses (draft — not yet on-chain)
+  // Expenses (draft, not yet on-chain)
   const [expenses, setExpenses] = useState<DraftExpense[]>([
     { description: '', amount: '', paidBy: address ?? '' },
   ])
@@ -121,11 +121,11 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
   const [createdId,           setCreatedId]          = useState<bigint | null>(null)
   const [finalizeImmediately, setFinalizeImmediately] = useState(false)
 
-  // Wagmi — createBill
+  // Wagmi, createBill
   const { writeContractAsync: createBillAsync } = useWriteContract()
-  // Wagmi — addExpense (reused for each expense in sequence)
+  // Wagmi, addExpense (reused for each expense in sequence)
   const { writeContractAsync: addExpenseAsync } = useWriteContract()
-  // Wagmi — finalize
+  // Wagmi, finalize
   const { writeContractAsync: finalizeAsync }   = useWriteContract()
 
   // derived
@@ -174,7 +174,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
       })
 
       // Parse the bill ID from the receipt logs
-      // createBillAsync returns the tx hash — we need to wait for the receipt
+      // createBillAsync returns the tx hash, we need to wait for the receipt
       // Use a lightweight fetch via viem (already imported in constants)
       // We'll pass the hash and wait for confirmation, then parse
       // Actually wagmi's writeContractAsync returns the tx hash, not receipt.
@@ -468,7 +468,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
                 className="rounded-xl px-2 py-2 text-xs outline-none transition-all"
                 style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
               >
-                <option value="">— who paid?</option>
+                <option value="">Who paid?</option>
                 {allMembers.map(m => (
                   <option key={m} value={m}>
                     {m.toLowerCase() === (address ?? '').toLowerCase() ? 'You' : shortAddr(m)}
@@ -599,7 +599,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
   )
 }
 
-// ── Add Expense (standalone — still available inside BillCard) ────────
+// ── Add Expense (standalone, still available inside BillCard) ────────
 function AddExpensePanel({ billId, onDone }: { billId: bigint; onDone: () => void }) {
   const [amount, setAmount] = useState('')
   const [desc, setDesc]     = useState('')
@@ -671,7 +671,7 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
   const [expanded,    setExpanded]    = useState(defaultExpanded)
   const [showExpense, setShowExpense] = useState(false)
   const [qrOpen,      setQrOpen]      = useState(false)
-  // Captured once on mount — stable across re-renders, avoids react-purity lint on Date.now
+  // Captured once on mount, stable across re-renders, avoids react-purity lint on Date.now
   const [nowSec] = useState<bigint>(() => BigInt(Math.trunc(Date.now() / 1000)))
 
   const { data: billData, refetch: refetchBill }         = useReadContract({ address: BILL_SPLITTER_ADDRESS, abi: BILL_SPLITTER_ABI, functionName: 'getBill', args: [id] })
@@ -780,7 +780,7 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
                 : <ChevronDown size={15} style={{ color: 'var(--subtle)' }} />}
             </div>
           </div>
-          {/* Action buttons — siblings of expand zone, never descendants */}
+          {/* Action buttons, siblings of expand zone, never descendants */}
           <div className="flex items-center gap-0.5 pr-3 shrink-0">
             <button onClick={() => setQrOpen(true)}
                     title="QR code & invite"
@@ -839,7 +839,7 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
             {isExpired && !finalized && (
               <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-xl"
                    style={{ background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.25)' }}>
-                <span className="text-xs font-semibold" style={{ color: '#fb923c' }}>Bill expired — anyone can force-finalize it.</span>
+                <span className="text-xs font-semibold" style={{ color: '#fb923c' }}>Bill expired, anyone can force-finalize it.</span>
               </div>
             )}
 
@@ -1055,7 +1055,7 @@ export default function SplitPage() {
   return (
     <ChainGuard>
       <div className="flex flex-col gap-6 max-w-2xl mx-auto">
-        <PageHeader icon={Users} title="Bill Splitter" subtitle="Split group expenses and settle in USDC — no mental math needed." />
+        <PageHeader icon={Users} title="Bill Splitter" subtitle="Split group expenses and settle in USDC, no mental math needed." />
 
         {/* Tab bar */}
         <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)' }}>

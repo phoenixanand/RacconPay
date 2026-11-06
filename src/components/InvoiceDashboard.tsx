@@ -1,5 +1,5 @@
 /**
- * Invoice Dashboard — analytics overview of all invoices.
+ * Invoice Dashboard, analytics overview of all invoices.
  * Shows totals, paid/unpaid/overdue breakdown, monthly chart, and recent activity.
  */
 import React, { useMemo, useState } from 'react'
@@ -12,7 +12,7 @@ import { explorerTxFor } from '../constants'
 import { ExternalLink } from 'lucide-react'
 
 const LS_KEY = 'racconpay-invoices'
-// Stable timestamp — computed once at module load, not during render
+// Stable timestamp, computed once at module load, not during render
 const MODULE_NOW = new Date()
 const MODULE_NOW_ISO = MODULE_NOW.toISOString().slice(0, 7)
 
@@ -150,7 +150,7 @@ export default function InvoiceDashboard() {
     ? (paidInvoices.reduce((s, i) => s + (i.paidAt! - i.createdAt), 0) / paidInvoices.length / 86400000).toFixed(1)
     : null
 
-  // This month — uses module-level constant to avoid impure new Date() in render
+  // This month, uses module-level constant to avoid impure new Date() in render
   const thisMonth = MODULE_NOW_ISO
   const thisMonthInvoiced = invoices
     .filter(i => new Date(i.createdAt).toISOString().slice(0, 7) === thisMonth)
@@ -219,7 +219,7 @@ export default function InvoiceDashboard() {
         <Card className="p-4">
           <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--subtle)' }}>Avg. days to pay</p>
           <p className="font-display font-bold text-xl tabular-nums" style={{ color: 'var(--ink)' }}>
-            {avgDaysToPay !== null ? `${avgDaysToPay}d` : '—'}
+            {avgDaysToPay !== null ? `${avgDaysToPay}d` : '-'}
           </p>
         </Card>
       </div>
@@ -270,7 +270,7 @@ export default function InvoiceDashboard() {
           <>
             <Divider />
             <p className="text-xs text-center pt-2" style={{ color: 'var(--subtle)' }}>
-              Showing 5 of {invoices.length} invoices — see all on the <a href="/invoice" style={{ color: 'var(--accent)' }}>Invoices page</a>
+              Showing 5 of {invoices.length} invoices, see all on the <a href="/invoice" style={{ color: 'var(--accent)' }}>Invoices page</a>
             </p>
           </>
         )}

@@ -1,5 +1,5 @@
 /**
- * SuccessAnimation — checkmark ring + confetti burst.
+ * SuccessAnimation, checkmark ring + confetti burst.
  * Self-dismisses after `duration` ms (default 2800).
  * Usage: mount when success=true, unmount or hide after onDone fires.
  */
@@ -151,7 +151,7 @@ export default function SuccessAnimation({
             transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
           }}
         >
-          {/* Checkmark SVG — draws via strokeDashoffset animation */}
+          {/* Checkmark SVG, draws via strokeDashoffset animation */}
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
             <polyline
               points="7,19 15,27 29,11"

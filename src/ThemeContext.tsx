@@ -1,5 +1,5 @@
 /**
- * ThemeContext — light / dark mode toggle.
+ * ThemeContext, light / dark mode toggle.
  * Persists to localStorage. Applies data-theme="light"|"dark" on <html>.
  */
 import React, { createContext, useContext, useEffect, useState } from 'react'

@@ -1,7 +1,7 @@
 /**
  * Vesting console for finance and HR teams: overview, inbox, streams table, new stream,
  * bulk CSV upload and address book. Runs on every network that has a V2 deployment
- * (Arc Testnet today; Arc Mainnet only once VITE_VESTING_V2_ADDRESS_MAINNET is set).
+ * (Arc Mainnet and Arc Testnet).
  */
 import { useState } from 'react'
 import { useAccount, usePublicClient } from 'wagmi'
@@ -75,7 +75,7 @@ function Console({ wallet, chainId, plainAddress, yieldAddress }: {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)' }}>
-          {([['paying', 'I am paying'], ['receiving', 'I am receiving']] as [Role, string][]).map(([r, label]) => (
+          {([['paying', 'Pay'], ['receiving', 'Receive']] as [Role, string][]).map(([r, label]) => (
             <button key={r} onClick={() => setRole(r)} className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all" style={segmented(role === r)}>
               {label}
             </button>
@@ -135,8 +135,7 @@ export default function VestingV2() {
              style={{ background: 'var(--accent-muted)', border: '1px solid var(--border-strong)', color: 'var(--ink-2)' }}>
           <FlaskConical size={15} className="shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
           <span className="text-pretty">
-            Pilot environment on Arc Testnet with test USDC. Leave, pauses and yield are not available on Arc Mainnet yet,
-            and these contracts have not had an independent audit.
+            Arc Testnet uses test USDC, and these contracts have not had an independent audit.
           </span>
         </div>
       )}
@@ -144,7 +143,9 @@ export default function VestingV2() {
       {chainId === ARC_CHAIN_ID && (
         <AlertBox variant="warning">
           Arc Mainnet uses real USDC and every transaction is final. These contracts have not had an independent audit.
-          Start with a small test stream before locking larger amounts.
+          Start with a small test stream before locking larger amounts. Yield, if you turn it on, goes through the
+          Aave V4 USDC vault: it can pay out less than expected if the vault loses funds, and claims can wait when the
+          vault does not have enough cash to pay out.
         </AlertBox>
       )}
 

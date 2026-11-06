@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ══════════════════════════════════════════════════════════════════════
-   RacconPay — Warm Earth Design Tokens
+   RacconPay, Warm Earth Design Tokens
    Palette: cream base · amber primary · terracotta · sage green · clay
    ══════════════════════════════════════════════════════════════════════ */
 :root {
@@ -35,13 +35,13 @@
   --accent-muted: rgba(196, 120, 42, 0.10);
 
   /* ── Per-tool accent colors ─────────────────────────────────────── */
-  --pay-accent:     #c4782a;   /* Batch Pay  — amber          */
+  --pay-accent:     #c4782a;   /* Batch Pay, amber          */
   --pay-glow:       rgba(196, 120, 42, 0.14);
-  --vest-accent:    #7c5a2e;   /* Vesting    — dark walnut    */
+  --vest-accent:    #7c5a2e;   /* Vesting  , dark walnut    */
   --vest-glow:      rgba(124, 90, 46, 0.14);
-  --split-accent:   #5a7a4a;   /* Bill Split — sage green     */
+  --split-accent:   #5a7a4a;   /* Bill Split, sage green     */
   --split-glow:     rgba(90, 122, 74, 0.14);
-  --receipt-accent: #b04a2e;   /* Receipts   — terracotta     */
+  --receipt-accent: #b04a2e;   /* Receipts , terracotta     */
   --receipt-glow:   rgba(176, 74, 46, 0.14);
 
   /* ── Semantic ───────────────────────────────────────────────────── */
@@ -63,34 +63,34 @@
    Dark mode overrides  (data-theme="dark" on <html>)
    ══════════════════════════════════════════════════════════════════════ */
 [data-theme="dark"] {
-  /* ── Deep cool-neutral navy — premium web3 base ─────────────────── */
+  /* ── Deep cool-neutral navy, premium web3 base ─────────────────── */
   --bg:          #0d0f14;
   --bg-2:        #12151c;
   --bg-gradient: linear-gradient(160deg, #0d0f14 0%, #111420 50%, #0f1118 100%);
 
-  /* ── Surfaces — clearly distinct from background ────────────────── */
+  /* ── Surfaces, clearly distinct from background ────────────────── */
   --surface:        rgba(255, 255, 255, 0.05);
   --surface-strong: rgba(255, 255, 255, 0.08);
   --surface-muted:  #161921;
   --surface-hover:  rgba(240, 168, 48, 0.07);
 
-  /* ── Text — warm white on cool dark ────────────────────────────── */
+  /* ── Text, warm white on cool dark ────────────────────────────── */
   --ink:    #f0ece4;
   --ink-2:  #c8bfb0;
   --muted:  #7a7060;
   --subtle: #4a4438;
 
-  /* ── Borders — crisp and visible ───────────────────────────────── */
+  /* ── Borders, crisp and visible ───────────────────────────────── */
   --border:        rgba(255, 255, 255, 0.09);
   --border-strong: rgba(255, 255, 255, 0.18);
 
-  /* ── Primary accent — bright amber pops on dark ─────────────────── */
+  /* ── Primary accent, bright amber pops on dark ─────────────────── */
   --accent:       #f0a830;
   --accent-hover: #f8bc4a;
   --accent-glow:  rgba(240, 168, 48, 0.30);
   --accent-muted: rgba(240, 168, 48, 0.13);
 
-  /* ── Per-tool accents — vivid on dark neutral base ──────────────── */
+  /* ── Per-tool accents, vivid on dark neutral base ──────────────── */
   --pay-accent:     #f0a830;
   --pay-glow:       rgba(240, 168, 48, 0.24);
   --vest-accent:    #d4956a;
@@ -192,7 +192,7 @@ input:-webkit-autofill:focus {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Grain / noise texture — parchment feel
+   Grain / noise texture, parchment feel
    ══════════════════════════════════════════════════════════════════════ */
 .grain {
   position: fixed;
@@ -207,7 +207,7 @@ input:-webkit-autofill:focus {
 [data-theme="dark"] .grain { opacity: 0.048; }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Page transitions — fade + slide up
+   Page transitions, fade + slide up
    ══════════════════════════════════════════════════════════════════════ */
 @keyframes page-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -216,7 +216,7 @@ input:-webkit-autofill:focus {
 .page-enter { animation: page-in 0.18s ease-out both; }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Card hover — unified lift + border brighten
+   Card hover, unified lift + border brighten
    ══════════════════════════════════════════════════════════════════════ */
 .card-hover {
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
@@ -255,7 +255,7 @@ input:-webkit-autofill:focus {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Grain / noise texture — parchment feel
+   Grain / noise texture, parchment feel
    ══════════════════════════════════════════════════════════════════════ */
 .grain {
   position: fixed;
@@ -270,7 +270,7 @@ input:-webkit-autofill:focus {
 [data-theme="dark"] .grain { opacity: 0.048; }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Page transitions — fade + slide up
+   Page transitions, fade + slide up
    ══════════════════════════════════════════════════════════════════════ */
 @keyframes page-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -279,7 +279,7 @@ input:-webkit-autofill:focus {
 .page-enter { animation: page-in 0.18s ease-out both; }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Card hover — unified lift + border brightens
+   Card hover, unified lift + border brightens
    ══════════════════════════════════════════════════════════════════════ */
 .card-hover {
   transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
@@ -306,7 +306,7 @@ input:-webkit-autofill:focus {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Warm orbs — very subtle, parchment feel
+   Warm orbs, very subtle, parchment feel
    ══════════════════════════════════════════════════════════════════════ */
 .orb {
   position: fixed;
@@ -335,7 +335,7 @@ input:-webkit-autofill:focus {
   animation: float-c 30s ease-in-out infinite;
 }
 
-/* Dark orbs — more visible against the deep navy base */
+/* Dark orbs, more visible against the deep navy base */
 [data-theme="dark"] .orb-a {
   opacity: 0.75;
   background: radial-gradient(circle, rgba(240,168,48,0.28) 0%, transparent 65%);
@@ -462,7 +462,7 @@ input:-webkit-autofill:focus {
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Scrollbar — warm tinted
+   Scrollbar, warm tinted
    ══════════════════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -479,7 +479,7 @@ input:-webkit-autofill:focus {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Focus ring — warm amber
+   Focus ring, warm amber
    ══════════════════════════════════════════════════════════════════════ */
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -487,7 +487,7 @@ input:-webkit-autofill:focus {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Sonner toast overrides — warm palette
+   Sonner toast overrides, warm palette
    ══════════════════════════════════════════════════════════════════════ */
 [data-sonner-toaster] {
   --normal-bg:      #fdf6ec !important;
@@ -524,7 +524,7 @@ input:-webkit-autofill:focus {
   border-top-color: rgba(255, 255, 255, 0.07) !important;
 }
 
-/* Dark dot-grid — subtle on navy */
+/* Dark dot-grid, subtle on navy */
 [data-theme="dark"] .dot-grid {
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }

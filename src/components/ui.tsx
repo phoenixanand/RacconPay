@@ -1,6 +1,6 @@
 /**
  * RacconPay v2 shared UI primitives.
- * All colors from CSS vars — never hardcode hex here.
+ * All colors from CSS vars, never hardcode hex here.
  *
  * Exports (existing):
  *   Card, Label, PrimaryButton, GhostButton, Input, Badge, Stat, TxStatus, PageHeader
@@ -27,7 +27,7 @@ export function Card({
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   GLOW CARD  — hover lifts + border glows in accentColor
+   GLOW CARD , hover lifts + border glows in accentColor
    ══════════════════════════════════════════════════════════════════════ */
 export function GlowCard({
   children, className = '', accentColor = 'var(--accent)', glowColor,
@@ -60,7 +60,7 @@ export function GlowCard({
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   STAT CARD  — big number + label + optional icon
+   STAT CARD , big number + label + optional icon
    ══════════════════════════════════════════════════════════════════════ */
 export function StatCard({
   label, value, sub, icon: Icon, accentColor = 'var(--accent)',
@@ -125,7 +125,7 @@ export function Divider({ className = '' }: { className?: string }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   TOKEN AMOUNT BADGE  — "12.50 USDC" pill
+   TOKEN AMOUNT BADGE , "12.50 USDC" pill
    ══════════════════════════════════════════════════════════════════════ */
 export function TokenAmountBadge({ amount, symbol = 'USDC' }: { amount: string; symbol?: string }) {
   return (
@@ -145,7 +145,7 @@ export function TokenAmountBadge({ amount, symbol = 'USDC' }: { amount: string; 
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   STEP BADGE  — "1 of 2" numbered step indicator
+   STEP BADGE , "1 of 2" numbered step indicator
    ══════════════════════════════════════════════════════════════════════ */
 export function StepBadge({
   step, total, label,
@@ -290,7 +290,7 @@ export function Badge({
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   STAT CELL  (legacy — kept for existing pages)
+   STAT CELL  (legacy, kept for existing pages)
    ══════════════════════════════════════════════════════════════════════ */
 export function Stat({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
   return (

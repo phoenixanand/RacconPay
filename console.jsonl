@@ -1211,3 +1211,277 @@
 {"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793991887498}
 {"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793992277498}
 {"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793992277564}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793994258764}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793994258813}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793995758710}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793995878163}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996330436}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996442679}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996595481}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996718425}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996718526}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1793996744280}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793996744281}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1793996744282}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793996744282}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996809448}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996809449}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996899598}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793996958288}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997015295}
+{"level":"debug","message":"[vite] connected.","timestamp":1793997020051}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997277479}
+{"level":"debug","message":"[vite] hot updated: /src/wallet/PasskeyWalletButton.tsx","timestamp":1793997318763}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793997318763}
+{"level":"debug","message":"[vite] hot updated: /src/wallet/PasskeyWalletButton.tsx","timestamp":1793997325004}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793997325004}
+{"level":"debug","message":"[vite] hot updated: /src/wallet/PasskeyWalletButton.tsx","timestamp":1793997325017}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793997325017}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997468424}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997528079}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997674829}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997826110}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793997990012}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793998001059}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998001059}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793998001100}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998001100}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1793998002585}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998002585}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1793998002586}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998002586}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793998073640}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998119958}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998119962}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793998119966}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793998307229}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793998548600}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793999466209}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793999599227}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793999681924}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794000141225}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794001195154}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001252830}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1794001252831}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1794001252831}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1794001252831}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1794001252832}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1794001252832}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1794001252832}
+{"level":"debug","message":"[vite] invalidate /src/components/InvoiceGenerator.tsx: Could not Fast Refresh (\"invoiceChain\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794001252833}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1794001252833}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794001252833}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/StablecoinBalances.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1794001252834}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794001252834}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1794001252835}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1794001252836}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001254161}
+{"level":"debug","message":"[vite] hot updated: /src/App.tsx","timestamp":1794001254161}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001254161}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001254164}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794001254164}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001262794}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1794001262794}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794001262794}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794001262794}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794001262794}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794001264449}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001264449}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794001265343}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001265343}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794001266691}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001266691}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794001267343}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001267343}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1794001268142}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001268142}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1794001269944}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1794001269944}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1794001269944}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1794001269944}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] invalidate /src/components/InvoiceGenerator.tsx: Could not Fast Refresh (\"invoiceChain\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/StablecoinBalances.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794001269945}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1794001269946}
+{"level":"debug","message":"[vite] hot updated: /src/components/Layout.tsx","timestamp":1794001271627}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001271627}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1794001272962}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001272962}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1794001274667}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001274667}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794001274679}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001274679}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1794001276321}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001276321}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1794001276847}
+{"level":"debug","message":"[vite] hot updated: /src/App.tsx","timestamp":1794001276847}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001276847}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001276858}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794001276858}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794001459759}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794001647659}
+{"level":"debug","message":"[vite] connected.","timestamp":1794001652275}
+{"level":"debug","message":"[vite] invalidate /src/components/InvoiceGenerator.tsx: Could not Fast Refresh (\"invoiceChain\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794001682933}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1794001682933}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001682933}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] hot updated: /src/components/StablecoinBalances.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794001682934}
+{"level":"debug","message":"[vite] invalidate /src/components/InvoiceGenerator.tsx: Could not Fast Refresh (\"invoiceChain\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794001683168}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/StablecoinBalances.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794001683169}
+{"level":"debug","message":"[vite] hot updated: /src/components/Layout.tsx","timestamp":1794001684587}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001684587}
+{"level":"debug","message":"[vite] hot updated: /src/components/Layout.tsx","timestamp":1794001684588}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001684588}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1794001686399}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001686399}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1794001686400}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001686401}
+{"level":"debug","message":"[vite] hot updated: /src/App.tsx","timestamp":1794001688581}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001688581}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001688581}
+{"level":"debug","message":"[vite] hot updated: /src/App.tsx","timestamp":1794001688588}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001688588}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794001688588}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1794001690213}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001690213}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1794001690215}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001690216}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1794001691543}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001691543}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1794001691543}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001691543}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794001720508}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001720508}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794001720512}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794001720512}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794002293550}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794002391881}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794003074853}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1794003505537}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003533427}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1794003533428}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1794003533428}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1794003533428}
+{"level":"debug","message":"[vite] invalidate /src/components/InvoiceGenerator.tsx: Could not Fast Refresh (\"invoiceChain\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794003533428}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1794003533429}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1794003533429}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1794003533429}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794003533429}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1794003533430}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1794003533430}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794003533430}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794003533430}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794003533431}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794003533431}
+{"level":"debug","message":"[vite] hot updated: /src/components/StablecoinBalances.tsx","timestamp":1794003533431}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794003533431}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794003533432}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1794003533432}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1794003533432}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1794003533432}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1794003533432}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1794003533433}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1794003533433}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1794003533433}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794003533433}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1794003533433}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1794003533434}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1794003533434}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1794003533434}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1794003534826}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003534826}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794003536370}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003536370}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1794003537705}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003537705}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1794003538335}
+{"level":"debug","message":"[vite] hot updated: /src/App.tsx","timestamp":1794003538335}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794003538335}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003538339}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794003538339}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003541108}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] invalidate /src/components/InvoiceGenerator.tsx: Could not Fast Refresh (\"invoiceChain\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/EscrowPage.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/SwapPage.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCredits.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/CreateEscrow.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowCard.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/StablecoinBalances.tsx","timestamp":1794003541109}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/escrow/EscrowSummary.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1794003541110}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1794003541111}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1794003541111}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1794003541111}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003542017}
+{"level":"debug","message":"[vite] hot updated: /src/App.tsx","timestamp":1794003542018}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1794003542018}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1794003542020}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1794003542020}

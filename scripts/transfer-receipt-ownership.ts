@@ -44,9 +44,9 @@ async function main() {
     console.log('  state:', state)
     if (['COMPLETE', 'FAILED', 'DENIED', 'CANCELLED'].includes(state ?? '')) {
       if (state === 'COMPLETE') {
-        console.log('SUCCESS — ReceiptNFT owner is now BatchPayout')
+        console.log('SUCCESS, ReceiptNFT owner is now BatchPayout')
       } else {
-        console.error('FAILED — state:', state)
+        console.error('FAILED, state:', state)
         process.exit(1)
       }
       return

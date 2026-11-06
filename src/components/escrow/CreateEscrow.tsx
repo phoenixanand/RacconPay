@@ -8,7 +8,7 @@ import { erc20Abi, isAddress, zeroAddress } from 'viem'
 import { Plus, Trash2, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, Input, PrimaryButton, GhostButton, AlertBox, TxStatus } from '../ui'
-import { ARC_TESTNET_CHAIN_ID, ESCROW_TESTNET_ADDRESS, explorerTxFor } from '../../constants'
+import { ARC_CHAIN_ID, ESCROW_ADDRESS, explorerTxFor } from '../../constants'
 import { ESCROW_ABI } from '../../abisEscrow'
 import { TOKEN_LIST, TOKENS, tokenAddress, type TokenSymbol } from '../../tokens'
 import { formatToken, parseToken } from '../../utils'
@@ -39,7 +39,7 @@ export default function CreateEscrow({ onCreated }: { onCreated: () => void }) {
   const [deadlineDate, setDeadlineDate] = useState(() => addDays(30))
   const [error, setError] = useState<string | null>(null)
 
-  const tokenAddr = tokenAddress(token, ARC_TESTNET_CHAIN_ID)
+  const tokenAddr = tokenAddress(token, ARC_CHAIN_ID)
   const decimals = TOKENS[token].decimals
 
   // Parse inputs
@@ -62,12 +62,12 @@ export default function CreateEscrow({ onCreated }: { onCreated: () => void }) {
 
   const { data: balance } = useReadContract({
     address: tokenAddr, abi: erc20Abi, functionName: 'balanceOf',
-    args: address ? [address] : undefined, chainId: ARC_TESTNET_CHAIN_ID,
+    args: address ? [address] : undefined, chainId: ARC_CHAIN_ID,
     query: { enabled: !!address && !!tokenAddr },
   })
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: tokenAddr, abi: erc20Abi, functionName: 'allowance',
-    args: address ? [address, ESCROW_TESTNET_ADDRESS] : undefined, chainId: ARC_TESTNET_CHAIN_ID,
+    args: address ? [address, ESCROW_ADDRESS] : undefined, chainId: ARC_CHAIN_ID,
     query: { enabled: !!address && !!tokenAddr },
   })
 
@@ -92,7 +92,7 @@ export default function CreateEscrow({ onCreated }: { onCreated: () => void }) {
     setError(null)
     resetCreate()
     approve(
-      { address: tokenAddr, abi: erc20Abi, functionName: 'approve', args: [ESCROW_TESTNET_ADDRESS, total], chainId: ARC_TESTNET_CHAIN_ID },
+      { address: tokenAddr, abi: erc20Abi, functionName: 'approve', args: [ESCROW_ADDRESS, total], chainId: ARC_CHAIN_ID },
       { onError: e => setError(errorText(e)) },
     )
   }
@@ -103,13 +103,13 @@ export default function CreateEscrow({ onCreated }: { onCreated: () => void }) {
     resetApprove()
     create(
       {
-        address: ESCROW_TESTNET_ADDRESS, abi: ESCROW_ABI, functionName: 'createEscrow',
+        address: ESCROW_ADDRESS, abi: ESCROW_ABI, functionName: 'createEscrow',
         args: [
           payee,
           arbiterBlank ? zeroAddress : (arbiter as `0x${string}`),
           tokenAddr, parsed, BigInt(windowSec), BigInt(deadlineSec), memo.trim(),
         ],
-        chainId: ARC_TESTNET_CHAIN_ID,
+        chainId: ARC_CHAIN_ID,
       },
       { onError: e => setError(errorText(e)) },
     )
@@ -211,7 +211,7 @@ export default function CreateEscrow({ onCreated }: { onCreated: () => void }) {
         isConfirming={approveConfirming || createConfirming}
         isSuccess={created}
         hash={createHash}
-        explorerUrl={h => explorerTxFor(ARC_TESTNET_CHAIN_ID, h)}
+        explorerUrl={h => explorerTxFor(ARC_CHAIN_ID, h)}
         successMsg="Escrow funded"
       />
     </Card>

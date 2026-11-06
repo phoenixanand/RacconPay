@@ -1,5 +1,5 @@
 /**
- * QRModal — shows a QR code for a bill share link, a copy-link button,
+ * QRModal, shows a QR code for a bill share link, a copy-link button,
  * and a pre-written invite message the user can paste into any chat.
  *
  * Usage:
@@ -29,9 +29,9 @@ function shareUrl(billId: bigint) {
 
 function inviteText(billName: string, shareAmt: string | undefined, url: string) {
   if (shareAmt) {
-    return `Hey! You owe ${shareAmt} USDC for "${billName}" — pay with USDC here:\n${url}`
+    return `Hey! You owe ${shareAmt} USDC for "${billName}", pay with USDC here:\n${url}`
   }
-  return `Hey! You're part of the "${billName}" bill on RacconPay — connect your wallet to see your share:\n${url}`
+  return `Hey! You're part of the "${billName}" bill on RacconPay, connect your wallet to see your share:\n${url}`
 }
 
 export default function QRModal({ billId, billName, shareAmt, open, onClose }: QRModalProps) {

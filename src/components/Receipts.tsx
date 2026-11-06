@@ -1,5 +1,5 @@
 /**
- * Receipts page — Arc Dark redesign.
+ * Receipts page, Arc Dark redesign.
  * Shows all ReceiptNFT tokens (soul-bound) for the connected wallet.
  */
 
