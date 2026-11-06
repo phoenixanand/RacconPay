@@ -669,3 +669,420 @@
 {"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1792472288944}
 {"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1792472289434}
 {"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1792472289434}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793944315897}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793944431813}
+{"level":"debug","message":"[vite] connected.","timestamp":1793944444503}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793944550461}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793944748250}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793944842857}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793944942586}
+{"level":"debug","message":"[vite] connected.","timestamp":1793945322299}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793945510841}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1793946168932}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793946168932}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793946331693}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793946331693}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793946333365}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793946333365}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793946345092}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793946345092}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793946346718}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793946346719}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793946348030}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793946348030}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793949466061}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950422809}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950422810}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950423141}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950423141}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793950424490}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950424490}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793950424504}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950424505}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793950425826}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950425826}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793950425839}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950425839}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950427434}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950427434}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950427621}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950427621}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793950428982}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1793950428982}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793950428982}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1793950428982}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1793950428982}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950428983}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950428991}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950428991}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950428991}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950428991}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793950428992}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793950428992}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793950429423}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1793950429423}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793950429423}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1793950429423}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1793950429423}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1793950429423}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950429424}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950429441}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950429441}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950429441}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950429441}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793950429441}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793950429441}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950438136}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950438136}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950438137}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950438137}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950438454}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950438454}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950439815}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950439815}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950439818}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950439818}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950439820}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950439820}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950441282}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950441282}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950441286}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950441286}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950441700}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950441700}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950442648}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950442648}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950442650}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950442650}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950442651}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950442651}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950444269}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950444269}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950444272}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950444272}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950444273}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950444274}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950445578}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950445579}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950445580}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950445580}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950445580}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950445581}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950447229}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950447229}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950447231}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950447231}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793950447231}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950447231}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950457261}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950457261}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950457476}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950457476}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950458056}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950458056}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950458590}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950458590}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950458591}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950458591}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950458623}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950458623}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950460376}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950460376}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950460379}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950460379}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950460380}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950460380}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950461779}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950461780}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950461807}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950461807}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793950461807}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950461807}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950477556}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950477556}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950477571}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950477572}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950477988}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950477988}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950479284}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950479284}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950479285}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950479285}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950479286}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950479286}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950481100}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950481100}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950481549}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950481550}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793950482042}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950482042}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950482721}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950482721}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950482722}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950482722}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793950482723}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950482723}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793950484403}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950484403}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793950484403}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950484403}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793950484403}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793950484403}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793950633728}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793950633729}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793950633730}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793951457683}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793951685785}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951785938}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951785938}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/StreamsV2.tsx: Could not Fast Refresh (new export)","timestamp":1793951789259}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793951789259}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951789259}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951790953}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951790953}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951792376}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951792376}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951792383}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951792383}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951793253}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951793253}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951793353}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951793353}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951799188}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951799188}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951799190}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951799190}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951855847}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951855847}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951855849}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951855849}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951869796}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951869796}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951869799}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951869799}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951925712}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1793951925712}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1793951925712}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951925713}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951925714}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1793951925714}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951925714}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951925853}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1793951925853}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1793951925853}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1793951925853}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793951925853}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793951925854}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951925855}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951925855}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1793951925855}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951925855}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951947088,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951947089}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951947089}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951947089}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951947097,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951947097}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951947097}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951947097}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951950390,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951950390}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951950390}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951950390}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951950397,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951950397}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951950398}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951950398}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951950401,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951950401}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951950401}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951950401}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951950403,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951950403}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951950403}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951950404}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951955303,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingStream.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951955303}
+{"level":"error","message":"[vite] SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'","timestamp":1793951955303,"stack":"SyntaxError: The requested module '/src/components/vesting/LeaveRequests.tsx?t=1793951922400' does not provide an export named 'LeaveRequestRow'"}
+{"level":"error","message":"[vite] Failed to reload /src/components/VestingStream.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951955304}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793951955652}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951955652}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793951955654}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951955654}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951966342}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/LeaveRequests.tsx: Could not Fast Refresh (new export)","timestamp":1793951966342}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951966342}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951966342}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951966346}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/LeaveRequests.tsx: Could not Fast Refresh (new export)","timestamp":1793951966346}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951966346}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951966346}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951969592}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951969592}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951969737}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951969737}
+{"level":"error","message":"[vite] Failed to reload /src/components/vesting/StreamsV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951970067}
+{"level":"error","message":"[vite] Failed to reload /src/components/vesting/StreamsV2.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793951970529}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793951971217}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951971217}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamsV2.tsx","timestamp":1793951971218}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951971218}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951971228}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951971228}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1793951971228}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951971230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951971230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1793951971230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951972874}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951972874}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951972874}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951972874}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951990336}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951990336}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951990337}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951990337}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793951991954}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951991954}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793951991956}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951991957}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1793951993526}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1793951993527}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1793951993527}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1793951993527}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1793951993527}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1793951993527}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951993533}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951993533}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951993535}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951993535}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951994229}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951994229}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793951994229}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951994229}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793951994229}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1793951994230}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793951994240}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951994240}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951994243}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951994243}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951995365}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951995365}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793951995365}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793951995366}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951995371}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951995371}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793951995372}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793951995372}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1793952011327}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793952011327}
+{"level":"debug","message":"[vite] hot updated: /src/components/Home.tsx","timestamp":1793952011330}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793952011330}
+{"level":"error","message":"[vite] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793952026501}
+{"level":"error","message":"[vite] Failed to reload /src/components/Docs.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793952026501}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793952026501}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793952026502}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793952026502}
+{"level":"error","message":"[vite] Failed to reload /src/components/Docs.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793952026503}
+{"level":"error","message":"[vite] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above)","timestamp":1793952026503}
+{"level":"debug","message":"[vite] hot updated: /src/components/Docs.tsx","timestamp":1793952026504}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793952026504}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793952026504}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957101509}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957104139}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957329781}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957329783}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957463716}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957464707}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957573166}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957573168}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957735390}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957735392}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957865925}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957866792}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957997134}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793957997315}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793958149901}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793958422095}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793958539951}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793959551990}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793965948903}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793966047520}
+{"level":"debug","message":"[vite] connected.","timestamp":1793966054735}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793966267153}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793966345032}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingStream.tsx","timestamp":1793966345033}
+{"level":"debug","message":"[vite] hot updated: /src/components/BatchPayout.tsx","timestamp":1793966345033}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceGenerator.tsx","timestamp":1793966345033}
+{"level":"debug","message":"[vite] hot updated: /src/components/ChainGuard.tsx","timestamp":1793966345033}
+{"level":"debug","message":"[vite] hot updated: /src/components/BillSplitter.tsx","timestamp":1793966345033}
+{"level":"debug","message":"[vite] hot updated: /src/components/MultiSigPayoutPage.tsx","timestamp":1793966345033}
+{"level":"debug","message":"[vite] hot updated: /src/components/Portfolio.tsx","timestamp":1793966345034}
+{"level":"debug","message":"[vite] hot updated: /src/components/InvoiceDashboard.tsx","timestamp":1793966345034}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/BulkCreate.tsx","timestamp":1793966345034}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793966345034}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamTable.tsx","timestamp":1793966345035}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/AddressBook.tsx","timestamp":1793966345035}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793966345035}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/StreamCardV2.tsx","timestamp":1793966345035}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveRequests.tsx","timestamp":1793966345035}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/LeaveForms.tsx","timestamp":1793966345035}
+{"level":"debug","message":"[vite] invalidate /src/components/vesting/Inbox.tsx: Could not Fast Refresh (\"inRole\" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports","timestamp":1793966345036}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Inbox.tsx","timestamp":1793966345036}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/Overview.tsx","timestamp":1793966345036}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/PendingBanner.tsx","timestamp":1793966345036}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/YieldPanel.tsx","timestamp":1793966345036}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793966346412}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793966346412}
+{"level":"debug","message":"[vite] hot updated: /src/components/vesting/CreateStreamV2.tsx","timestamp":1793966346414}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1793966346415}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1793966346417}
+{"level":"debug","message":"[vite] hot updated: /src/components/VestingV2.tsx","timestamp":1793966346417}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793966489202}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793967077261}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793967195137}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793968531549}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1793968743022}

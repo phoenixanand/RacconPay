@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 import { Clock, CheckCircle2, XCircle, ExternalLink, ChevronDown, ChevronUp, Loader2, AlertTriangle } from 'lucide-react'
 
 import ChainGuard from './ChainGuard'
+import VestingV2 from './VestingV2'
 import SuccessAnimation from './SuccessAnimation'
 import { USDC_ADDRESS, VESTING_STREAM_ADDRESS, ARC_CHAIN_ID, explorerTx } from '../constants'
 import { ERC20_ABI, VESTING_STREAM_ABI } from '../abis'
@@ -53,8 +54,43 @@ function progressPct(stream: StreamData): number {
 
 function shortAddr(addr: string) { return `${addr.slice(0, 6)}…${addr.slice(-4)}` }
 
+type Version = 'v1' | 'v2'
+
 export default function VestingStreamPage() {
-  return <ChainGuard><Inner /></ChainGuard>
+  const [version, setVersion] = useState<Version>('v2')
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)' }}>
+          {([['v2', 'Console (pilot)'], ['v1', 'Classic streams (Arc Mainnet)']] as [Version, string][]).map(([v, label]) => (
+            <button
+              key={v}
+              onClick={() => setVersion(v)}
+              className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+              style={{
+                background: version === v ? 'var(--surface-strong)' : 'transparent',
+                color: version === v ? 'var(--ink)' : 'var(--muted)',
+                border: version === v ? '1px solid var(--border-strong)' : '1px solid transparent',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {version === 'v2' && (
+          <p className="text-xs" style={{ color: 'var(--subtle)' }}>
+            Leave and pauses, bulk upload, reporting and optional yield.
+          </p>
+        )}
+      </div>
+      {version === 'v1' ? <ChainGuard><Inner /></ChainGuard> : (
+        <>
+          <PageHeader icon={Clock} title="Vesting Console" subtitle="Pay employees and contractors over time, with leave, approvals and reporting." />
+          <VestingV2 />
+        </>
+      )}
+    </div>
+  )
 }
 
 type Tab = 'create' | 'streams'

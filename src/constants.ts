@@ -36,6 +36,69 @@ export const BILL_SPLITTER_ADDRESS = '0x1362beC447F1350Eb4b072F2De92FBD29Abb72d3
 // v3 archived: 0xD640F1C79930Be01ABCa41a28A89eDe9F93380d9
 export const MULTISIG_ADDRESS = '0xF5ae83341dfd707f55F8f3818f9B6EACceC3f45e' as const
 
+// ── Arc Testnet (chain ID 5042002) ──────────────────────────────────────
+export const ARC_TESTNET_CHAIN_ID = 5042002 as const
+export const TESTNET_EXPLORER_BASE = 'https://explorer.testnet.arc.io'
+
+// VestingStreamV2 (breaks / leave) — Arc Testnet. Not audited for mainnet.
+export const VESTING_STREAM_V2_TESTNET_ADDRESS = '0x57ac4bd8d65e9b32953d35f45383b8b113db984f' as const
+
+// VestingStreamV2Yield — same as V2 plus opt-in yield into one ERC-4626 vault (Arc Testnet only).
+export const VESTING_STREAM_V2_YIELD_TESTNET_ADDRESS = '0x6dc957426da30dc98027f3350795793dc5eef13c' as const
+// The Earn vault (Morpho VaultV2, USDC) the yield contract above was deployed against.
+export const VESTING_YIELD_VAULT_TESTNET_ADDRESS = '0xaabbef1d3971c710276ed41ec791bbe14cdb8e88' as const
+
+const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/
+const TX_RE = /^0x[0-9a-fA-F]{64}$/
+const envAddress = (v: unknown): `0x${string}` | undefined =>
+  typeof v === 'string' && ADDRESS_RE.test(v) ? (v as `0x${string}`) : undefined
+const envTx = (v: unknown): `0x${string}` | undefined =>
+  typeof v === 'string' && TX_RE.test(v) ? (v as `0x${string}`) : undefined
+
+// Deployment transactions (used to start event scans at the deployment block, never at block 0).
+// Mainnet values are written to .env.local by scripts/deploy-mainnet.sh.
+export function vestingDeployTx(contract: string): `0x${string}` | undefined {
+  const c = contract.toLowerCase()
+  const known: Record<string, `0x${string}` | undefined> = {
+    [VESTING_STREAM_V2_TESTNET_ADDRESS]: '0x3c34ddfa47a922979675ba37182c1007cfd64517bcea4de58b5deee33516b65e',
+    [VESTING_STREAM_V2_YIELD_TESTNET_ADDRESS]: '0xfdc50d9a53a232496a935ed41f192d7ca954fe0dca366cc3937acf4839afffba',
+  }
+  const mainnetV2 = envAddress(import.meta.env.VITE_VESTING_V2_ADDRESS_MAINNET)
+  const mainnetYield = envAddress(import.meta.env.VITE_VESTING_YIELD_ADDRESS_MAINNET)
+  if (mainnetV2) known[mainnetV2.toLowerCase()] = envTx(import.meta.env.VITE_VESTING_V2_DEPLOY_TX_MAINNET)
+  if (mainnetYield) known[mainnetYield.toLowerCase()] = envTx(import.meta.env.VITE_VESTING_YIELD_DEPLOY_TX_MAINNET)
+  return known[c]
+}
+
+/**
+ * Yield-enabled vesting contract per chain. Mainnet is only enabled when you deploy it yourself
+ * (scripts/deploy-mainnet.sh --yield <vault>) and VITE_VESTING_YIELD_ADDRESS_MAINNET is set.
+ */
+export function vestingYieldAddress(chainId: number): `0x${string}` | undefined {
+  if (chainId === ARC_TESTNET_CHAIN_ID) return VESTING_STREAM_V2_YIELD_TESTNET_ADDRESS
+  if (chainId === ARC_CHAIN_ID) return envAddress(import.meta.env.VITE_VESTING_YIELD_ADDRESS_MAINNET)
+  return undefined
+}
+
+/**
+ * VestingStreamV2 address per chain. Mainnet is only enabled when you deploy V2
+ * yourself (scripts/deploy-mainnet.sh), which sets VITE_VESTING_V2_ADDRESS_MAINNET in .env.local.
+ */
+export function vestingV2Address(chainId: number): `0x${string}` | undefined {
+  if (chainId === ARC_TESTNET_CHAIN_ID) return VESTING_STREAM_V2_TESTNET_ADDRESS
+  if (chainId === ARC_CHAIN_ID) return envAddress(import.meta.env.VITE_VESTING_V2_ADDRESS_MAINNET)
+  return undefined
+}
+
+export function chainLabel(chainId: number): string {
+  return chainId === ARC_TESTNET_CHAIN_ID ? 'Arc Testnet' : 'Arc Mainnet'
+}
+
+export function explorerTxFor(chainId: number, hash: string) {
+  const base = chainId === ARC_TESTNET_CHAIN_ID ? TESTNET_EXPLORER_BASE : 'https://explorer.arc.io'
+  return `${base}/tx/${hash}`
+}
+
 export const EXPLORER_BASE = 'https://explorer.arc.io'
 
 export function explorerTx(hash: string) {

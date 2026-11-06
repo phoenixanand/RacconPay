@@ -203,7 +203,7 @@ const SECTIONS: Section[] = [
     accent: 'var(--vest-accent)',
     title: 'Vesting Stream',
     intro:
-      'Lock USDC and release it to a recipient linearly over time. Commonly used for employee grants, contractor payments, or token distributions. The recipient can claim their vested amount at any time.',
+      'Lock USDC and release it to an employee or contractor linearly over time. The vesting console (pilot, Arc Testnet) adds an overview, an inbox for approvals, bulk CSV upload, address-book names and CSV reports. The payee can claim their vested amount at any time.',
     steps: [
       {
         num: 1,
@@ -225,6 +225,11 @@ const SECTIONS: Section[] = [
         title: 'Cancel (grantor only)',
         body: 'The grantor can cancel a stream at any time. Already-vested USDC remains claimable by the recipient. Unvested USDC is returned to the grantor. Both parties can withdraw independently.',
       },
+      {
+        num: 5,
+        title: 'Leave and pauses (vesting console)',
+        body: 'On a stream created in the console, the payee can request leave and the payer approves it. Only the dates are recorded on-chain; any note stays in your browser. Vesting pauses during the break and the end date moves back by the same time, so no pay is lost. The grantor can also schedule a break with at least 1 day of notice. This version is currently available on Arc Testnet.',
+      },
     ],
     faqs: [
       {
@@ -242,6 +247,22 @@ const SECTIONS: Section[] = [
       {
         q: 'What happens to unvested USDC if cancelled?',
         a: 'It goes into a "pendingWithdrawals" balance for the grantor. The grantor then calls "Claim" on their end to withdraw it back. Nothing is lost.',
+      },
+      {
+        q: 'What if the grantor does not answer a leave request?',
+        a: 'After 7 days anyone can finalize a leave of up to 14 days. Longer leaves always need the grantor to approve them. A leave only ever starts from the moment it is approved, so it never reduces pay that was already earned.',
+      },
+      {
+        q: 'Can the locked USDC earn yield?',
+        a: 'Optionally, when the payer creates a stream in the console (off by default, and fixed once created). 70% of the amount is deposited into the Arc Testnet Earn vault and 30% stays in the contract so claims can be paid. Yield belongs to the grantor, the beneficiary is always paid their vested amount first, and any loss comes out of the grantor\'s unvested part first. The vault can delay payouts, in which case a claim waits until it can pay. Either side can stop yield at any time.',
+      },
+      {
+        q: 'Are there limits on breaks?',
+        a: 'Yes. A stream can have at most 12 breaks and the total break time cannot exceed 50% of the original duration. Every break has a fixed end date, and a break cannot be removed once added.',
+      },
+      {
+        q: 'What happens if the grantor cancels during a break?',
+        a: 'The recipient is paid everything vested up to the start of the break, and the rest returns to the grantor. A break never reduces earned pay.',
       },
     ],
     notes: [

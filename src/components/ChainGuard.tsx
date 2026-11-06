@@ -1,16 +1,21 @@
 /**
- * Renders children only when the wallet is connected and on Arc Mainnet.
- * Shows a styled connect/switch prompt otherwise.
+ * Renders children only when the wallet is connected and on the required Arc network
+ * (Arc Mainnet by default, or the `chainId` you pass). Shows a styled connect/switch
+ * prompt otherwise.
  */
 import { useAccount, useSwitchChain } from 'wagmi'
 import { ConnectKitButton } from 'connectkit'
 import { Wallet, AlertTriangle } from 'lucide-react'
-import { ARC_CHAIN_ID } from '../constants'
+import { ARC_CHAIN_ID, chainLabel } from '../constants'
 import { Card, PrimaryButton } from './ui'
 
-export default function ChainGuard({ children }: { children: React.ReactNode }) {
+export default function ChainGuard({ children, chainId: requiredChainId = ARC_CHAIN_ID }: {
+  children: React.ReactNode
+  chainId?: number
+}) {
   const { isConnected, chainId } = useAccount()
   const { switchChain, isPending } = useSwitchChain()
+  const network = chainLabel(requiredChainId)
 
   if (!isConnected) {
     return (
@@ -27,7 +32,7 @@ export default function ChainGuard({ children }: { children: React.ReactNode }) 
               Connect your wallet
             </p>
             <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
-              A wallet on Arc Mainnet is needed to use this feature.
+              A wallet on {network} is needed to use this feature.
             </p>
           </div>
           <ConnectKitButton />
@@ -36,7 +41,7 @@ export default function ChainGuard({ children }: { children: React.ReactNode }) 
     )
   }
 
-  if (chainId !== ARC_CHAIN_ID) {
+  if (chainId !== requiredChainId) {
     return (
       <div className="flex items-center justify-center py-20">
         <Card className="p-8 flex flex-col items-center gap-5 text-center max-w-sm w-full">
@@ -51,15 +56,15 @@ export default function ChainGuard({ children }: { children: React.ReactNode }) 
               Wrong network
             </p>
             <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
-              Switch to Arc Mainnet to use RacconPay.
+              Switch to {network} to use this feature.
             </p>
           </div>
           <PrimaryButton
-            onClick={() => switchChain({ chainId: ARC_CHAIN_ID })}
+            onClick={() => switchChain({ chainId: requiredChainId })}
             loading={isPending}
-            className="max-w-[200px]"
+            className="max-w-[240px]"
           >
-            Switch to Arc Mainnet
+            Switch to {network}
           </PrimaryButton>
         </Card>
       </div>
