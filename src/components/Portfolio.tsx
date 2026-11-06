@@ -10,9 +10,11 @@ import {
   Wallet, TrendingUp, ShieldCheck, Users, Layers, Send,
   ArrowUpRight, ArrowDownRight, Clock, AlertCircle,
   CheckCircle2, XCircle, Loader2, RefreshCw, ExternalLink, Shield,
-  PieChart, FileText,
+  PieChart, FileText, Handshake,
 } from 'lucide-react'
 import InvoiceDashboard from './InvoiceDashboard'
+import StablecoinBalances from './StablecoinBalances'
+import EscrowSummary from './escrow/EscrowSummary'
 import {
   Card, Label, StatCard, GlowCard, Badge,
   PrimaryButton, TxStatus, AlertBox, Divider,
@@ -981,6 +983,9 @@ export default function DashboardPage() {
             <StatCard label="Proposals"  value={proposals.toString()}        sub="Multi-sig"    icon={ShieldCheck} accentColor="var(--pay-accent)"     />
           </div>
 
+          {/* USDC and EURC balances on both Arc networks */}
+          <StablecoinBalances address={address} />
+
           {/* Detail sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Section icon={TrendingUp}  title="Vesting Streams"     accent="var(--vest-accent)">
@@ -994,6 +999,9 @@ export default function DashboardPage() {
             </Section>
             <Section icon={Send}        title="Batch Payouts"       accent="var(--receipt-accent)">
               <ReceiptsSummarySection address={address} />
+            </Section>
+            <Section icon={Handshake}   title="Escrow (Arc Testnet)" accent="var(--split-accent)">
+              <EscrowSummary address={address} />
             </Section>
           </div>
 

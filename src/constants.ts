@@ -48,6 +48,10 @@ export const VESTING_STREAM_V2_YIELD_TESTNET_ADDRESS = '0x6dc957426da30dc98027f3
 // The Earn vault (Morpho VaultV2, USDC) the yield contract above was deployed against.
 export const VESTING_YIELD_VAULT_TESTNET_ADDRESS = '0xaabbef1d3971c710276ed41ec791bbe14cdb8e88' as const
 
+// MilestoneEscrow (USDC + EURC milestone escrow with arbiter) — Arc Testnet only. Not audited for mainnet.
+export const ESCROW_TESTNET_ADDRESS = '0x352deb3ce0eba5016d27b98de877dca7761c3e79' as const
+export const ESCROW_TESTNET_DEPLOY_TX = '0x4bbcdae1df1dc3f5ff037dd8dd11b61cfc3c4e3edd0ac9fb19e965c7ebdea493' as const
+
 const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/
 const TX_RE = /^0x[0-9a-fA-F]{64}$/
 const envAddress = (v: unknown): `0x${string}` | undefined =>

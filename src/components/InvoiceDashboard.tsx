@@ -2,12 +2,13 @@
  * Invoice Dashboard — analytics overview of all invoices.
  * Shows totals, paid/unpaid/overdue breakdown, monthly chart, and recent activity.
  */
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { BarChart2, CheckCircle2, Clock, AlertTriangle, TrendingUp, FileText, Download } from 'lucide-react'
 import { Card, PageHeader, Badge, Divider } from './ui'
-import { type InvoiceData, type InvoiceStatus } from './InvoiceGenerator'
+import { type InvoiceData, type InvoiceStatus, invoiceToken, invoiceChain } from './InvoiceGenerator'
+import { TOKEN_LIST, type TokenSymbol } from '../tokens'
 import { shortAddr } from '../utils'
-import { explorerTx } from '../constants'
+import { explorerTxFor } from '../constants'
 import { ExternalLink } from 'lucide-react'
 
 const LS_KEY = 'racconpay-invoices'
@@ -32,7 +33,7 @@ function statusBadge(s: InvoiceStatus) {
 }
 
 /* ── Mini bar chart ─────────────────────────────────────── */
-function MonthlyChart({ invoices }: { invoices: InvoiceData[] }) {
+function MonthlyChart({ invoices, symbol }: { invoices: InvoiceData[]; symbol: TokenSymbol }) {
   const months = useMemo(() => {
     const map: Record<string, { total: number; paid: number }> = {}
     const now = MODULE_NOW
@@ -63,7 +64,7 @@ function MonthlyChart({ invoices }: { invoices: InvoiceData[] }) {
     <Card className="p-5">
       <div className="flex items-center gap-2 mb-4">
         <BarChart2 size={16} style={{ color: 'var(--receipt-accent)' }} />
-        <span className="font-display font-semibold text-sm" style={{ color: 'var(--ink)' }}>Monthly Invoiced (USDC)</span>
+        <span className="font-display font-semibold text-sm" style={{ color: 'var(--ink)' }}>Monthly Invoiced ({symbol})</span>
       </div>
       <div className="flex items-end gap-2 h-28">
         {months.map((m, i) => (
@@ -130,7 +131,10 @@ function StatTile({
 
 /* ── Main Dashboard ─────────────────────────────────────── */
 export default function InvoiceDashboard() {
-  const invoices = useMemo(() => loadInvoices(), [])
+  const allInvoices = useMemo(() => loadInvoices(), [])
+  // Totals only make sense within one currency, so analytics are scoped to a selected token.
+  const [token, setToken] = useState<TokenSymbol>('USDC')
+  const invoices = useMemo(() => allInvoices.filter(i => invoiceToken(i) === token), [allInvoices, token])
 
   const totalInvoiced  = invoices.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
   const totalPaid      = invoices.filter(i => computeStatus(i) === 'paid').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
@@ -155,7 +159,7 @@ export default function InvoiceDashboard() {
   // Recent invoices (last 5)
   const recent = [...invoices].sort((a, b) => b.createdAt - a.createdAt).slice(0, 5)
 
-  if (invoices.length === 0) {
+  if (allInvoices.length === 0) {
     return (
       <div className="flex flex-col gap-6 animate-fade-up">
         <PageHeader icon={BarChart2} title="Invoice Dashboard" subtitle="Analytics overview of all your invoices." accentColor="var(--receipt-accent)" />
@@ -177,9 +181,26 @@ export default function InvoiceDashboard() {
         accentColor="var(--receipt-accent)"
       />
 
+      {/* Currency filter */}
+      <div className="flex items-center gap-2">
+        {TOKEN_LIST.map(t => (
+          <button
+            key={t.symbol}
+            onClick={() => setToken(t.symbol)}
+            className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
+            style={{
+              background: token === t.symbol ? 'var(--accent)' : 'var(--surface-strong)',
+              color:      token === t.symbol ? '#fff' : 'var(--muted)',
+            }}
+          >
+            {t.symbol}
+          </button>
+        ))}
+      </div>
+
       {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatTile icon={FileText}     label="Total invoiced"  value={`${totalInvoiced.toFixed(2)}`}  sub="USDC all time"             accent="var(--receipt-accent)" />
+        <StatTile icon={FileText}     label="Total invoiced"  value={`${totalInvoiced.toFixed(2)}`}  sub={`${token} all time`}       accent="var(--receipt-accent)" />
         <StatTile icon={CheckCircle2} label="Total collected" value={`${totalPaid.toFixed(2)}`}      sub={`${collectionRate}% collection rate`} accent="var(--success)" />
         <StatTile icon={Clock}        label="Outstanding"     value={`${totalOutstanding.toFixed(2)}`} sub={`${unpaidCount} unpaid invoice${unpaidCount !== 1 ? 's' : ''}`} accent="var(--vest-accent)" />
         <StatTile icon={AlertTriangle} label="Overdue"        value={String(overdueCount)}            sub={overdueCount > 0 ? 'Need attention' : 'All good'} accent="var(--error)" />
@@ -189,7 +210,7 @@ export default function InvoiceDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <Card className="p-4">
           <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--subtle)' }}>This month</p>
-          <p className="font-display font-bold text-xl tabular-nums" style={{ color: 'var(--ink)' }}>{thisMonthInvoiced.toFixed(2)} <span className="text-sm font-normal" style={{ color: 'var(--muted)' }}>USDC</span></p>
+          <p className="font-display font-bold text-xl tabular-nums" style={{ color: 'var(--ink)' }}>{thisMonthInvoiced.toFixed(2)} <span className="text-sm font-normal" style={{ color: 'var(--muted)' }}>{token}</span></p>
         </Card>
         <Card className="p-4">
           <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--subtle)' }}>Paid invoices</p>
@@ -204,7 +225,7 @@ export default function InvoiceDashboard() {
       </div>
 
       {/* Monthly chart */}
-      <MonthlyChart invoices={invoices} />
+      <MonthlyChart invoices={invoices} symbol={token} />
 
       {/* Recent activity */}
       <Card className="p-5">
@@ -227,7 +248,7 @@ export default function InvoiceDashboard() {
                 </div>
                 <div className="flex flex-col items-end gap-1 shrink-0">
                   <span className="font-display font-bold tabular-nums" style={{ color: 'var(--receipt-accent)' }}>
-                    {inv.amount} <span className="text-xs font-normal" style={{ color: 'var(--muted)' }}>USDC</span>
+                    {inv.amount} <span className="text-xs font-normal" style={{ color: 'var(--muted)' }}>{invoiceToken(inv)}</span>
                   </span>
                   {inv.dueDate && (
                     <span className="text-xs" style={{ color: s === 'overdue' ? 'var(--error)' : 'var(--subtle)' }}>
@@ -235,7 +256,7 @@ export default function InvoiceDashboard() {
                     </span>
                   )}
                   {inv.paidTx && (
-                    <a href={explorerTx(inv.paidTx)} target="_blank" rel="noreferrer"
+                    <a href={explorerTxFor(invoiceChain(inv), inv.paidTx)} target="_blank" rel="noreferrer"
                       className="flex items-center gap-1 text-xs" style={{ color: 'var(--success)' }}>
                       <ExternalLink size={10} /> View tx
                     </a>

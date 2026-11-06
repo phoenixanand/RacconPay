@@ -6,6 +6,8 @@ import VestingPage          from './components/VestingStream'
 import SplitPage            from './components/BillSplitter'
 import InvoicePage          from './components/InvoiceGenerator'
 
+import SwapPage             from './components/SwapPage'
+import EscrowPage           from './components/EscrowPage'
 import MultiSigPage         from './components/MultiSigPayoutPage'
 import DocsPage             from './components/Docs'
 import DashboardPage        from './components/Portfolio'
@@ -26,6 +28,8 @@ export default function App() {
           <Route path="/split"        element={<SplitPage />} />
           <Route path="/invoice"      element={<InvoicePage />} />
           <Route path="/pay-invoice"  element={<InvoicePage />} />
+          <Route path="/swap"         element={<SwapPage />} />
+          <Route path="/escrow"       element={<EscrowPage />} />
           <Route path="/multisig"     element={<MultiSigPage />} />
           <Route path="/invoice-dashboard" element={<Navigate to="/dashboard?tab=invoices" replace />} />
           <Route path="/dashboard"    element={<DashboardPage />} />

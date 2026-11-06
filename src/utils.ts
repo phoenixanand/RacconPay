@@ -18,6 +18,23 @@ export function parseUsdc(value: string): bigint {
   return BigInt(wholePart) * 10n ** BigInt(USDC_DECIMALS) + BigInt(fracPadded)
 }
 
+/** Format a raw token amount with the given decimals ("12.5"). */
+export function formatToken(raw: bigint, decimals = USDC_DECIMALS): string {
+  const divisor = 10n ** BigInt(decimals)
+  const whole = raw / divisor
+  const fracStr = (raw % divisor).toString().padStart(decimals, '0').replace(/0+$/, '')
+  return fracStr.length > 0 ? `${whole}.${fracStr}` : `${whole}`
+}
+
+/** Parse a human-readable token amount to a raw bigint. Throws on invalid input. */
+export function parseToken(value: string, decimals = USDC_DECIMALS): bigint {
+  const trimmed = value.trim()
+  if (!/^\d+(\.\d*)?$/.test(trimmed)) throw new Error(`Invalid amount: "${value}"`)
+  const [wholePart, fracPart = ''] = trimmed.split('.')
+  const fracPadded = fracPart.slice(0, decimals).padEnd(decimals, '0')
+  return BigInt(wholePart) * 10n ** BigInt(decimals) + BigInt(fracPadded || '0')
+}
+
 /** Shorten an Ethereum address for display: 0x1234...abcd */
 export function shortAddr(addr: string): string {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`

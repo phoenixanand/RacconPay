@@ -484,7 +484,78 @@ const SECTIONS: Section[] = [
     link: '/invoice',
     linkLabel: 'Open Invoices →',
   },
+  {
+    id: 'swap',
+    icon: TrendingUp,
+    accent: 'var(--receipt-accent)',
+    title: 'Swap USDC and EURC',
+    intro:
+      'Swap between USDC and EURC on Arc Testnet. You review a quote first, then confirm in your wallet. The swap fails instead of filling below the minimum you see.',
+    steps: [
+      { num: 1, title: 'Switch to Arc Testnet', body: 'The Swap page asks you to switch networks. Test tokens have no real value.' },
+      { num: 2, title: 'Enter an amount and review the quote', body: 'Pick the direction, type an amount and choose a maximum slippage. The quote shows the estimated output, the minimum you will receive and the fees.' },
+      { num: 3, title: 'Swap', body: 'Click Swap and confirm in your wallet. Nothing is sent until you do.' },
+    ],
+    faqs: [
+      { q: 'Which tokens can I swap?', a: 'USDC and EURC.' },
+      { q: 'Who executes the swap?', a: 'It is routed through a swap service provider that can vary by route. The provider\'s terms apply.' },
+    ],
+    link: '/swap',
+    linkLabel: 'Open Swap →',
+  },
+  {
+    id: 'escrow',
+    icon: ShieldCheck,
+    accent: 'var(--split-accent)',
+    title: 'Milestone Escrow',
+    intro:
+      'Lock USDC or EURC for someone and release it milestone by milestone. Runs on Arc Testnet and has not been audited for mainnet.',
+    steps: [
+      { num: 1, title: 'Create and fund', body: 'Choose the currency, the payee, an optional arbiter, up to 20 milestone amounts, a review window and a refund deadline. You approve the total, then lock it.' },
+      { num: 2, title: 'Payee submits a milestone', body: 'When work is done the payee submits the milestone, optionally with a link or note.' },
+      { num: 3, title: 'Approve, or let the window pass', body: 'The payer approves and the funds go to the payee. If the payer stays silent through the review window, the payee can collect.' },
+      { num: 4, title: 'Disputes', body: 'With an arbiter set, the payer can dispute inside the review window. The arbiter splits the milestone. If the arbiter is silent for 30 days, anyone can split it 50/50.' },
+      { num: 5, title: 'Refunds', body: 'If the payee never submits a milestone and the refund deadline passes, the payer can take it back. Both sides can also cancel unstarted milestones by agreement.' },
+    ],
+    notes: [
+      'If a payout cannot be sent directly, for example because a token issuer blocked an address, it is held for that address and shown under "Ready to withdraw".',
+      'Batch Pay, Vesting, Bill Split and Multi-Sig remain USDC only. Invoices support USDC and EURC.',
+    ],
+    link: '/escrow',
+    linkLabel: 'Open Escrow →',
+  },
 ]
+
+/* ── Audience grouping: enterprise tools first, personal tools after ── */
+type Audience = 'general' | 'enterprise' | 'personal'
+
+const AUDIENCE: Record<string, Audience> = {
+  'getting-started': 'general',
+  'batch-pay':       'enterprise',
+  'multisig':        'enterprise',
+  'vesting':         'enterprise',
+  'my-streams':      'enterprise',
+  'escrow':          'enterprise',
+  'invoices':        'enterprise',
+  'receipts':        'enterprise',
+  'bill-split':      'personal',
+  'swap':            'personal',
+}
+
+const AUDIENCE_GROUPS: { key: Audience; title: string | null }[] = [
+  { key: 'general',    title: null },
+  { key: 'enterprise', title: 'Enterprise' },
+  { key: 'personal',   title: 'Personal' },
+]
+
+const audienceOf = (id: string): Audience => AUDIENCE[id] ?? 'general'
+
+const ORDERED_SECTIONS: Section[] = AUDIENCE_GROUPS.flatMap(g =>
+  SECTIONS.filter(s => audienceOf(s.id) === g.key),
+)
+
+const audienceTitle = (a: Audience): string | null =>
+  AUDIENCE_GROUPS.find(g => g.key === a)?.title ?? null
 
 /* ── FAQ accordion item ── */
 function FAQItem({ q, a }: { q: string; a: string }) {
@@ -652,10 +723,18 @@ function DocNav({ activeId }: { activeId: string }) {
       </p>
 
       <div className="flex-1 space-y-0.5">
-        {SECTIONS.map(s => {
+        {ORDERED_SECTIONS.map((s, i) => {
           const Icon   = s.icon
           const active = activeId === s.id
+          const heading = audienceTitle(audienceOf(s.id))
+          const startsGroup = heading !== null && (i === 0 || audienceOf(ORDERED_SECTIONS[i - 1].id) !== audienceOf(s.id))
           return (
+            <div key={s.id}>
+              {startsGroup && (
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] px-3 pt-4 pb-1" style={{ color: 'var(--subtle)' }}>
+                  {heading}
+                </p>
+              )}
             <a
               key={s.id}
               href={`#${s.id}`}
@@ -671,6 +750,7 @@ function DocNav({ activeId }: { activeId: string }) {
               <Icon size={14} style={{ color: active ? s.accent : 'var(--muted)' }} />
               {s.title}
             </a>
+            </div>
           )
         })}
       </div>
@@ -693,12 +773,12 @@ function DocNav({ activeId }: { activeId: string }) {
 
 /* ── Main page ── */
 export default function DocsPage() {
-  const [activeId, setActiveId] = useState<string>(SECTIONS[0].id)
+  const [activeId, setActiveId] = useState<string>(ORDERED_SECTIONS[0].id)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   useEffect(() => {
     // Track which section is most visible in the viewport
-    const sectionEls = SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean) as HTMLElement[]
+    const sectionEls = ORDERED_SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean) as HTMLElement[]
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
@@ -733,9 +813,24 @@ export default function DocsPage() {
 
         {/* Content */}
         <div className="flex-1 space-y-6 min-w-0">
-          {SECTIONS.map(section => (
-            <DocSection key={section.id} section={section} />
-          ))}
+          {ORDERED_SECTIONS.map((section, i) => {
+            const audience = audienceOf(section.id)
+            const heading = audienceTitle(audience)
+            const startsGroup = heading !== null && (i === 0 || audienceOf(ORDERED_SECTIONS[i - 1].id) !== audience)
+            return (
+              <div key={section.id} className="space-y-6">
+                {startsGroup && (
+                  <h2
+                    className="font-display font-bold text-2xl pt-4"
+                    style={{ color: 'var(--ink)', letterSpacing: '-0.02em' }}
+                  >
+                    {heading}
+                  </h2>
+                )}
+                <DocSection section={section} />
+              </div>
+            )
+          })}
 
           {/* Footer note */}
           <div
