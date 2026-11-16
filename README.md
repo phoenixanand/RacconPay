@@ -132,21 +132,6 @@ RUN_AAVE_FORK=1 arc-forge test --network arc --match-path "contracts/test/Vestin
 
 Latest results: 705 of 708 tests pass in the full suite. The 3 failures are in `MilestoneEscrowV2`, a variant the app does not use. The 7 yield fork tests pass.
 
-## Deploying to mainnet
-
-Done by you, from your own computer, with an encrypted keystore. The private key never goes in a file. See `docs/mainnet-deploy-guide.md`.
-
-## Continuity Track: what existed and what is new
-
-Existing before the hackathon: Batch Payout and Receipts, Vesting v1, Bill Splitter, MultiSig and Invoices on Arc Mainnet.
-
-Added with Arc Studio: the vesting console (leave and pauses, bulk CSV, address book, reports), opt-in yield through Aave V4, Milestone Escrow, Swap through Circle App Kit, and the mainnet deployments of the new contracts.
-
-Prize-card fit: USDC and EURC payment flows added to an existing fintech product, and escrow plus Aave-based yield logic. Crosschain and nanopayments are not built.
-
-## AI tools
-
-Arc Studio (Circle's AI assistant) was used to plan, review and edit the code, research the Aave V4 vault, write the fork test, and draft documentation. Contracts were deployed by the author, not by the AI tool.
 
 ## Known limitations
 
