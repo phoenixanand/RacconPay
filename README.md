@@ -2,10 +2,6 @@
 
 Non-custodial USDC and EURC money tools on Arc. Pay many people at once, stream salary with leave controls, lock funds in milestone escrow, send invoices, split bills, swap, and optionally earn yield on locked funds through Aave V4.
 
-Built with [Arc Studio](https://studio.arc.io) for the ETHGlobal Continuity Track. Runs on Arc Mainnet (chain ID 5042). USDC is the gas token, so fees are predictable and finality is under a second.
-
-> Status: the contracts have unit, fuzz and fork tests but have not had an independent audit. Use small amounts.
-
 ## The problem
 
 Teams, freelancers and finance departments that pay people in stablecoins use a patchwork of tools: one for batch payments, one for salary streaming, one for invoices, one for escrow. Vesting tools lack HR controls such as leave, pauses, approvals and reports. Locked money earns nothing, and on most chains gas is a separate token with a changing price.
