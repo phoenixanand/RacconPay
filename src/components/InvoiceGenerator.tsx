@@ -15,8 +15,13 @@ import { toast } from 'sonner'
 import jsPDF from 'jspdf'
 import {
   Card, PageHeader, Input, PrimaryButton, GhostButton,
-  Badge, TxStatus, AlertBox, Divider,
+  TxStatus, AlertBox, Divider, StatCard,
 } from './ui'
+import { StatusBadge } from './kit/StatusBadge'
+import { EmptyState } from './kit/States'
+import { DateField } from './kit/Fields'
+import { friendlyTxError } from '../lib/txError'
+import { useRecordTx } from '../lib/txlog'
 import { ARC_CHAIN_ID, ARC_TESTNET_CHAIN_ID, chainLabel, explorerTxFor } from '../constants'
 import { ERC20_ABI } from '../abis'
 import { TOKENS, TOKEN_LIST, isTokenSymbol, tokenAddress, type TokenSymbol } from '../tokens'
@@ -78,9 +83,7 @@ function computeStatus(inv: InvoiceData): InvoiceStatus {
 }
 
 function statusBadge(s: InvoiceStatus) {
-  if (s === 'paid')    return <Badge variant="success">Paid</Badge>
-  if (s === 'overdue') return <Badge variant="danger">Overdue</Badge>
-  return <Badge variant="warning">Unpaid</Badge>
+  return <StatusBadge status={s} />
 }
 
 function loadInvoices(): InvoiceData[] {
@@ -312,12 +315,14 @@ function PayInvoiceView() {
   const [paidAtMs] = useState(() => Date.now())
 
   // Single-step: direct ERC-20 transfer (no approve needed, payer sends to creator)
-  const { writeContract: transfer, data: transferHash } = useWriteContract()
+  const { writeContract: transfer, data: transferHash, isPending: transferPending, error: transferError } = useWriteContract()
   const { isSuccess: transferConfirmed, isLoading: transferConfirming } = useWaitForTransactionReceipt({ hash: transferHash })
 
   const amountRaw = (() => {
     try { return parseToken(amountStr, tokenDecimals) } catch { return 0n }
   })()
+
+  useRecordTx({ address, hash: transferHash, confirmed: transferConfirmed, kind: 'Invoice', detail: `Paid invoice ${invoiceId || ''}`.trim(), amountRaw, token })
 
   // On payment confirmed, mark invoice paid in localStorage (only if opened by creator)
   useEffect(() => {
@@ -348,7 +353,7 @@ function PayInvoiceView() {
           <CheckCircle2 size={32} style={{ color: 'var(--success)' }} />
         </div>
         <div>
-          <h2 className="font-display font-bold text-2xl" style={{ color: 'var(--ink)' }}>Payment sent!</h2>
+          <h2 className="font-semibold text-2xl" style={{ color: 'var(--ink)' }}>Payment confirmed</h2>
           <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
             {formatToken(amountRaw, tokenDecimals)} {token} sent to {fromName || shortAddr(toAddr)} · {invoiceId}
           </p>
@@ -387,7 +392,7 @@ function PayInvoiceView() {
             token, chainId: invChain,
           })}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01]"
-          style={{ background: 'var(--success)', color: '#fff' }}
+          style={{ background: 'var(--success)', color: '#ffffff' }}
         >
           <Download size={15} /> Download Payment Receipt PDF
         </button>
@@ -401,10 +406,10 @@ function PayInvoiceView() {
   }
 
   return (
-    <div className="max-w-md mx-auto py-10">
+    <div className="max-w-md mx-auto py-6">
       <PageHeader
         icon={FileText}
-        title="Pay Invoice"
+        title="Pay invoice"
         subtitle={invoiceId || `${token} Payment Request`}
         accentColor="var(--receipt-accent)"
       />
@@ -418,7 +423,7 @@ function PayInvoiceView() {
         <div className="flex items-center justify-between py-3 px-4 rounded-xl"
           style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)' }}>
           <span className="text-sm" style={{ color: 'var(--muted)' }}>Amount due</span>
-          <span className="font-display font-bold text-2xl tabular-nums" style={{ color: 'var(--receipt-accent)' }}>
+          <span className="font-semibold text-2xl tabular-nums" style={{ color: 'var(--ink)' }}>
             {formatToken(amountRaw, tokenDecimals)} <span className="text-base font-semibold" style={{ color: 'var(--muted)' }}>{token}</span>
           </span>
         </div>
@@ -440,6 +445,8 @@ function PayInvoiceView() {
             Send {formatToken(amountRaw, tokenDecimals)} {token}
           </PrimaryButton>
         )}
+        {transferPending && !transferError && <TxStatus isPending />}
+        {transferError && <TxStatus isError errorMsg={friendlyTxError(transferError)} />}
         {transferHash && (
           <TxStatus
             isPending={!transferHash}
@@ -533,29 +540,24 @@ function InvoiceCard({
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-xs font-bold" style={{ color: 'var(--receipt-accent)' }}>{inv.id}</span>
+            <span className="font-mono text-xs font-semibold" style={{ color: 'var(--accent)' }}>{inv.id}</span>
             {statusBadge(status)}
-            {status === 'overdue' && (
-              <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--error)' }}>
-                <AlertTriangle size={11} /> Overdue
-              </span>
-            )}
           </div>
           {inv.fromName && <p className="text-xs font-semibold" style={{ color: 'var(--ink-2)' }}>{inv.fromName}</p>}
           {inv.clientName && <p className="text-xs" style={{ color: 'var(--muted)' }}>To: {inv.clientName}</p>}
           {inv.memo && <p className="text-sm truncate" style={{ color: 'var(--muted)' }}>{inv.memo}</p>}
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <button onClick={() => setShowQR(v => !v)} className="p-2 rounded-lg hover:bg-black/5 transition-colors" style={{ color: 'var(--muted)' }} title="QR">
+          <button onClick={() => setShowQR(v => !v)} className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-[var(--surface-hover)] transition-colors" style={{ color: 'var(--muted)' }} title="QR code" aria-label="Show QR code">
             <QrCode size={15} />
           </button>
-          <button onClick={copyLink} className="p-2 rounded-lg hover:bg-black/5 transition-colors" style={{ color: copied ? 'var(--success)' : 'var(--muted)' }} title="Copy link">
+          <button onClick={copyLink} className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-[var(--surface-hover)] transition-colors" style={{ color: copied ? 'var(--success)' : 'var(--muted)' }} title="Copy link" aria-label="Copy payment link">
             {copied ? <Check size={15} /> : <Copy size={15} />}
           </button>
-          <button onClick={() => exportPDF(inv)} className="p-2 rounded-lg hover:bg-black/5 transition-colors" style={{ color: 'var(--muted)' }} title="Download PDF">
+          <button onClick={() => exportPDF(inv)} className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-[var(--surface-hover)] transition-colors" style={{ color: 'var(--muted)' }} title="Download PDF" aria-label="Download invoice PDF">
             <Download size={15} />
           </button>
-          <button onClick={() => onDelete(inv.id)} className="p-2 rounded-lg hover:bg-black/5 transition-colors" style={{ color: 'var(--danger)' }} title="Delete">
+          <button onClick={() => onDelete(inv.id)} className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-[var(--danger-muted)] transition-colors" style={{ color: 'var(--danger)' }} title="Delete invoice" aria-label="Delete invoice">
             <Trash2 size={15} />
           </button>
         </div>
@@ -563,12 +565,12 @@ function InvoiceCard({
 
       {/* Amount + due date row */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="font-display font-bold text-xl tabular-nums" style={{ color: 'var(--receipt-accent)' }}>
+        <span className="font-semibold text-xl tabular-nums" style={{ color: 'var(--ink)' }}>
           {inv.amount} <span className="text-sm font-medium" style={{ color: 'var(--muted)' }}>{token}</span>
         </span>
         <div className="flex flex-col items-end gap-0.5">
           {inv.dueDate && (
-            <span className="text-xs" style={{ color: status === 'overdue' ? 'var(--error)' : 'var(--subtle)' }}>
+            <span className="text-xs" style={{ color: status === 'overdue' ? 'var(--danger)' : 'var(--subtle)' }}>
               Due {inv.dueDate}
             </span>
           )}
@@ -593,7 +595,7 @@ function InvoiceCard({
         <>
           <Divider />
           <div className="flex flex-col items-center gap-3">
-            <div className="p-3 rounded-xl" style={{ background: '#fff' }}>
+            <div className="p-3 rounded-xl" style={{ background: '#ffffff' }}>
               <QRCodeSVG value={url} size={180} level="M" />
             </div>
             <div className="flex gap-2 w-full">
@@ -717,120 +719,135 @@ export default function InvoiceGenerator() {
   const paidCount    = invoices.filter(i => computeStatus(i) === 'paid').length
   const overdueCount = invoices.filter(i => computeStatus(i) === 'overdue').length
 
+  const cur = (t: TokenSymbol) => invoices.filter(i => invoiceToken(i) === t)
+  const sumOf = (list: InvoiceData[]) => { let t = 0n; for (const i of list) { try { t += parseToken(i.amount, TOKENS[invoiceToken(i)].decimals) } catch { /* skip invalid */ } } return t }
+  const outstanding = TOKEN_LIST.map(t => ({ sym: t.symbol, raw: sumOf(cur(t.symbol).filter(i => computeStatus(i) !== 'paid')) })).filter(x => x.raw > 0n)
+  const paidTotals = TOKEN_LIST.map(t => ({ sym: t.symbol, raw: sumOf(cur(t.symbol).filter(i => computeStatus(i) === 'paid')) })).filter(x => x.raw > 0n)
+  const money = (rows: { sym: TokenSymbol; raw: bigint }[]) => rows.length ? rows.map(r => `${formatToken(r.raw, TOKENS[r.sym].decimals)} ${r.sym}`).join(' · ') : '0'
+  const nextNumber = `INV-${String((parseInt(localStorage.getItem(LS_CTR_KEY) ?? '0', 10) || 0) + 1).padStart(4, '0')}`
+  const previewAmount = form.amount && !isNaN(Number(form.amount)) ? form.amount : '0.00'
+
   return (
-    <div className="flex flex-col gap-6 animate-fade-up">
+    <div className="flex flex-col gap-6">
       <PageHeader
         icon={FileText}
         title="Invoices"
-        subtitle="Create a USDC or EURC payment request. Share the link, payer connects wallet and pays in one click."
-        accentColor="var(--receipt-accent)"
+        subtitle="Create a USDC or EURC payment request. Share the link, and the payer connects a wallet and pays in one step."
       />
 
-      {/* Create form */}
-      <Card className="p-5 flex flex-col gap-4">
-        <h3 className="font-display font-semibold text-base" style={{ color: 'var(--ink)' }}>New Invoice</h3>
-        {!address && <AlertBox variant="info">Connect your wallet, your address becomes the payment destination.</AlertBox>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input label="Your name / company" value={form.fromName} onChange={v => setForm(f => ({ ...f, fromName: v }))} placeholder="Acme Ltd" />
-          <Input label="Client name (optional)" value={form.clientName} onChange={v => setForm(f => ({ ...f, clientName: v }))} placeholder="John Smith" />
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.1em]" style={{ color: 'var(--subtle)' }}>Currency</p>
-            <div className="flex gap-2">
-              {TOKEN_LIST.map(t => (
-                <button
-                  key={t.symbol}
-                  type="button"
-                  onClick={() => setToken(t.symbol)}
-                  className="flex-1 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all"
-                  style={{
-                    background: token === t.symbol ? 'var(--accent)' : 'var(--surface-muted)',
-                    color:      token === t.symbol ? '#fff' : 'var(--muted)',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  {t.symbol}
-                </button>
-              ))}
+      <section aria-label="Invoice summary" className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-3">
+        <StatCard label="Outstanding" value={money(outstanding)} sub={`${unpaidCount + overdueCount} unpaid invoice${unpaidCount + overdueCount === 1 ? '' : 's'}`} icon={FileText} />
+        <StatCard label="Paid" value={money(paidTotals)} sub={`${paidCount} invoice${paidCount === 1 ? '' : 's'}`} icon={CheckCircle2} />
+        <StatCard label="Overdue" value={overdueCount.toString()} sub="Past their due date" icon={AlertTriangle} />
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5 items-start">
+        {/* Create form */}
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>New invoice</h2>
+          {!address && <AlertBox variant="info">Connect your wallet. Its address becomes the payment destination.</AlertBox>}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="Your name or company" value={form.fromName} onChange={v => setForm(f => ({ ...f, fromName: v }))} placeholder="Acme Ltd" />
+            <Input label="Client name (optional)" value={form.clientName} onChange={v => setForm(f => ({ ...f, clientName: v }))} placeholder="John Smith" />
+            <div className="flex flex-col gap-1.5">
+              <span id="invoice-currency" className="text-xs font-medium" style={{ color: 'var(--ink-2)' }}>Currency</span>
+              <div role="radiogroup" aria-labelledby="invoice-currency" className="grid grid-cols-2 gap-2">
+                {TOKEN_LIST.map(t => {
+                  const on = token === t.symbol
+                  return (
+                    <button key={t.symbol} type="button" role="radio" aria-checked={on} onClick={() => setToken(t.symbol)}
+                      className="min-h-[44px] rounded-lg text-sm font-semibold transition-colors"
+                      style={{ background: on ? 'var(--accent-muted)' : 'var(--surface)', color: on ? 'var(--accent)' : 'var(--ink-2)', border: `1px solid ${on ? 'var(--accent)' : 'var(--border-strong)'}` }}>
+                      {t.symbol}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <Input label={`Amount (${token})`} value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} placeholder="50.00" type="number" />
+            <DateField label="Due date (optional)" value={form.dueDate} onChange={v => setForm(f => ({ ...f, dueDate: v }))} />
+            <div className="sm:col-span-2">
+              <Input label="Description" value={form.memo} onChange={v => setForm(f => ({ ...f, memo: v }))} placeholder="Design work, March 2026" />
             </div>
           </div>
-          <Input label={`Amount (${token})`} value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} placeholder="50.00" type="number" />
-          <Input label="Due date (optional)" value={form.dueDate} onChange={v => setForm(f => ({ ...f, dueDate: v }))} type="date" />
-          <Input label="Memo / description" value={form.memo} onChange={v => setForm(f => ({ ...f, memo: v }))} placeholder="Design work, March 2026" className="sm:col-span-2" />
+          <PrimaryButton onClick={createInvoice} disabled={!form.amount || !address}>
+            <Plus size={15} aria-hidden="true" /> Create invoice
+          </PrimaryButton>
+          {(!form.amount || !address) && <p className="text-xs" style={{ color: 'var(--muted)' }}>{!address ? 'Connect a wallet and enter an amount.' : 'Enter an amount to create the invoice.'}</p>}
+        </Card>
+
+        {/* Live preview */}
+        <div className="lg:sticky lg:top-24">
+          <p className="text-xs font-medium mb-2" style={{ color: 'var(--muted)' }}>Invoice preview</p>
+          <Card className="p-5 flex flex-col gap-4" >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-base font-semibold" style={{ color: 'var(--ink)' }}>{form.fromName || 'Your name or company'}</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>Invoice {nextNumber}</p>
+              </div>
+              <StatusBadge status="draft" />
+            </div>
+            <dl className="flex flex-col text-sm">
+              {([
+                ['Bill to', form.clientName || 'Client'],
+                ['For', form.memo || '-'],
+                ['Due', form.dueDate || 'No due date'],
+                ['Network', chainLabel(invoiceChainId)],
+              ] as [string, string][]).map(([k, v]) => (
+                <div key={k} className="flex items-start justify-between gap-3 py-2" style={{ borderTop: '1px solid var(--border)' }}>
+                  <dt style={{ color: 'var(--muted)' }}>{k}</dt>
+                  <dd className="font-medium text-right break-words min-w-0" style={{ color: 'var(--ink)' }}>{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="rounded-lg p-4" style={{ background: 'var(--surface-muted)' }}>
+              <p className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Amount due</p>
+              <p className="text-3xl font-semibold tabular-nums tracking-tight mt-1" style={{ color: 'var(--ink)' }}>
+                {previewAmount}<span className="text-base font-medium ml-1.5" style={{ color: 'var(--muted)' }}>{token}</span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Pay to</p>
+              <p className="text-xs font-mono break-all mt-1" style={{ color: 'var(--ink-2)' }}>{address ?? 'Connect a wallet to set the payment address'}</p>
+            </div>
+          </Card>
         </div>
-        {address && (
-          <div className="text-xs font-mono px-1" style={{ color: 'var(--subtle)' }}>
-            Payment will go to: <span style={{ color: 'var(--receipt-accent)' }}>{address}</span> on {chainLabel(invoiceChainId)}
+      </div>
+
+      {/* History */}
+      <section aria-label="Invoice history" className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Invoice history</h2>
+          <div className="flex items-center gap-2">
+            <button onClick={exportJSON} disabled={invoices.length === 0} className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-lg text-xs font-semibold hover:bg-[var(--surface-hover)] disabled:opacity-40" style={{ color: 'var(--ink-2)', border: '1px solid var(--border-strong)' }}>
+              <ArrowDownToLine size={14} aria-hidden="true" /> Export
+            </button>
+            <button onClick={() => importRef.current?.click()} className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-lg text-xs font-semibold hover:bg-[var(--surface-hover)]" style={{ color: 'var(--ink-2)', border: '1px solid var(--border-strong)' }}>
+              <Upload size={14} aria-hidden="true" /> Import
+            </button>
+            <input ref={importRef} type="file" accept=".json" className="hidden" aria-label="Import invoices JSON file" onChange={importJSON} />
+          </div>
+        </div>
+
+        {invoices.length > 0 && (
+          <div role="tablist" aria-label="Filter invoices" className="flex items-center gap-1 overflow-x-auto no-scrollbar" style={{ borderBottom: '1px solid var(--border)' }}>
+            {(['all', 'unpaid', 'paid', 'overdue'] as const).map(f => {
+              const n = f === 'all' ? invoices.length : f === 'unpaid' ? unpaidCount : f === 'paid' ? paidCount : overdueCount
+              return (
+                <button key={f} role="tab" aria-selected={filter === f} onClick={() => setFilter(f)}
+                  className="px-4 min-h-[44px] text-sm font-medium whitespace-nowrap -mb-px transition-colors"
+                  style={{ color: filter === f ? 'var(--accent)' : 'var(--muted)', borderBottom: `2px solid ${filter === f ? 'var(--accent)' : 'transparent'}` }}>
+                  {f.charAt(0).toUpperCase() + f.slice(1)} <span className="tabular-nums">({n})</span>
+                </button>
+              )
+            })}
           </div>
         )}
-        <PrimaryButton onClick={createInvoice} disabled={!form.amount || !address}>
-          <Plus size={14} /> Create Invoice
-        </PrimaryButton>
-      </Card>
 
-      {/* Invoice list */}
-      {invoices.length > 0 && (
-        <div className="flex flex-col gap-4">
-          {/* Filter pills + export/import */}
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-2 flex-wrap">
-              {(['all', 'unpaid', 'paid', 'overdue'] as const).map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
-                  style={{
-                    background: filter === f ? 'var(--accent)' : 'var(--surface-strong)',
-                    color:      filter === f ? '#fff'          : 'var(--muted)',
-                  }}
-                >
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
-                  {f === 'unpaid'  && unpaidCount  > 0 && ` (${unpaidCount})`}
-                  {f === 'paid'    && paidCount    > 0 && ` (${paidCount})`}
-                  {f === 'overdue' && overdueCount > 0 && ` (${overdueCount})`}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={exportJSON}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors hover:opacity-80"
-                style={{ background: 'var(--surface-strong)', color: 'var(--muted)' }}
-                title="Export invoices as JSON"
-              >
-                <ArrowDownToLine size={13} /> Export
-              </button>
-              <button
-                onClick={() => importRef.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors hover:opacity-80"
-                style={{ background: 'var(--surface-strong)', color: 'var(--muted)' }}
-                title="Import invoices from JSON"
-              >
-                <Upload size={13} /> Import
-              </button>
-              <input ref={importRef} type="file" accept=".json" className="hidden" onChange={importJSON} />
-            </div>
-          </div>
-
-          {filtered.map(inv => (
-            <InvoiceCard key={inv.id} inv={inv} onDelete={deleteInvoice} onMarkPaid={markPaid} />
-          ))}
-        </div>
-      )}
-
-      {invoices.length === 0 && (
-        <div className="flex flex-col items-center gap-4 py-12 text-center">
-          <FileText size={32} style={{ color: 'var(--subtle)' }} />
-          <p className="text-sm" style={{ color: 'var(--muted)' }}>No invoices yet, create one above</p>
-          <button
-            onClick={() => importRef.current?.click()}
-            className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:opacity-80"
-            style={{ color: 'var(--accent)' }}
-          >
-            <Upload size={13} /> Import existing invoices
-          </button>
-          <input ref={importRef} type="file" accept=".json" className="hidden" onChange={importJSON} />
-        </div>
-      )}
+        {filtered.length > 0
+          ? <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">{filtered.map(inv => <InvoiceCard key={inv.id} inv={inv} onDelete={deleteInvoice} onMarkPaid={markPaid} />)}</div>
+          : <Card><EmptyState icon={FileText} title={invoices.length ? 'No invoices in this view' : 'No invoices yet'} body={invoices.length ? 'Pick another filter.' : 'Create your first invoice above, or import invoices you exported earlier.'} /></Card>}
+      </section>
     </div>
   )
 }

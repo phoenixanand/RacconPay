@@ -7,7 +7,7 @@
 
 import { http, createConfig } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
-import { arc, arcTestnet } from 'viem/chains'
+import { arc, arcTestnet, base, avalanche } from 'viem/chains'
 import { injected, walletConnect } from 'wagmi/connectors'
 import { registerChain } from './tracing'
 
@@ -24,12 +24,20 @@ registerChain(arc.id, ARC_RPC)
 const ARC_TESTNET_RPC = 'https://rpc.testnet.arc.io'
 registerChain(arcTestnet.id, ARC_TESTNET_RPC)
 
+// Bridge chains (mainnet). Used by the Bridge page to switch the wallet before burning.
+const ETHEREUM_RPC = 'https://ethereum-rpc.publicnode.com'
+const BASE_RPC = 'https://base-rpc.publicnode.com'
+const AVALANCHE_RPC = 'https://api.avax.network/ext/bc/C/rpc'
+registerChain(mainnet.id, ETHEREUM_RPC)
+registerChain(base.id, BASE_RPC)
+registerChain(avalanche.id, AVALANCHE_RPC)
+
 const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID
 
 export const walletConnectEnabled = Boolean(WALLETCONNECT_PROJECT_ID)
 
 export const config = createConfig({
-  chains: [arc, arcTestnet, mainnet],
+  chains: [arc, arcTestnet, mainnet, base, avalanche],
   connectors: [
     injected(),
     // Only added when a project ID is set, so the app still works without one.
@@ -51,7 +59,9 @@ export const config = createConfig({
   transports: {
     [arc.id]: http(ARC_RPC, { batch: true }),
     [arcTestnet.id]: http(ARC_TESTNET_RPC, { batch: true }),
-    [mainnet.id]: http(),
+    [mainnet.id]: http(ETHEREUM_RPC, { batch: true }),
+    [base.id]: http(BASE_RPC, { batch: true }),
+    [avalanche.id]: http(AVALANCHE_RPC, { batch: true }),
   },
   // Poll every 2s for tx receipts instead of WebSocket push.
   // Ensures confirmations work in Brave with Shields enabled.

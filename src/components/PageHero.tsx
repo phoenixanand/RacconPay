@@ -18,7 +18,7 @@ export default function PageHero({
   title,
   subtitle,
   accent = 'var(--accent)',
-  gradient = 'linear-gradient(120deg, rgba(196,120,42,0.09) 0%, transparent 65%)',
+  gradient = 'linear-gradient(120deg, color-mix(in srgb, var(--warning) 9%, transparent) 0%, transparent 65%)',
 }: PageHeroProps) {
   return (
     <div

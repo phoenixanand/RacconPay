@@ -126,3 +126,9 @@ export function explorerTx(hash: string) {
 export function explorerAddr(addr: string) {
   return `${EXPLORER_BASE}/address/${addr}`
 }
+
+// ── CCTP (Circle bridge) on Arc Mainnet ─────────────────────────────────
+// Arc's CCTP domain is 26. TokenMessengerV2 emits MintAndWithdraw for every transfer minted on Arc.
+export const CCTP_ARC_DOMAIN = 26 as const
+// From Circle's CCTP contract address reference (TokenMessengerV2, Arc, domain 26).
+export const CCTP_TOKEN_MESSENGER_V2 = '0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d' as const

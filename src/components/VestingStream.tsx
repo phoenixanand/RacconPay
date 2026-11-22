@@ -19,7 +19,11 @@ import SuccessAnimation from './SuccessAnimation'
 import { USDC_ADDRESS, VESTING_STREAM_ADDRESS, ARC_CHAIN_ID, explorerTx } from '../constants'
 import { ERC20_ABI, VESTING_STREAM_ABI } from '../abis'
 import { parseUsdc, formatUsdc } from '../utils'
-import { Card, Label, PrimaryButton, GhostButton, Badge, PageHeader, TxStatus } from './ui'
+import { Card, Label, PrimaryButton, GhostButton, Badge, PageHeader, TxStatus, Input } from './ui'
+import { Select } from './kit/Fields'
+import { Stepper } from './kit/Stepper'
+import { friendlyTxError } from '../lib/txError'
+import { useRecordTx } from '../lib/txlog'
 
 interface StreamData {
   grantor: `0x${string}`; beneficiary: `0x${string}`
@@ -62,7 +66,7 @@ export default function VestingStreamPage() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)' }}>
-          {([['v2', 'Console (pilot)'], ['v1', 'Classic streams (Arc Mainnet)']] as [Version, string][]).map(([v, label]) => (
+          {([['v2', 'Payroll console'], ['v1', 'Simple streams']] as [Version, string][]).map(([v, label]) => (
             <button
               key={v}
               onClick={() => setVersion(v)}
@@ -77,11 +81,6 @@ export default function VestingStreamPage() {
             </button>
           ))}
         </div>
-        {version === 'v2' && (
-          <p className="text-xs" style={{ color: 'var(--subtle)' }}>
-            Leave and pauses, bulk upload, reporting and optional yield.
-          </p>
-        )}
       </div>
       {version === 'v1' ? <ChainGuard><Inner /></ChainGuard> : (
         <>
@@ -147,10 +146,14 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
     args: [address], chainId: ARC_CHAIN_ID,
   })
 
-  const { writeContract: writeApprove, data: approveHash, isPending: isApproving } = useWriteContract()
+  const { writeContract: writeApprove, data: approveHash, isPending: isApproving, error: approveError } = useWriteContract()
   const { isSuccess: approveConfirmed } = useWaitForTransactionReceipt({ hash: approveHash })
-  const { writeContract: writeCreate,  data: createHash,  isPending: isCreating  } = useWriteContract()
+  const { writeContract: writeCreate,  data: createHash,  isPending: isCreating, error: createError } = useWriteContract()
   const { isSuccess: createConfirmed,  data: createReceipt, isLoading: createLoading } = useWaitForTransactionReceipt({ hash: createHash })
+
+  let recordAmount: bigint | undefined
+  try { recordAmount = parseUsdc(amount) } catch { recordAmount = undefined }
+  useRecordTx({ address, hash: createHash, confirmed: createConfirmed, kind: 'Vesting', detail: 'Created vesting stream', amountRaw: recordAmount, token: 'USDC' })
 
   if (approveConfirmed && step === 'approving') {
     setStep('approved')
@@ -210,7 +213,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
     return (
       <Card strong className="p-8 flex flex-col items-center text-center gap-5 max-w-md">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
-             style={{ background: 'var(--success-muted)', border: '1px solid rgba(94,207,138,0.25)' }}>
+             style={{ background: 'var(--success-muted)', border: '1px solid color-mix(in srgb, var(--success) 25%, transparent)' }}>
           <CheckCircle2 size={32} style={{ color: 'var(--success)' }} />
         </div>
         <div>
@@ -258,61 +261,42 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
   const insufficientFunds = balance !== undefined && amtRawPreview > 0n && balance < amtRawPreview
   const canApprove = step === 'idle'
   const canCreate  = step === 'approved'
+  let schedule: { end: string; perDay: string } | null = null
+  try {
+    const secs = durationToSeconds(duration, unit)
+    if (amtRawPreview > 0n && secs > 0n) {
+      schedule = { end: formatDuration(secs) + ' after creation', perDay: formatUsdc((amtRawPreview * 86400n) / secs) }
+    }
+  } catch { schedule = null }
+  const flowStep = isDone ? 3 : step === 'creating' ? 2 : step === 'approved' ? 2 : step === 'approving' ? 1 : 0
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6 items-start">
+    <div className="flex flex-col gap-4">
+    <Card className="px-4 py-3"><Stepper steps={['Details', 'Allow USDC', 'Create stream', 'Done']} current={flowStep} failed={!!(approveError && step === 'approving') || !!(createError && step === 'creating')} /></Card>
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-6 items-start">
       {/* Form */}
       <Card className="divide-y divide-[var(--border)]">
-        {/* Beneficiary */}
         <div className="p-5">
-          <Label>Beneficiary address</Label>
-          <input
-            className="font-mono text-xs w-full rounded-xl mt-1.5 px-3.5 py-2.5 outline-none transition-all placeholder:text-[var(--subtle)]"
-            style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-            placeholder="0x…"
-            value={beneficiary}
-            onChange={e => setBeneficiary(e.target.value)}
-            onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-            onBlur={e  => (e.currentTarget.style.borderColor = 'var(--border)')}
-          />
+          <Input label="Beneficiary address" mono value={beneficiary} onChange={setBeneficiary} placeholder="0x…" />
         </div>
-
-        {/* Amount */}
         <div className="p-5">
-          <Label>Total USDC to vest</Label>
-          <div className="flex items-center gap-2 mt-1.5">
-            <input
-              className="flex-1 text-sm tabular-nums rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-[var(--subtle)]"
-              style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-              placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)}
-              onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-              onBlur={e  => (e.currentTarget.style.borderColor = 'var(--border)')}
-            />
-            <span className="text-sm shrink-0" style={{ color: 'var(--subtle)' }}>USDC</span>
-          </div>
+          <Input label="Total USDC to vest" value={amount} onChange={setAmount} placeholder="0.00" />
         </div>
-
-        {/* Duration */}
-        <div className="p-5">
-          <Label>Vesting duration</Label>
-          <div className="flex items-center gap-2 mt-1.5">
-            <input
-              className="flex-1 text-sm tabular-nums rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-[var(--subtle)]"
-              style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-              placeholder="30" value={duration} onChange={e => setDuration(e.target.value)}
-              onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-              onBlur={e  => (e.currentTarget.style.borderColor = 'var(--border)')}
-            />
-            <select
-              className="text-sm rounded-xl px-3 py-2.5 outline-none transition-all"
-              style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-              value={unit} onChange={e => setUnit(e.target.value as typeof unit)}
-            >
-              <option value="minutes">Minutes</option>
-              <option value="hours">Hours</option>
-              <option value="days">Days</option>
-            </select>
-          </div>
+        <div className="p-5 grid grid-cols-[1fr_140px] gap-3 items-end">
+          <Input label="Vesting duration" value={duration} onChange={setDuration} placeholder="30" />
+          <Select label="Unit" value={unit} onChange={v => setUnit(v as typeof unit)} options={[{ value: 'minutes', label: 'Minutes' }, { value: 'hours', label: 'Hours' }, { value: 'days', label: 'Days' }]} />
+        </div>
+        <div className="p-5 flex flex-col gap-2">
+          <p className="text-xs font-medium" style={{ color: 'var(--ink-2)' }}>Vesting schedule</p>
+          {schedule ? (
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <dt style={{ color: 'var(--muted)' }}>Starts</dt><dd className="text-right font-medium" style={{ color: 'var(--ink)' }}>When the stream is created</dd>
+              <dt style={{ color: 'var(--muted)' }}>Ends</dt><dd className="text-right font-medium tabular-nums" style={{ color: 'var(--ink)' }}>{schedule.end}</dd>
+              <dt style={{ color: 'var(--muted)' }}>Vests</dt><dd className="text-right font-medium tabular-nums" style={{ color: 'var(--ink)' }}>{schedule.perDay} USDC per day, continuously</dd>
+            </dl>
+          ) : (
+            <p className="text-sm" style={{ color: 'var(--muted)' }}>Enter an amount and a duration to preview the schedule. Funds vest in a straight line from the moment you create the stream.</p>
+          )}
         </div>
       </Card>
 
@@ -332,7 +316,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
               <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
                     style={{ background: step !== 'idle' ? 'var(--success-muted)' : 'var(--surface-strong)',
                              color: step !== 'idle' ? 'var(--success)' : 'var(--subtle)',
-                             border: `1px solid ${step !== 'idle' ? 'rgba(94,207,138,0.3)' : 'var(--border)'}` }}>
+                             border: `1px solid ${step !== 'idle' ? 'color-mix(in srgb, var(--success) 30%, transparent)' : 'var(--border)'}` }}>
                 {step !== 'idle' ? '✓' : '1'}
               </span>
               Allow USDC
@@ -341,7 +325,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
               <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
                     style={{ background: isDone ? 'var(--success-muted)' : 'var(--surface-strong)',
                              color: isDone ? 'var(--success)' : 'var(--subtle)',
-                             border: `1px solid ${isDone ? 'rgba(94,207,138,0.3)' : 'var(--border)'}` }}>
+                             border: `1px solid ${isDone ? 'color-mix(in srgb, var(--success) 30%, transparent)' : 'var(--border)'}` }}>
                 {isDone ? '✓' : '2'}
               </span>
               Create stream
@@ -351,7 +335,7 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
           {/* Insufficient funds warning */}
           {insufficientFunds && (
             <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs"
-                 style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)', color: 'var(--danger)' }}>
+                 style={{ background: 'var(--danger-muted)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)', color: 'var(--danger)' }}>
               <AlertTriangle size={13} className="shrink-0 mt-0.5" />
               <span>You need {amount} USDC but have {balFmt}. Get USDC on Arc first.</span>
             </div>
@@ -371,18 +355,35 @@ function CreateStream({ address, onReset }: { address: `0x${string}`; onReset: (
             </PrimaryButton>
           )}
 
-          <TxStatus isPending={isApproving} isConfirming={!isApproving && step === 'approving'}
-                    hash={approveHash} explorerUrl={explorerTx} successMsg="Allowed" />
+          {step === 'approving' && !approveError && (
+            <TxStatus isPending={isApproving} isConfirming={!isApproving} hash={approveHash} explorerUrl={explorerTx} successMsg="Allowed" />
+          )}
+          {step === 'approving' && approveError && (
+            <>
+              <TxStatus isError errorMsg={friendlyTxError(approveError)} />
+              <GhostButton onClick={() => setStep('idle')}>Try again</GhostButton>
+            </>
+          )}
+          {step === 'creating' && createError && (
+            <>
+              <TxStatus isError errorMsg={friendlyTxError(createError)} />
+              <GhostButton onClick={() => setStep('approved')}>Try again</GhostButton>
+            </>
+          )}
+          {step === 'creating' && !createError && (isCreating || createLoading) && (
+            <TxStatus isPending={isCreating} isConfirming={!isCreating} hash={createHash} explorerUrl={explorerTx} />
+          )}
         </Card>
 
         {/* Errors */}
         {errors.length > 0 && (
           <div className="rounded-xl px-4 py-3 text-sm space-y-1"
-               style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)', color: 'var(--danger)' }}>
+               style={{ background: 'var(--danger-muted)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)', color: 'var(--danger)' }}>
             {errors.map((e, i) => <p key={i}>{e}</p>)}
           </div>
         )}
       </div>
+    </div>
     </div>
   )
 }
@@ -488,7 +489,7 @@ function MyStreams({ address }: { address: `0x${string}` }) {
       {/* Pending withdrawal banner */}
       {pending !== undefined && pending > 0n && (
         <div className="flex items-center justify-between gap-4 rounded-2xl px-5 py-4"
-             style={{ background: 'var(--warning-muted)', border: '1px solid rgba(245,192,90,0.25)' }}>
+             style={{ background: 'var(--warning-muted)', border: '1px solid color-mix(in srgb, var(--warning) 25%, transparent)' }}>
           <div>
             <Label>Pending withdrawal</Label>
             <p className="font-display font-bold text-xl tabular-nums mt-0.5" style={{ color: 'var(--warning)', letterSpacing: '-0.02em' }}>
@@ -499,7 +500,7 @@ function MyStreams({ address }: { address: `0x${string}` }) {
           <button
             onClick={handleWithdraw} disabled={isWithdrawing}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] disabled:opacity-50 shrink-0"
-            style={{ background: 'var(--warning)', color: '#080f1a' }}
+            style={{ background: 'var(--warning)', color: 'var(--on-accent)' }}
           >
             {isWithdrawing && <Loader2 size={13} className="animate-spin" />}
             {isWithdrawing ? 'Withdrawing…' : 'Withdraw'}
@@ -551,7 +552,7 @@ function StreamCard({ streamId, data, address, onRefresh }: {
       {/* Header */}
       <button
         onClick={() => setExpanded(x => !x)}
-        className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors hover:bg-white/[0.03]"
+        className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors hover:bg-[var(--surface-hover)]"
       >
         <div className="flex items-center gap-3 min-w-0">
           <span className="font-mono text-sm font-semibold shrink-0" style={{ color: 'var(--accent)' }}>
@@ -619,7 +620,7 @@ function StreamCard({ streamId, data, address, onRefresh }: {
             {isGrantor && !data.cancelled && (
               isCompleted ? (
                 <div className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium"
-                     style={{ color: 'var(--success)', border: '1px solid rgba(94,207,138,0.25)', background: 'var(--success-muted)' }}>
+                     style={{ color: 'var(--success)', border: '1px solid color-mix(in srgb, var(--success) 25%, transparent)', background: 'var(--success-muted)' }}>
                   <CheckCircle2 size={14} />
                   Closed, fully claimed
                 </div>
@@ -627,7 +628,7 @@ function StreamCard({ streamId, data, address, onRefresh }: {
                 <button
                   onClick={handleCancel} disabled={isCancelling}
                   className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-[var(--danger-muted)] disabled:opacity-50"
-                  style={{ color: 'var(--danger)', border: '1px solid rgba(232,109,122,0.25)' }}
+                  style={{ color: 'var(--danger)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)' }}
                 >
                   <XCircle size={14} />
                   {isCancelling ? 'Cancelling…' : 'Cancel'}

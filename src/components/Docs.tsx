@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import {
   Send, Clock, Users, Layers, ShieldCheck,
   FileText, TrendingUp, ChevronDown, ChevronRight,
-  ExternalLink, Info, CheckCircle2, AlertTriangle,
+  ExternalLink, Info, CheckCircle2, AlertTriangle, Waypoints,
 } from 'lucide-react'
 import { PageHeader, Card } from './ui'
 
@@ -68,14 +68,6 @@ const SECTIONS: Section[] = [
       {
         q: 'What happens if I make a mistake?',
         a: 'Blockchain transactions are irreversible. If you send to the wrong address, the funds cannot be recovered. Always verify addresses and amounts carefully before confirming.',
-      },
-      {
-        q: 'Does it work in Brave browser?',
-        a: 'Yes. If transaction confirmations seem slow with Brave Shields enabled, the app uses HTTP polling instead of WebSockets to detect confirmations, so it works correctly with Shields on. If you still see issues, click the Brave Shields icon and set fingerprinting to Standard.',
-      },
-      {
-        q: 'Why does MetaMask show a phishing warning?',
-        a: 'New dapps sometimes trigger MetaMask\'s phishing detector until they are whitelisted. RacconPay is a non-custodial app with no admin keys and it cannot move funds without your explicit MetaMask approval. If you see the warning, click "Connect anyway" so it is safe.',
       },
     ],
   },
@@ -142,14 +134,14 @@ const SECTIONS: Section[] = [
     id: 'multisig',
     icon: ShieldCheck,
     accent: 'var(--pay-accent)',
-    title: 'Multi-Sig Payout',
+    title: 'Payouts with approval',
     intro:
       'A safety layer for large payrolls. The proposer nominates two co-signers who must both approve before any funds move. Only the proposer can execute the co-signers can approve or reject but cannot trigger the payout themselves. Proposals are only visible to the three participants.',
     steps: [
       {
         num: 1,
         title: 'Create a proposal',
-        body: 'Go to Multi-Sig, fill in a description, add two co-signer wallet addresses, and upload your recipient list. Click "Create Proposal" and this records the proposal on-chain. Use "Copy invite link" to share the proposal URL directly with each co-signer.',
+        body: 'Go to Payouts, add your recipient list, and under "How should this be released?" choose Require approval. Add a description and two co-signer wallet addresses, then click "Create approval request". This records the request on-chain. Use "Copy invite link" on the Approvals tab to share it with each co-signer.',
       },
       {
         num: 2,
@@ -194,8 +186,8 @@ const SECTIONS: Section[] = [
         a: 'The proposal is cancelled immediately and the proposer sees a red "Rejected by co-signer" banner on their proposal card. The proposer can create a new proposal with corrected details.',
       },
     ],
-    link: '/multisig',
-    linkLabel: 'Open Multi-Sig →',
+    link: '/pay?tab=approvals',
+    linkLabel: 'Open Approvals →',
   },
   {
     id: 'vesting',
@@ -504,12 +496,33 @@ const SECTIONS: Section[] = [
     linkLabel: 'Open Swap →',
   },
   {
+    id: 'bridge',
+    icon: Waypoints,
+    accent: 'var(--vest-accent)',
+    title: 'Bridge into Arc',
+    intro:
+      'Send USDC and EURC to Arc Mainnet or from it, with Ethereum, Base, Avalanche or Solana on the other side, using the route you are most comfortable with. The Bridge page uses real funds and transfers cannot be reversed, so check the chains and addresses and start with a small amount.',
+    steps: [
+      { num: 1, title: 'Pick a provider', body: 'CCTP is Circle\'s native transfer and suits a one-off move. Gateway keeps one USDC balance across chains and suits frequent moves. Other providers show a status, and an unavailable one explains why.' },
+      { num: 2, title: 'Choose From and To, then review', body: 'Pick where the funds start (From) and where they should arrive (To). One side is always Arc, and the swap button flips the direction. Then pick the token and amount and set the receiving address (your wallet by default). The review shows the route, the fees and the speed before anything is sent.' },
+      { num: 3, title: 'Confirm', body: 'Click the action button and confirm in your wallet. Nothing is sent until you do. With CCTP, an interrupted transfer can be resumed. With Gateway, you first deposit to your unified balance on the From chain, then send it to the To chain. When sending from Arc, Circle completes the transfer on the other chain for a small forwarding fee, so you need no gas there.' },
+    ],
+    faqs: [
+      { q: 'CCTP or Gateway?', a: 'CCTP burns on the source chain and mints on Arc, and works for USDC and EURC (EURC on EVM routes). Gateway needs a deposit first, then sends USDC to Arc in under a second, and is better if you move USDC often or hold it on several chains.' },
+      { q: 'When is Across available?', a: 'Across appears as ready only when its own service lists Arc. It works both ways between Arc and Ethereum, Base or Avalanche, with USDC. Solana is not supported through Across, so use CCTP for that.' },
+      { q: 'What do the Bridge numbers mean?', a: 'For CCTP they count every Circle transfer minted on Arc (sending to Arc) or burned on it (sending from Arc) since the first sync on this device, not only RacconPay users. For Gateway they are your own transfers on this device, because nothing of RacconPay\'s holds the funds.' },
+      { q: 'Why is EURC missing on Solana and Gateway?', a: 'EURC bridging is available on supported EVM routes through CCTP only. The review step tells you when a route does not support a token.' },
+    ],
+    link: '/bridge',
+    linkLabel: 'Open Bridge →',
+  },
+  {
     id: 'escrow',
     icon: ShieldCheck,
     accent: 'var(--split-accent)',
     title: 'Milestone Escrow',
     intro:
-      'Lock USDC or EURC for someone and release it milestone by milestone. Runs on Arc Mainnet with real funds and has not had an independent audit, so start with small amounts.',
+      'Lock USDC or EURC for someone and release it milestone by milestone. Runs on Arc Mainnet with real funds, so start with small amounts.',
     steps: [
       { num: 1, title: 'Create and fund', body: 'Choose the currency, the payee, an optional arbiter, up to 20 milestone amounts, a review window and a refund deadline. You approve the total, then lock it.' },
       { num: 2, title: 'Payee submits a milestone', body: 'When work is done the payee submits the milestone, optionally with a link or note.' },
@@ -519,7 +532,7 @@ const SECTIONS: Section[] = [
     ],
     notes: [
       'If a payout cannot be sent directly, for example because a token issuer blocked an address, it is held for that address and shown under "Ready to withdraw".',
-      'Batch Pay, Vesting, Bill Split and Multi-Sig remain USDC only. Invoices support USDC and EURC.',
+      'Payouts (with or without approval), Vesting and Bill Split remain USDC only. Invoices support USDC and EURC.',
     ],
     link: '/escrow',
     linkLabel: 'Open Escrow →',
@@ -540,6 +553,7 @@ const AUDIENCE: Record<string, Audience> = {
   'receipts':        'enterprise',
   'bill-split':      'personal',
   'swap':            'personal',
+  'bridge':          'personal',
 }
 
 const AUDIENCE_GROUPS: { key: Audience; title: string | null }[] = [

@@ -7,12 +7,17 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useAccount, useReadContract, useReadContracts, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
-  Wallet, TrendingUp, ShieldCheck, Users, Layers, Send,
+  Wallet, TrendingUp, ShieldCheck, Layers, Send,
   ArrowUpRight, ArrowDownRight, Clock, AlertCircle,
   CheckCircle2, XCircle, Loader2, RefreshCw, ExternalLink, Shield,
   PieChart, FileText, Handshake,
 } from 'lucide-react'
 import InvoiceDashboard from './InvoiceDashboard'
+import ActivityTable, { BUSINESS_TYPES } from './ActivityTable'
+import { PageHeader } from './ui'
+import { useActivity } from '../lib/activity'
+import { EmptyState } from './kit/States'
+import { ConnectKitButton } from 'connectkit'
 import StablecoinBalances from './StablecoinBalances'
 import EscrowSummary from './escrow/EscrowSummary'
 import {
@@ -70,7 +75,7 @@ function Row({
       </div>
       <div className="flex items-center gap-1.5">
         {arrow === 'up'   && <ArrowUpRight   size={12} style={{ color: 'var(--success)' }} />}
-        {arrow === 'down' && <ArrowDownRight  size={12} style={{ color: 'var(--error)'   }} />}
+        {arrow === 'down' && <ArrowDownRight  size={12} style={{ color: 'var(--danger)'   }} />}
         <span className="text-sm font-semibold tabular-nums" style={{ color: accent ?? 'var(--ink)' }}>
           {value}
         </span>
@@ -206,7 +211,7 @@ function MultiSigSection({ address }: { address: `0x${string}` }) {
     return (
       <GlowCard accentColor="var(--pay-accent)" className="p-4">
         <p className="text-xs text-center py-2" style={{ color: 'var(--subtle)' }}>
-          No proposals. <Link to="/multisig" className="underline" style={{ color: 'var(--pay-accent)' }}>Create one →</Link>
+          No proposals. <Link to="/pay?tab=approvals" className="underline" style={{ color: 'var(--pay-accent)' }}>Create one →</Link>
         </p>
       </GlowCard>
     )
@@ -260,7 +265,7 @@ function MultiSigSection({ address }: { address: `0x${string}` }) {
   )
 }
 
-function BillsSection({ address }: { address: `0x${string}` }) {
+export function BillsSection({ address }: { address: `0x${string}` }) {
   const { data: billIds } = useReadContract({
     address: BILL_SPLITTER_ADDRESS, abi: BILL_SPLITTER_ABI,
     functionName: 'billsOf', args: [address], chainId: ARC_CHAIN_ID,
@@ -327,7 +332,7 @@ function BillsSection({ address }: { address: `0x${string}` }) {
       <Row label={`${openBills} open bill${openBills !== 1 ? 's' : ''}, ${settledBills} settled`}
         value="" sub={`${ids.length} total`} />
       {totalOwed > 0n && (
-        <Row label="You owe (remaining)" value={`${fmt(totalOwed)} USDC`} accent="var(--error)" arrow="up" />
+        <Row label="You owe (remaining)" value={`${fmt(totalOwed)} USDC`} accent="var(--danger)" arrow="up" />
       )}
       {totalOwedToYou > 0n && (
         <Row label="Owed to you" value={`${fmt(totalOwedToYou)} USDC`} accent="var(--success)" arrow="down" />
@@ -701,7 +706,7 @@ function ReceiptsTab({ address }: { address: `0x${string}` }) {
                 </span>
               </div>
               <a href={explorerAddr(RECEIPT_NFT_ADDRESS)} target="_blank" rel="noreferrer"
-                className="p-1.5 rounded-lg transition-colors hover:bg-white/5"
+                className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]"
                 style={{ color: 'var(--subtle)' }}>
                 <ExternalLink size={14} />
               </a>
@@ -760,24 +765,22 @@ const TABS: { id: Tab; label: string; icon: React.ElementType; accent: string }[
 
 function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
   return (
-    <div
-      className="flex items-center gap-1 p-1 rounded-2xl w-fit"
-      style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-    >
-      {TABS.map(({ id, label, icon: Icon, accent }) => {
+    <div role="tablist" aria-label="Dashboard sections" className="flex items-center gap-1 overflow-x-auto no-scrollbar" style={{ borderBottom: '1px solid var(--border)' }}>
+      {TABS.map(({ id, label, icon: Icon }) => {
         const isActive = active === id
         return (
           <button
             key={id}
+            role="tab"
+            aria-selected={isActive}
             onClick={() => onChange(id)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150"
+            className="flex items-center gap-2 px-4 min-h-[44px] text-sm font-medium whitespace-nowrap -mb-px transition-colors"
             style={{
-              color:      isActive ? accent           : 'var(--muted)',
-              background: isActive ? `color-mix(in srgb, ${accent} 12%, var(--bg))` : 'transparent',
-              border:     isActive ? `1px solid color-mix(in srgb, ${accent} 25%, transparent)` : '1px solid transparent',
+              color: isActive ? 'var(--accent)' : 'var(--muted)',
+              borderBottom: `2px solid ${isActive ? 'var(--accent)' : 'transparent'}`,
             }}
           >
-            <Icon size={14} />
+            <Icon size={15} aria-hidden="true" />
             {label}
           </button>
         )
@@ -810,7 +813,7 @@ export default function DashboardPage() {
   }
 
   /* ── Summary reads for the hero bar (Overview tab only) ── */
-  const { data: usdcBalance, refetch: refetchBalance } = useReadContract({
+  const { data: usdcBalance } = useReadContract({
     address: USDC_ADDRESS, abi: ERC20_ABI, functionName: 'balanceOf',
     args: [address ?? '0x0000000000000000000000000000000000000000'],
     chainId: ARC_CHAIN_ID, query: { enabled: isConnected && !!address, refetchInterval: 30_000 },
@@ -825,27 +828,28 @@ export default function DashboardPage() {
     args: [address ?? '0x0000000000000000000000000000000000000000'],
     chainId: ARC_CHAIN_ID, query: { enabled: isConnected && !!address },
   })
-  const { data: billIds } = useReadContract({
-    address: BILL_SPLITTER_ADDRESS, abi: BILL_SPLITTER_ABI, functionName: 'billsOf',
-    args: [address ?? '0x0000000000000000000000000000000000000000'],
-    chainId: ARC_CHAIN_ID, query: { enabled: isConnected && !!address },
-  })
   const { data: proposalCount } = useReadContract({
     address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'proposalCount',
     chainId: ARC_CHAIN_ID, query: { enabled: isConnected },
   })
+  const { data: pendingWithdrawal } = useReadContract({
+    address: VESTING_STREAM_ADDRESS, abi: VESTING_STREAM_ABI, functionName: 'pendingWithdrawals',
+    args: [address ?? '0x0000000000000000000000000000000000000000'],
+    chainId: ARC_CHAIN_ID, query: { enabled: isConnected && !!address },
+  })
+  const activity = useActivity(address)
 
   if (!isConnected || !address) {
     return (
-      <div className="flex flex-col items-center justify-center gap-5 py-24">
-        <span className="flex items-center justify-center w-14 h-14 rounded-2xl"
-          style={{ background: 'color-mix(in srgb, var(--accent) 10%, transparent)' }}>
-          <Wallet size={24} style={{ color: 'var(--accent)' }} />
-        </span>
-        <div className="text-center">
-          <p className="text-base font-semibold" style={{ color: 'var(--ink)' }}>Connect your wallet</p>
-          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>Your portfolio summary appears here once connected.</p>
-        </div>
+      <div className="flex flex-col gap-5">
+        <PageHeader icon={PieChart} title="Overview" subtitle="Your balance, payments and activity on Arc Mainnet." />
+        <Card>
+          <EmptyState
+            icon={Wallet} title="Connect your wallet"
+            body="Your overview is read from the chain for the connected wallet only."
+            action={<ConnectKitButton />}
+          />
+        </Card>
       </div>
     )
   }
@@ -853,75 +857,11 @@ export default function DashboardPage() {
   const balance   = (usdcBalance) ?? 0n
   const receipts  = (receiptIds as bigint[] | undefined) ?? []
   const streams   = (streamIds  as bigint[] | undefined) ?? []
-  const bills     = (billIds    as bigint[] | undefined) ?? []
   const proposals = Number((proposalCount) ?? 0n)
-
-  // Generate a deterministic avatar colour from the address
-  const avatarHue = parseInt(address.slice(2, 6), 16) % 360
-  const avatarBg  = `hsl(${avatarHue}, 55%, 52%)`
 
   return (
     <div className="flex flex-col gap-6">
-      {/* ── Wallet identity card ─────────────────────────────── */}
-      <div
-        className="flex items-center gap-4 p-5 rounded-3xl"
-        style={{
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-        }}
-      >
-        {/* Avatar circle, deterministic colour from address */}
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 font-display font-bold text-xl text-white select-none"
-          style={{ background: avatarBg }}
-        >
-          {address.slice(2, 4).toUpperCase()}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] mb-0.5" style={{ color: 'var(--subtle)' }}>
-            Connected Wallet
-          </p>
-          <p className="font-mono text-sm font-semibold truncate" style={{ color: 'var(--ink)' }}>
-            {address}
-          </p>
-          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-            <span
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
-              style={{ background: 'rgba(74,140,92,0.10)', color: 'var(--success)', border: '1px solid rgba(74,140,92,0.22)' }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--success)' }} />
-              Arc Mainnet
-            </span>
-            <a
-              href={explorerAddr(address)}
-              target="_blank" rel="noreferrer"
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-opacity hover:opacity-70"
-              style={{ background: 'var(--surface-strong)', color: 'var(--muted)', border: '1px solid var(--border-strong)' }}
-            >
-              View on Explorer <ExternalLink size={9} />
-            </a>
-          </div>
-        </div>
-        {/* USDC balance, large */}
-        <div className="text-right shrink-0 hidden sm:block">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: 'var(--subtle)' }}>Balance</p>
-          <p className="font-display font-bold tabular-nums" style={{ fontSize: 28, color: 'var(--ink)', lineHeight: 1.1 }}>
-            {fmt(balance)}
-          </p>
-          <div className="flex items-center justify-end gap-1.5 mt-0.5">
-            <p className="text-xs" style={{ color: 'var(--muted)' }}>USDC</p>
-            <button
-              onClick={() => void refetchBalance()}
-              className="flex items-center justify-center w-5 h-5 rounded-full transition-colors hover:opacity-70"
-              style={{ color: 'var(--muted)' }}
-              title="Refresh balance"
-            >
-              <RefreshCw size={11} />
-            </button>
-          </div>
-        </div>
-      </div>
+      <PageHeader icon={PieChart} title="Overview" subtitle="Your balance, payments and activity on Arc Mainnet." />
 
       {/* ── Tab bar ─────────────────────────────────────────── */}
       <TabBar active={activeTab} onChange={handleTabChange} />
@@ -932,56 +872,49 @@ export default function DashboardPage() {
       {activeTab === 'overview' && (
         <div className="flex flex-col gap-6">
 
-          {/* Activity chips */}
-          <div
-            className="relative overflow-hidden rounded-2xl p-4"
-            style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-          >
-            <div className="flex flex-wrap gap-2">
+          {/* Financial overview, real reads only */}
+          <section aria-label="Financial overview" className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-3">
+            <StatCard label="USDC balance" value={usdcBalance === undefined ? '-' : fmt(balance)} sub="In your wallet" icon={Wallet} />
+            <StatCard label="Total payments sent" value={activity.isLoading ? '-' : `${fmt(activity.totalSent)} USDC`} sub={activity.totalReceipts > 50 ? 'Latest 50 batches' : 'Across your batch payouts'} icon={Send} />
+            <StatCard label="Pending withdrawals" value={pendingWithdrawal === undefined ? '-' : `${fmt(pendingWithdrawal)} USDC`} sub="Vesting credits ready to withdraw" icon={Clock} />
+            <StatCard label="Batch payouts" value={receiptIds === undefined ? '-' : receipts.length.toString()} sub="Each is one transaction" icon={Layers} />
+          </section>
+
+          {/* Quick actions */}
+          <section aria-label="Quick actions">
+            <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--ink)' }}>Quick actions</h2>
+            <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-5 gap-3">
               {[
-                { icon: Layers,      label: `${receipts.length} receipt${receipts.length !== 1 ? 's' : ''}`,  accent: 'var(--receipt-accent)', tab: 'receipts' as Tab },
-                { icon: TrendingUp,  label: `${streams.length} stream${streams.length !== 1 ? 's' : ''}`,     accent: 'var(--vest-accent)',    tab: 'streams'  as Tab },
-                { icon: Users,       label: `${bills.length} bill${bills.length !== 1 ? 's' : ''}`,           accent: 'var(--split-accent)',   to: '/split'           },
-                { icon: ShieldCheck, label: `${proposals} proposal${proposals !== 1 ? 's' : ''}`,             accent: 'var(--pay-accent)',     to: '/multisig'        },
-              ].map(({ icon: Icon, label, accent, tab, to }) => (
-                tab ? (
-                  <button
-                    key={label}
-                    onClick={() => handleTabChange(tab)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:opacity-80"
-                    style={{
-                      background: `color-mix(in srgb, ${accent} 10%, var(--surface))`,
-                      border: `1px solid color-mix(in srgb, ${accent} 22%, transparent)`,
-                      color: accent,
-                    }}
-                  >
-                    <Icon size={11} />{label}
-                  </button>
-                ) : (
-                  <Link
-                    key={label}
-                    to={to}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:opacity-80"
-                    style={{
-                      background: `color-mix(in srgb, ${accent} 10%, var(--surface))`,
-                      border: `1px solid color-mix(in srgb, ${accent} 22%, transparent)`,
-                      color: accent,
-                    }}
-                  >
-                    <Icon size={11} />{label}
-                  </Link>
-                )
+                { to: '/pay',      label: 'Send batch payment',    icon: Send },
+                { to: '/vesting',  label: 'Create vesting stream', icon: Clock },
+                { to: '/invoice',  label: 'Create invoice',        icon: FileText },
+                { to: '/pay?tab=approvals', label: 'Review approvals',  icon: ShieldCheck },
+                { to: '/escrow',   label: 'Open escrow',           icon: Handshake },
+              ].map(({ to, label, icon: Icon }) => (
+                <Link key={to} to={to} className="glass card-hover rounded-xl p-4 min-h-[44px] flex items-center gap-3 text-sm font-medium" style={{ color: 'var(--ink)' }}>
+                  <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'var(--accent-muted)' }}>
+                    <Icon size={16} style={{ color: 'var(--accent)' }} aria-hidden="true" />
+                  </span>
+                  {label}
+                </Link>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard label="Receipts"   value={receipts.length.toString()}  sub="Batches sent" icon={Layers}      accentColor="var(--receipt-accent)" />
-            <StatCard label="Streams"    value={streams.length.toString()}   sub="Vesting"      icon={TrendingUp}  accentColor="var(--vest-accent)"    />
-            <StatCard label="Bills"      value={bills.length.toString()}     sub="Split"        icon={Users}       accentColor="var(--split-accent)"   />
-            <StatCard label="Proposals"  value={proposals.toString()}        sub="Multi-sig"    icon={ShieldCheck} accentColor="var(--pay-accent)"     />
-          </div>
+          {/* Recent activity */}
+          <section aria-label="Recent activity" className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Recent activity</h2>
+              <Link to="/history" className="text-sm font-medium hover:underline" style={{ color: 'var(--accent)' }}>View all</Link>
+            </div>
+            <ActivityTable rows={activity.rows.filter(r => r.scope === 'business')} typeOptions={BUSINESS_TYPES} loading={activity.isLoading} error={activity.isError} onRetry={() => void activity.refetch()} pageSize={5} />
+          </section>
+
+          {/* Your records */}
+          <section aria-label="Your records" className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-3">
+            <StatCard label="Vesting streams" value={streams.length.toString()} sub="Created or received" icon={TrendingUp} />
+            <StatCard label="Proposals"       value={proposals.toString()}      sub="Approvals (all wallets)" icon={ShieldCheck} />
+          </section>
 
           {/* USDC and EURC balances on both Arc networks */}
           <StablecoinBalances address={address} />
@@ -993,9 +926,6 @@ export default function DashboardPage() {
             </Section>
             <Section icon={ShieldCheck} title="Multi-Sig Proposals" accent="var(--pay-accent)">
               <MultiSigSection address={address} />
-            </Section>
-            <Section icon={Users}       title="Bill Splitter"       accent="var(--split-accent)">
-              <BillsSection address={address} />
             </Section>
             <Section icon={Send}        title="Batch Payouts"       accent="var(--receipt-accent)">
               <ReceiptsSummarySection address={address} />

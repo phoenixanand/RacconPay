@@ -98,7 +98,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
     return (
       <Card strong className="p-8 flex flex-col items-center text-center gap-5 max-w-md">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
-             style={{ background: 'var(--success-muted)', border: '1px solid rgba(94,207,138,0.25)' }}>
+             style={{ background: 'var(--success-muted)', border: '1px solid color-mix(in srgb, var(--success) 25%, transparent)' }}>
           <CheckCircle2 size={32} style={{ color: 'var(--success)' }} />
         </div>
         <div>
@@ -130,7 +130,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
           <Label>Payee wallet address</Label>
           <input className={`${input} font-mono text-xs mt-1.5`} style={inputStyle} placeholder="0x…"
                  value={beneficiary} onChange={e => setBeneficiary(e.target.value.trim())} />
-          <input className={`${input} mt-2`} style={inputStyle} placeholder="Name or employee ID (optional, saved in this browser only)"
+          <input className={`${input} mt-2`} style={inputStyle} placeholder="Name or employee ID (optional)"
                  maxLength={80} value={label} onChange={e => setLabelText(e.target.value)} />
         </div>
         <div className="p-5">
@@ -170,7 +170,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
               </span>
             </label>
             {useYield && (
-              <div className="rounded-xl p-3.5 flex flex-col gap-2.5" style={{ background: 'var(--warning-muted)', border: '1px solid rgba(245,192,90,0.25)' }}>
+              <div className="rounded-xl p-3.5 flex flex-col gap-2.5" style={{ background: 'var(--warning-muted)', border: '1px solid color-mix(in srgb, var(--warning) 25%, transparent)' }}>
                 <p className="text-xs text-pretty" style={{ color: 'var(--warning)' }}>
                   The deposited part can lose value and may not be withdrawable instantly. The payee is always paid their
                   vested amount first, and any loss comes out of your unvested part first. If the vault cannot pay out, claims can
@@ -203,7 +203,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
           </div>
           {insufficient && (
             <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs"
-                 style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)', color: 'var(--danger)' }}>
+                 style={{ background: 'var(--danger-muted)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)', color: 'var(--danger)' }}>
               <AlertTriangle size={13} className="shrink-0 mt-0.5" />
               <span>You need {amount} USDC but have {balance !== undefined ? formatUsdc(balance) : '0'}.</span>
             </div>
@@ -221,7 +221,7 @@ export default function CreateStreamV2({ address, chainId, vestingAddress, yield
         </Card>
         {errors.length > 0 && (
           <div className="rounded-xl px-4 py-3 text-sm space-y-1"
-               style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)', color: 'var(--danger)' }}>
+               style={{ background: 'var(--danger-muted)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)', color: 'var(--danger)' }}>
             {errors.map(e => <p key={e}>{e}</p>)}
           </div>
         )}

@@ -203,7 +203,7 @@ export default function InvoiceDashboard() {
         <StatTile icon={FileText}     label="Total invoiced"  value={`${totalInvoiced.toFixed(2)}`}  sub={`${token} all time`}       accent="var(--receipt-accent)" />
         <StatTile icon={CheckCircle2} label="Total collected" value={`${totalPaid.toFixed(2)}`}      sub={`${collectionRate}% collection rate`} accent="var(--success)" />
         <StatTile icon={Clock}        label="Outstanding"     value={`${totalOutstanding.toFixed(2)}`} sub={`${unpaidCount} unpaid invoice${unpaidCount !== 1 ? 's' : ''}`} accent="var(--vest-accent)" />
-        <StatTile icon={AlertTriangle} label="Overdue"        value={String(overdueCount)}            sub={overdueCount > 0 ? 'Need attention' : 'All good'} accent="var(--error)" />
+        <StatTile icon={AlertTriangle} label="Overdue"        value={String(overdueCount)}            sub={overdueCount > 0 ? 'Need attention' : 'All good'} accent="var(--danger)" />
       </div>
 
       {/* Secondary stats */}
@@ -251,7 +251,7 @@ export default function InvoiceDashboard() {
                     {inv.amount} <span className="text-xs font-normal" style={{ color: 'var(--muted)' }}>{invoiceToken(inv)}</span>
                   </span>
                   {inv.dueDate && (
-                    <span className="text-xs" style={{ color: s === 'overdue' ? 'var(--error)' : 'var(--subtle)' }}>
+                    <span className="text-xs" style={{ color: s === 'overdue' ? 'var(--danger)' : 'var(--subtle)' }}>
                       Due {inv.dueDate}
                     </span>
                   )}

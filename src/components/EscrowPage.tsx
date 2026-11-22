@@ -5,13 +5,13 @@
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
 import { Handshake, Plus } from 'lucide-react'
-import { Card, GhostButton, PageHeader, AlertBox } from './ui'
+import { Card, GhostButton, PageHeader } from './ui'
 import ChainGuard from './ChainGuard'
 import CreateEscrow from './escrow/CreateEscrow'
 import EscrowCard from './escrow/EscrowCard'
 import EscrowCredits from './escrow/EscrowCredits'
 import { useEscrows } from './escrow/useEscrows'
-import { ARC_CHAIN_ID, ESCROW_ADDRESS, explorerAddr } from '../constants'
+import { ARC_CHAIN_ID } from '../constants'
 
 type Filter = 'all' | 'payer' | 'payee' | 'arbiter'
 
@@ -83,16 +83,6 @@ export default function EscrowPage() {
         subtitle="Lock USDC or EURC against milestones. Release on approval, with an optional arbiter for disputes."
         accentColor="var(--split-accent)"
       />
-      <AlertBox variant="info">
-        Arc Mainnet uses real USDC and EURC and every transaction is final. This escrow contract has not had an
-        independent audit, so start with a small test escrow. Contract:{' '}
-        <a
-          href={explorerAddr(ESCROW_ADDRESS)}
-          target="_blank" rel="noreferrer" className="underline font-mono"
-        >
-          {ESCROW_ADDRESS.slice(0, 10)}…{ESCROW_ADDRESS.slice(-6)}
-        </a>
-      </AlertBox>
       <ChainGuard chainId={ARC_CHAIN_ID}>
         {address && <EscrowBoard address={address} />}
       </ChainGuard>

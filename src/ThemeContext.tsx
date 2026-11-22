@@ -8,16 +8,16 @@ import { Sun, Moon } from 'lucide-react'
 type Theme = 'dark' | 'light'
 
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
-  theme: 'dark',
+  theme: 'light',
   toggle: () => {},
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('racconpay-theme') as Theme) ?? 'dark'
+      return (localStorage.getItem('racconpay-theme') as Theme) ?? 'light'
     }
-    return 'dark'
+    return 'light'
   })
 
   useEffect(() => {
@@ -44,13 +44,9 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
   return (
     <button
       onClick={toggle}
-      aria-label="Toggle theme"
-      className={`flex items-center justify-center w-8 h-8 rounded-xl transition-all hover:scale-110 active:scale-95 ${className}`}
-      style={{
-        background: 'var(--surface-strong)',
-        border: '1px solid var(--border-strong)',
-        color: 'var(--muted)',
-      }}
+      aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+      className={`flex items-center justify-center w-9 h-9 rounded-lg transition-colors hover:bg-[var(--surface-hover)] ${className}`}
+      style={{ border: '1px solid var(--border)', color: 'var(--muted)', background: 'var(--surface)' }}
     >
       {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
     </button>

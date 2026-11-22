@@ -95,7 +95,7 @@ export default function StreamCardV2({ streamId, stream, address, chainId, vesti
   return (
     <Card className="overflow-hidden">
       <button onClick={() => setExpanded(x => !x)}
-              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors hover:bg-white/[0.03]">
+              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors hover:bg-[var(--surface-hover)]">
         <div className="flex items-center gap-3 min-w-0">
           <span className="font-mono text-sm font-semibold shrink-0" style={{ color: 'var(--accent)' }}>#{streamId.toString()}</span>
           <Badge variant={statusVariant}>{statusLabel}</Badge>
@@ -213,18 +213,18 @@ export default function StreamCardV2({ streamId, stream, address, chainId, vesti
               ) : !confirmCancel ? (
                 <button onClick={() => setConfirmCancel(true)}
                         className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-[var(--danger-muted)]"
-                        style={{ color: 'var(--danger)', border: '1px solid rgba(232,109,122,0.25)' }}>
+                        style={{ color: 'var(--danger)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)' }}>
                   <XCircle size={14} /> Cancel stream
                 </button>
               ) : (
-                <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)' }}>
+                <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: 'var(--danger-muted)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)' }}>
                   <p className="text-sm text-pretty" style={{ color: 'var(--danger)' }}>
                     Cancelling pays the payee everything vested so far ({formatUsdc(vested)} USDC, minus what they already claimed)
                     and returns {formatUsdc(unvested)} USDC to you. This cannot be undone.
                     {hasYield && ' If part of the funds is in the vault and it cannot pay out right now, the rest is paid later through "Retry payout from the vault", beneficiary first.'}
                   </p>
                   <div className="flex gap-2">
-                    <button className="flex-1 px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: 'var(--danger)', color: '#fff8f0' }}
+                    <button className="flex-1 px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: 'var(--danger)', color: 'var(--on-accent)' }}
                             disabled={cancel.busy} onClick={() => cancel.send({ ...base, functionName: 'cancel' })}>
                       {cancel.busy ? 'Cancelling…' : 'Yes, cancel'}
                     </button>

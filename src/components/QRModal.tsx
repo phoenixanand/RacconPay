@@ -86,7 +86,7 @@ export default function QRModal({ billId, billName, shareAmt, open, onClose }: Q
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg transition-colors hover:bg-white/10"
+          className="absolute top-4 right-4 p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]"
           style={{ color: 'var(--subtle)' }}
         >
           <X size={16} />
@@ -162,7 +162,7 @@ export default function QRModal({ billId, billName, shareAmt, open, onClose }: Q
             style={{
               background: copiedMessage ? 'var(--success-muted)' : 'var(--surface-strong)',
               color:      copiedMessage ? 'var(--success)'       : 'var(--ink-2)',
-              border: `1px solid ${copiedMessage ? 'rgba(94,207,138,0.3)' : 'var(--border-strong)'}`,
+              border: `1px solid ${copiedMessage ? 'color-mix(in srgb, var(--success) 30%, transparent)' : 'var(--border-strong)'}`,
             }}
           >
             {copiedMessage ? <><Check size={14} /> Copied to clipboard!</> : <><Copy size={14} /> Copy invite message</>}

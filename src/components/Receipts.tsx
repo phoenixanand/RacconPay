@@ -84,7 +84,7 @@ function Inner() {
                     </span>
                   </div>
                   <a href={explorerAddr(RECEIPT_NFT_ADDRESS)} target="_blank" rel="noreferrer"
-                     className="p-1.5 rounded-lg transition-colors hover:bg-white/5"
+                     className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]"
                      style={{ color: 'var(--subtle)' }}>
                     <ExternalLink size={14} />
                   </a>

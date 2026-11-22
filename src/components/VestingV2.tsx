@@ -135,14 +135,13 @@ export default function VestingV2() {
              style={{ background: 'var(--accent-muted)', border: '1px solid var(--border-strong)', color: 'var(--ink-2)' }}>
           <FlaskConical size={15} className="shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
           <span className="text-pretty">
-            Arc Testnet uses test USDC, and these contracts have not had an independent audit.
+            Arc Testnet uses test USDC.
           </span>
         </div>
       )}
 
       {chainId === ARC_CHAIN_ID && (
         <AlertBox variant="warning">
-          Arc Mainnet uses real USDC and every transaction is final. These contracts have not had an independent audit.
           Start with a small test stream before locking larger amounts. Yield, if you turn it on, goes through the
           Aave V4 USDC vault: it can pay out less than expected if the vault loses funds, and claims can wait when the
           vault does not have enough cash to pay out.

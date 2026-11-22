@@ -15,8 +15,8 @@ interface Particle {
 }
 
 const COLORS = [
-  '#f59e0b', '#fb923c', '#34d399', '#60a5fa',
-  '#a78bfa', '#f472b6', '#fbbf24', '#4ade80',
+  '#3157d5', '#7b97ff', '#159b65', '#3dd598',
+  '#d99a24', '#e5b045', '#8ea2e8', '#5b78e0',
 ]
 
 function useConfetti(canvas: HTMLCanvasElement | null, active: boolean) {
@@ -146,7 +146,7 @@ export default function SuccessAnimation({
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'var(--success-muted)',
             border: `3px solid var(--success)`,
-            boxShadow: '0 0 24px 4px rgba(52,211,153,0.25)',
+            boxShadow: '0 0 24px 4px color-mix(in srgb, var(--success) 25%, transparent)',
             transform: ring ? 'scale(1)' : 'scale(0)',
             transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
           }}

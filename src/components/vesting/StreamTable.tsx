@@ -121,7 +121,7 @@ export default function StreamTable({ streams, wallet, role, chainId, networkNam
                 const pct = vestedPct(s)
                 return (
                   <Fragment key={s.key}>
-                    <tr onClick={() => setOpenKey(open ? null : s.key)} className="cursor-pointer border-b border-[var(--border)] last:border-0 hover:bg-white/[0.03]">
+                    <tr onClick={() => setOpenKey(open ? null : s.key)} className="cursor-pointer border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)]">
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span className="font-mono font-semibold" style={{ color: 'var(--accent)' }}>#{s.id.toString()}</span>
                         {s.hasYield && <span className="ml-2 text-[10px] font-semibold uppercase" style={{ color: 'var(--success)' }}>yield</span>}

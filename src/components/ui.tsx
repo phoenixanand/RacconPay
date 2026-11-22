@@ -1,67 +1,47 @@
 /**
- * RacconPay v2 shared UI primitives.
- * All colors from CSS vars, never hardcode hex here.
+ * RacconPay shared UI primitives.
+ * All colours come from CSS variables in index.css. Never hardcode hex here.
  *
- * Exports (existing):
- *   Card, Label, PrimaryButton, GhostButton, Input, Badge, Stat, TxStatus, PageHeader
- *
- * New in v2:
- *   GlowCard, StatCard, SectionTitle, Divider, TokenAmountBadge, StepBadge
+ * Exports: Card, GlowCard, StatCard, SectionTitle, Divider, TokenAmountBadge, StepBadge,
+ *          Label, PrimaryButton, GhostButton, Input, Badge, Stat, TxStatus, PageHeader, AlertBox
+ * Props are unchanged from earlier versions so existing pages keep working.
  */
-import React from 'react'
-import { Loader2, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react'
+import React, { useId } from 'react'
+import { Loader2, ExternalLink, CheckCircle2, AlertCircle, XCircle, Info } from 'lucide-react'
 
-/* ══════════════════════════════════════════════════════════════════════
-   CARD
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Card ─────────────────────────────────────────────────────────── */
 export function Card({
   children, className = '', strong = false, style,
 }: {
   children: React.ReactNode; className?: string; strong?: boolean; style?: React.CSSProperties
 }) {
   return (
-    <div className={`rounded-2xl ${strong ? 'glass-strong' : 'glass'} ${className}`} style={style}>
+    <div className={`rounded-xl ${strong ? 'glass-strong' : 'glass'} ${className}`} style={style}>
       {children}
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   GLOW CARD , hover lifts + border glows in accentColor
-   ══════════════════════════════════════════════════════════════════════ */
+/** Card with a hover border. The accent colour props are kept for compatibility and only tint the hover border. */
 export function GlowCard({
-  children, className = '', accentColor = 'var(--accent)', glowColor,
+  children, className = '', accentColor = 'var(--accent)',
 }: {
   children: React.ReactNode
   className?: string
   accentColor?: string
   glowColor?: string
 }) {
-  const glow = glowColor ?? `color-mix(in srgb, ${accentColor} 20%, transparent)`
   return (
     <div
-      className={`glow-card rounded-2xl glass ${className}`}
-      onMouseEnter={e => {
-        const el = e.currentTarget
-        el.style.borderColor = accentColor
-        el.style.boxShadow = `0 0 24px ${glow}`
-        el.style.background = `color-mix(in srgb, ${accentColor} 6%, var(--surface))`
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget
-        el.style.borderColor = ''
-        el.style.boxShadow = ''
-        el.style.background = ''
-      }}
+      className={`glow-card rounded-xl glass hover:!border-[var(--hover-accent)] ${className}`}
+      style={{ '--hover-accent': accentColor } as React.CSSProperties}
     >
       {children}
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   STAT CARD , big number + label + optional icon
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Stat card ────────────────────────────────────────────────────── */
 export function StatCard({
   label, value, sub, icon: Icon, accentColor = 'var(--accent)',
 }: {
@@ -72,89 +52,58 @@ export function StatCard({
   accentColor?: string
 }) {
   return (
-    <div
-      className="flex flex-col gap-2 p-4 rounded-2xl"
-      style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-    >
-      <div className="flex items-center justify-between">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'var(--subtle)' }}>
-          {label}
-        </p>
+    <div className="flex flex-col gap-2 p-4 rounded-xl glass">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-medium" style={{ color: 'var(--muted)' }}>{label}</p>
         {Icon && (
           <span
-            className="w-6 h-6 rounded-lg flex items-center justify-center"
-            style={{ background: `color-mix(in srgb, ${accentColor} 14%, transparent)` }}
+            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: `color-mix(in srgb, ${accentColor} 10%, transparent)` }}
           >
-            <Icon size={12} style={{ color: accentColor }} />
+            <Icon size={14} style={{ color: accentColor }} aria-hidden="true" />
           </span>
         )}
       </div>
-      <div className="font-display font-bold text-xl tabular-nums" style={{ color: 'var(--ink)' }}>{value}</div>
-      {sub && <p className="text-xs" style={{ color: 'var(--subtle)' }}>{sub}</p>}
+      <div className="text-2xl font-semibold tabular-nums tracking-tight break-words" style={{ color: 'var(--ink)' }}>{value}</div>
+      {sub && <p className="text-xs" style={{ color: 'var(--muted)' }}>{sub}</p>}
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   SECTION TITLE
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Section title ────────────────────────────────────────────────── */
 export function SectionTitle({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div className="flex flex-col gap-1 mb-5">
-      <h2
-        className="font-display font-bold text-xl"
-        style={{ color: 'var(--ink)', letterSpacing: '-0.02em' }}
-      >
-        {title}
-      </h2>
+    <div className="flex flex-col gap-1 mb-4">
+      <h2 className="text-base font-semibold tracking-tight" style={{ color: 'var(--ink)' }}>{title}</h2>
       {subtitle && <p className="text-sm" style={{ color: 'var(--muted)' }}>{subtitle}</p>}
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   DIVIDER (spectral)
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Divider ──────────────────────────────────────────────────────── */
 export function Divider({ className = '' }: { className?: string }) {
-  return (
-    <div
-      className={`h-px w-full rounded-full ${className}`}
-      style={{ background: 'var(--spectral)', opacity: 0.3 }}
-    />
-  )
+  return <div role="separator" className={`h-px w-full ${className}`} style={{ background: 'var(--border)' }} />
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   TOKEN AMOUNT BADGE , "12.50 USDC" pill
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Token amount pill ────────────────────────────────────────────── */
 export function TokenAmountBadge({ amount, symbol = 'USDC' }: { amount: string; symbol?: string }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold tabular-nums"
-      style={{ background: 'var(--accent-muted)', color: 'var(--accent)', border: '1px solid var(--accent-glow)' }}
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold tabular-nums"
+      style={{ background: 'var(--accent-muted)', color: 'var(--accent)' }}
     >
-      <span
-        className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-black shrink-0"
-        style={{ background: 'var(--accent)', color: '#fff8f0' }}
-      >
-        $
-      </span>
       {amount} {symbol}
     </span>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   STEP BADGE , "1 of 2" numbered step indicator
-   ══════════════════════════════════════════════════════════════════════ */
-export function StepBadge({
-  step, total, label,
-}: { step: number; total: number; label?: string }) {
+/* ── Step badge ───────────────────────────────────────────────────── */
+export function StepBadge({ step, total, label }: { step: number; total: number; label?: string }) {
   return (
     <div className="flex items-center gap-2">
       <span
-        className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-        style={{ background: 'var(--accent)', color: '#fff8f0' }}
+        className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
+        style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
       >
         {step}
       </span>
@@ -165,20 +114,16 @@ export function StepBadge({
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   LABEL
-   ══════════════════════════════════════════════════════════════════════ */
-export function Label({ children }: { children: React.ReactNode }) {
+/* ── Label ────────────────────────────────────────────────────────── */
+export function Label({ children, htmlFor }: { children: React.ReactNode; htmlFor?: string }) {
   return (
-    <p className="text-[10px] font-semibold uppercase tracking-[0.1em]" style={{ color: 'var(--subtle)' }}>
+    <label htmlFor={htmlFor} className="text-xs font-medium" style={{ color: 'var(--ink-2)' }}>
       {children}
-    </p>
+    </label>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   PRIMARY BUTTON
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Buttons ──────────────────────────────────────────────────────── */
 export function PrimaryButton({
   children, onClick, disabled, loading, className = '', type = 'button',
 }: {
@@ -191,26 +136,22 @@ export function PrimaryButton({
       type={type}
       onClick={onClick}
       disabled={isDisabled}
-      className={`w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold
-        transition-all hover:scale-[1.01] hover:brightness-110 active:scale-[0.99]
-        disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100 disabled:brightness-100 ${className}`}
+      aria-busy={loading || undefined}
+      className={`w-full min-h-[44px] flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold
+        transition-colors hover:bg-[var(--accent-hover)] active:brightness-95
+        disabled:cursor-not-allowed disabled:hover:bg-[var(--surface-muted)] ${className}`}
       style={{
-        background: isDisabled
-          ? 'var(--surface-strong)'
-          : 'linear-gradient(135deg, var(--pay-accent) 0%, var(--receipt-accent) 100%)',
-        color: isDisabled ? 'var(--muted)' : '#fff8f0',
-        boxShadow: isDisabled ? 'none' : '0 4px 14px rgba(196,120,42,0.28)',
+        background: isDisabled ? 'var(--surface-muted)' : 'var(--accent)',
+        color: isDisabled ? 'var(--subtle)' : 'var(--on-accent)',
+        border: isDisabled ? '1px solid var(--border)' : '1px solid transparent',
       }}
     >
-      {loading && <Loader2 size={15} className="animate-spin shrink-0" />}
+      {loading && <Loader2 size={15} className="animate-spin shrink-0" aria-hidden="true" />}
       {children}
     </button>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   GHOST BUTTON
-   ══════════════════════════════════════════════════════════════════════ */
 export function GhostButton({
   children, onClick, disabled, className = '',
 }: {
@@ -218,21 +159,19 @@ export function GhostButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-medium
-        transition-all hover:bg-white/5 active:bg-white/10
-        disabled:opacity-40 disabled:cursor-not-allowed ${className}`}
-      style={{ color: 'var(--ink-2)', border: '1px solid var(--border-strong)' }}
+      className={`min-h-[44px] flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium
+        transition-colors hover:bg-[var(--surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      style={{ color: 'var(--ink-2)', border: '1px solid var(--border-strong)', background: 'var(--surface)' }}
     >
       {children}
     </button>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   INPUT
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Input ────────────────────────────────────────────────────────── */
 export function Input({
   value, onChange, onKeyDown, placeholder, type = 'text',
   className = '', label, mono = false,
@@ -240,28 +179,27 @@ export function Input({
   value: string; onChange: (v: string) => void; onKeyDown?: (e: React.KeyboardEvent) => void
   placeholder?: string; type?: string; className?: string; label?: string; mono?: boolean
 }) {
+  const id = useId()
   return (
-    <div className="flex flex-col gap-1">
-      {label && <Label>{label}</Label>}
+    <div className="flex flex-col gap-1.5">
+      {label && <Label htmlFor={id}>{label}</Label>}
       <input
+        id={id}
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         placeholder={placeholder}
-        className={`w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all
-          placeholder:text-[var(--subtle)] ${mono ? 'font-mono' : ''} ${className}`}
-        style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-        onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-        onBlur={e  => (e.currentTarget.style.borderColor = 'var(--border)')}
+        className={`w-full min-h-[44px] rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors
+          placeholder:text-[var(--subtle)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-glow)]
+          ${mono ? 'font-mono' : ''} ${className}`}
+        style={{ background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--border-strong)' }}
       />
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   BADGE
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Badge ────────────────────────────────────────────────────────── */
 export function Badge({
   children, variant = 'default', className = '',
 }: {
@@ -269,142 +207,127 @@ export function Badge({
   variant?: 'default' | 'success' | 'danger' | 'warning' | 'green' | 'red' | 'yellow' | 'blue'
   className?: string
 }) {
-  const styles: Record<string, React.CSSProperties> = {
-    default: { background: 'var(--surface-strong)', color: 'var(--muted)',   border: '1px solid var(--border)' },
-    success: { background: 'var(--success-muted)',  color: 'var(--success)', border: '1px solid rgba(52,211,153,0.25)' },
-    danger:  { background: 'var(--danger-muted)',   color: 'var(--danger)',  border: '1px solid rgba(248,113,113,0.25)' },
-    warning: { background: 'var(--warning-muted)',  color: 'var(--warning)', border: '1px solid rgba(251,191,36,0.25)' },
-    green:   { background: 'var(--success-muted)',  color: 'var(--success)', border: '1px solid rgba(52,211,153,0.25)' },
-    red:     { background: 'var(--danger-muted)',   color: 'var(--danger)',  border: '1px solid rgba(248,113,113,0.25)' },
-    yellow:  { background: 'var(--warning-muted)',  color: 'var(--warning)', border: '1px solid rgba(251,191,36,0.25)' },
-    blue:    { background: 'rgba(99,157,255,0.12)', color: 'var(--accent)',  border: '1px solid rgba(99,157,255,0.25)' },
+  const tone = {
+    default: { bg: 'var(--surface-muted)', fg: 'var(--muted)' },
+    success: { bg: 'var(--success-muted)', fg: 'var(--success)' },
+    danger:  { bg: 'var(--danger-muted)',  fg: 'var(--danger)' },
+    warning: { bg: 'var(--warning-muted)', fg: 'var(--warning)' },
+    blue:    { bg: 'var(--accent-muted)',  fg: 'var(--accent)' },
   }
+  const map = { green: 'success', red: 'danger', yellow: 'warning' } as const
+  const t = tone[(map as Record<string, keyof typeof tone>)[variant] ?? (variant as keyof typeof tone)]
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide ${className}`}
-      style={styles[variant]}
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${className}`}
+      style={{ background: t.bg, color: t.fg }}
     >
       {children}
     </span>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   STAT CELL  (legacy, kept for existing pages)
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Stat cell (legacy) ───────────────────────────────────────────── */
 export function Stat({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <Label>{label}</Label>
-      <div className="font-display font-bold text-xl tabular-nums" style={{ color: 'var(--ink)' }}>{value}</div>
-      {sub && <p className="text-xs" style={{ color: 'var(--subtle)' }}>{sub}</p>}
+      <p className="text-xs font-medium" style={{ color: 'var(--muted)' }}>{label}</p>
+      <div className="text-xl font-semibold tabular-nums tracking-tight" style={{ color: 'var(--ink)' }}>{value}</div>
+      {sub && <p className="text-xs" style={{ color: 'var(--muted)' }}>{sub}</p>}
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   TX STATUS ROW
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Transaction status row ───────────────────────────────────────── */
 export function TxStatus({
-  isPending, isConfirming, isSuccess, hash, explorerUrl, successMsg = 'Transaction confirmed', className = '',
+  isPending, isConfirming, isSuccess, isError, errorMsg, hash, explorerUrl,
+  successMsg = 'Transaction confirmed', className = '',
 }: {
   isPending?: boolean; isConfirming?: boolean; isSuccess?: boolean
+  isError?: boolean; errorMsg?: string
   hash?: string; explorerUrl?: (h: string) => string; successMsg?: string; className?: string
 }) {
-  if (!isPending && !isConfirming && !isSuccess) return null
+  if (!isPending && !isConfirming && !isSuccess && !isError) return null
+  const tone = isSuccess ? 'var(--success)' : isError ? 'var(--danger)' : 'var(--muted)'
+  const bg = isSuccess ? 'var(--success-muted)' : isError ? 'var(--danger-muted)' : 'var(--surface-muted)'
   return (
     <div
-      className={`flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm ${className}`}
-      style={{
-        background: isSuccess ? 'var(--success-muted)' : 'var(--surface-muted)',
-        border: `1px solid ${isSuccess ? 'rgba(52,211,153,0.25)' : 'var(--border)'}`,
-        color: isSuccess ? 'var(--success)' : 'var(--muted)',
-      }}
+      role="status"
+      aria-live="polite"
+      className={`flex items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm ${className}`}
+      style={{ background: bg, border: '1px solid var(--border)', color: tone }}
     >
-      <span className="flex items-center gap-2">
-        {(isPending || isConfirming) && <Loader2 size={13} className="animate-spin shrink-0" />}
-        {isSuccess && <CheckCircle2 size={13} className="shrink-0" />}
-        {isPending    && 'Waiting for wallet signature…'}
-        {isConfirming && 'Confirming on-chain…'}
-        {isSuccess    && successMsg}
+      <span className="flex items-center gap-2 min-w-0">
+        {(isPending || isConfirming) && <Loader2 size={14} className="animate-spin shrink-0" aria-hidden="true" />}
+        {isSuccess && <CheckCircle2 size={14} className="shrink-0" aria-hidden="true" />}
+        {isError && <XCircle size={14} className="shrink-0" aria-hidden="true" />}
+        <span className="min-w-0 break-words">
+          {isPending    && 'Waiting for wallet signature…'}
+          {isConfirming && 'Submitted. Waiting for confirmation on Arc…'}
+          {isSuccess    && successMsg}
+          {isError      && (errorMsg ?? 'Transaction failed')}
+        </span>
       </span>
-      {isSuccess && hash && explorerUrl && (
+      {hash && explorerUrl && (isSuccess || isConfirming) && (
         <a
           href={explorerUrl(hash)}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-1 text-xs shrink-0 hover:opacity-70 transition-opacity"
+          className="flex items-center gap-1 text-xs font-medium shrink-0 hover:underline"
           style={{ color: 'var(--accent)' }}
         >
-          <ExternalLink size={11} /> View
+          <ExternalLink size={12} aria-hidden="true" /> View
         </a>
       )}
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   PAGE HEADER
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Page header ──────────────────────────────────────────────────── */
 export function PageHeader({
   icon: Icon, title, subtitle, accentColor = 'var(--accent)',
 }: {
   icon?: React.ElementType; title: string; subtitle?: string; accentColor?: string
 }) {
-  const grad = `linear-gradient(120deg, color-mix(in srgb, ${accentColor} 10%, transparent) 0%, transparent 65%)`
   return (
-    <div
-      className="page-hero flex items-center gap-4"
-      style={{ '--hero-accent-grad': grad } as React.CSSProperties}
-    >
+    <div className="page-hero flex items-start gap-3.5">
       {Icon && (
         <div
-          className="relative z-10 flex-shrink-0 flex items-center justify-center rounded-2xl"
-          style={{
-            width: 52, height: 52,
-            background: `color-mix(in srgb, ${accentColor} 13%, transparent)`,
-            border: `1px solid color-mix(in srgb, ${accentColor} 26%, transparent)`,
-          }}
+          className="shrink-0 flex items-center justify-center rounded-xl w-10 h-10"
+          style={{ background: `color-mix(in srgb, ${accentColor} 10%, transparent)` }}
         >
-          <Icon size={24} style={{ color: accentColor }} strokeWidth={1.8} />
+          <Icon size={20} style={{ color: accentColor }} strokeWidth={1.8} aria-hidden="true" />
         </div>
       )}
-      <div className="relative z-10 min-w-0">
-        <h1
-          className="font-display font-bold text-2xl leading-tight"
-          style={{ color: 'var(--ink)', letterSpacing: '-0.025em' }}
-        >
+      <div className="min-w-0">
+        <h1 className="text-2xl font-semibold leading-tight tracking-tight text-balance" style={{ color: 'var(--ink)' }}>
           {title}
         </h1>
-        {subtitle && (
-          <p className="text-sm mt-0.5" style={{ color: 'var(--muted)' }}>{subtitle}</p>
-        )}
+        {subtitle && <p className="text-sm mt-1 max-w-prose text-pretty" style={{ color: 'var(--muted)' }}>{subtitle}</p>}
       </div>
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   ALERT BOX
-   ══════════════════════════════════════════════════════════════════════ */
+/* ── Alert box ────────────────────────────────────────────────────── */
 export function AlertBox({
   children, variant = 'warning',
 }: {
   children: React.ReactNode; variant?: 'warning' | 'danger' | 'info'
 }) {
   const map = {
-    warning: { bg: 'var(--warning-muted)', border: 'rgba(251,191,36,0.25)', color: 'var(--warning)', Icon: AlertCircle },
-    danger:  { bg: 'var(--danger-muted)',  border: 'rgba(248,113,113,0.25)', color: 'var(--danger)',  Icon: AlertCircle },
-    info:    { bg: 'var(--accent-muted)',  border: 'rgba(99,157,255,0.25)',  color: 'var(--accent)',  Icon: AlertCircle },
+    warning: { bg: 'var(--warning-muted)', color: 'var(--warning)', Icon: AlertCircle },
+    danger:  { bg: 'var(--danger-muted)',  color: 'var(--danger)',  Icon: AlertCircle },
+    info:    { bg: 'var(--accent-muted)',  color: 'var(--accent)',  Icon: Info },
   }
-  const { bg, border, color, Icon } = map[variant]
+  const { bg, color, Icon } = map[variant]
   return (
     <div
-      className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm"
-      style={{ background: bg, border: `1px solid ${border}`, color }}
+      role={variant === 'danger' ? 'alert' : 'status'}
+      className="flex items-start gap-2.5 px-4 py-3 rounded-lg text-sm"
+      style={{ background: bg, border: '1px solid var(--border)', color }}
     >
-      <Icon size={15} className="shrink-0 mt-0.5" />
-      <span>{children}</span>
+      <Icon size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
+      <span className="min-w-0 break-words">{children}</span>
     </div>
   )
 }

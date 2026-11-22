@@ -12,7 +12,7 @@
  * TRUST NOTE: Members are trusted to record honest expenses (Splitwise model).
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useId } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract,
@@ -30,7 +30,11 @@ import QRModal from './QRModal'
 import { BILL_SPLITTER_ADDRESS, USDC_ADDRESS, ARC_CHAIN_ID, explorerTx, explorerAddr } from '../constants'
 import { BILL_SPLITTER_ABI as BILL_SPLITTER_V3_ABI, ERC20_ABI } from '../abis'
 import { parseUsdc, formatUsdc, shortAddr } from '../utils'
-import { Card, Label, PrimaryButton, GhostButton, Badge, PageHeader } from './ui'
+import { Card, Label, PrimaryButton, GhostButton, Badge, PageHeader, TxStatus } from './ui'
+import { StatusBadge } from './kit/StatusBadge'
+import { friendlyTxError } from '../lib/txError'
+import { recordTx, useRecordTx } from '../lib/txlog'
+import { BillSplitStats } from './PageStats'
 
 // V3 ABI alias used throughout (matches deployed BillSplitter v3 on Arc Mainnet)
 const BILL_SPLITTER_ABI = BILL_SPLITTER_V3_ABI
@@ -83,18 +87,18 @@ function Field({
   label?: string; value: string; onChange: (v: string) => void
   placeholder?: string; type?: string; mono?: boolean
 }) {
+  const id = useId()
   return (
-    <div>
-      {label && <Label>{label}</Label>}
+    <div className="flex flex-col gap-1.5">
+      {label && <Label htmlFor={id}>{label}</Label>}
       <input
+        id={id}
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full mt-1.5 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--subtle)] ${mono ? 'font-mono text-xs' : ''}`}
-        style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-        onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-        onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
+        className={`w-full min-h-[44px] rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-[var(--subtle)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-glow)] ${mono ? 'font-mono text-xs' : ''}`}
+        style={{ background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--border-strong)' }}
       />
     </div>
   )
@@ -211,6 +215,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
 
       if (billId === null) throw new Error('Could not parse bill ID from transaction')
       setCreatedId(billId)
+      recordTx(address, { hash: createReceipt, kind: 'Group expense', detail: `Created bill #${billId.toString()}` })
 
       // 2. Add each expense in sequence
       for (let i = 0; i < validExpenses.length; i++) {
@@ -245,7 +250,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
       setStep('done')
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err)
-      if (!msg.includes('User rejected')) toast.error('Transaction failed')
+      if (!msg.includes('User rejected')) toast.error(friendlyTxError(err))
       setStep('form')
       setProgress('')
     }
@@ -255,13 +260,13 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
   if (step === 'done' && createdId !== null) {
     const billId = createdId
     return (
-      <>
+      <Card className="p-6 max-w-lg mx-auto">
         {qrOpen && (
           <QRModal billId={billId} billName={billName} open={qrOpen} onClose={() => setQrOpen(false)} />
         )}
         <div className="flex flex-col items-center gap-5 py-4 text-center">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
-               style={{ background: 'var(--success-muted)', border: '1px solid rgba(94,207,138,0.25)' }}>
+               style={{ background: 'var(--success-muted)', border: '1px solid color-mix(in srgb, var(--success) 25%, transparent)' }}>
             <CheckCircle2 size={28} style={{ color: 'var(--success)' }} />
           </div>
           <div>
@@ -289,7 +294,7 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
             </div>
             <button
               onClick={() => setQrOpen(true)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-[var(--surface-hover)]"
               style={{ border: '1px solid var(--border-strong)', color: 'var(--ink-2)' }}
             >
               <QrCode size={15} /> Show QR code &amp; invite message
@@ -312,14 +317,14 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
             </PrimaryButton>
           </div>
         </div>
-      </>
+      </Card>
     )
   }
 
   // ── Submitting state ───────────────────────────────────────────────
   if (step === 'submitting') {
     return (
-      <div className="flex flex-col items-center gap-5 py-8 text-center">
+      <Card className="p-6 max-w-lg mx-auto"><div className="flex flex-col items-center gap-5 py-8 text-center" role="status">
         <Loader2 size={32} className="animate-spin" style={{ color: 'var(--accent)' }} />
         <div>
           <p className="font-semibold text-sm" style={{ color: 'var(--ink)' }}>Processing…</p>
@@ -328,273 +333,191 @@ function CreateBillPanel({ onCreated }: { onCreated: (billId: bigint) => void })
         <p className="text-xs px-4" style={{ color: 'var(--subtle)' }}>
           You may need to confirm {validExpenses.length + 1} transaction{validExpenses.length !== 0 ? 's' : ''} in your wallet.
         </p>
-      </div>
+      </div></Card>
     )
   }
 
   // ── Form ───────────────────────────────────────────────────────────
+  const perPerson = allMembers.length > 0 ? totalExpense / allMembers.length : 0
+  const canSubmit = !!billName.trim() && allMembers.length >= 2 && validExpenses.length > 0
+  const txCount = validExpenses.length + 1 + (finalizeImmediately ? 1 : 0)
+  const fieldStyle = { background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--border-strong)' }
+  const fieldClass = 'w-full min-h-[44px] rounded-lg px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-[var(--subtle)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-glow)]'
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5 items-start">
+      <div className="flex flex-col gap-5 min-w-0">
 
-      {/* ── Section 1: Bill details ── */}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-               style={{ background: 'var(--accent)', color: '#fff' }}>1</div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Bill details</p>
-        </div>
+        {/* 1. Group */}
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>1. Group</h2>
+          <Field label="Bill name" value={billName} onChange={setBillName} placeholder="Weekend trip, dinner, etc." />
 
-        <Field
-          label="Bill name"
-          value={billName}
-          onChange={setBillName}
-          placeholder="Weekend trip, dinner, etc."
-        />
-
-        {/* Members */}
-        <div>
-          <Label>
-            Members{' '}
-            <span className="normal-case font-normal" style={{ color: 'var(--subtle)' }}>
-              (you are auto-included)
-            </span>
-          </Label>
-          <div className="flex gap-2 mt-1.5">
-            <input
-              value={memberInput}
-              onChange={e => setMemberInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && addMember()}
-              placeholder="0x…"
-              className="flex-1 font-mono text-xs rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-[var(--subtle)]"
-              style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-              onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-              onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
-            />
-            <button
-              onClick={addMember}
-              className="px-3 rounded-xl transition-colors hover:bg-white/5"
-              style={{ border: '1px solid var(--border-strong)', color: 'var(--ink-2)' }}
-            >
-              <Plus size={15} />
-            </button>
-          </div>
-
-          {/* Member pills */}
-          {allMembers.length > 0 && (
-            <div className="mt-2 flex flex-col gap-1">
-              {allMembers.map((m, i) => {
-                const isYou = m.toLowerCase() === (address ?? '').toLowerCase()
-                return (
-                  <div key={m} className="flex items-center justify-between px-3 py-2 rounded-xl"
-                       style={{ background: isYou ? 'var(--accent-glow)' : 'var(--surface-muted)', border: `1px solid ${isYou ? 'var(--border-strong)' : 'var(--border)'}` }}>
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-                           style={{ background: 'var(--accent)', color: '#fff', opacity: isYou ? 1 : 0.6 }}>
-                        {i + 1}
-                      </div>
-                      <span className="text-xs font-mono" style={{ color: isYou ? 'var(--accent)' : 'var(--ink-2)' }}>
-                        {isYou ? `You (${shortAddr(m)})` : m}
-                      </span>
-                    </div>
-                    {!isYou && (
-                      <button onClick={() => removeMember(members.indexOf(m))}
-                              className="transition-colors hover:opacity-70" style={{ color: 'var(--subtle)' }}>
-                        <XCircle size={13} />
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Divider ── */}
-      <div style={{ borderTop: '1px solid var(--border)' }} />
-
-      {/* ── Section 2: Expenses ── */}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-               style={{ background: 'var(--accent)', color: '#fff' }}>2</div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Add expenses</p>
-          <span className="text-xs ml-auto" style={{ color: 'var(--muted)' }}>
-            Split equally among {allMembers.length} member{allMembers.length !== 1 ? 's' : ''}
-          </span>
-        </div>
-
-        {/* Column headers */}
-        <div className="grid gap-2 px-1 text-xs font-semibold uppercase tracking-wide"
-             style={{ gridTemplateColumns: '1fr 130px 110px 36px', color: 'var(--subtle)' }}>
-          <span>Description</span>
-          <span>Amount (USDC)</span>
-          <span>Paid by</span>
-          <span />
-        </div>
-
-        {/* Expense rows */}
-        <div className="flex flex-col gap-2">
-          {expenses.map((e, i) => (
-            <div key={i} className="grid gap-2 items-center"
-                 style={{ gridTemplateColumns: '1fr 130px 110px 36px' }}>
-              {/* Description */}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="member-input">Participants <span className="normal-case font-normal">(you are included automatically)</span></Label>
+            <div className="flex gap-2">
               <input
-                value={e.description}
-                onChange={ev => updateExpense(i, { description: ev.target.value })}
-                placeholder="Hotel, dinner…"
-                className="rounded-xl px-3 py-2 text-sm outline-none transition-all placeholder:text-[var(--subtle)]"
-                style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-                onFocus={ev => (ev.currentTarget.style.borderColor = 'var(--border-strong)')}
-                onBlur={ev => (ev.currentTarget.style.borderColor = 'var(--border)')}
+                id="member-input" value={memberInput} onChange={e => setMemberInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && addMember()} placeholder="Wallet address 0x…"
+                className={`${fieldClass} flex-1 font-mono text-xs`} style={fieldStyle}
               />
-              {/* Amount */}
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={e.amount}
-                onChange={ev => updateExpense(i, { amount: ev.target.value })}
-                placeholder="0.00"
-                className="rounded-xl px-3 py-2 text-sm outline-none transition-all tabular-nums placeholder:text-[var(--subtle)]"
-                style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-                onFocus={ev => (ev.currentTarget.style.borderColor = 'var(--border-strong)')}
-                onBlur={ev => (ev.currentTarget.style.borderColor = 'var(--border)')}
-              />
-              {/* Paid by */}
-              <select
-                value={e.paidBy}
-                onChange={ev => updateExpense(i, { paidBy: ev.target.value })}
-                className="rounded-xl px-2 py-2 text-xs outline-none transition-all"
-                style={{ background: 'var(--surface-muted)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-              >
-                <option value="">Who paid?</option>
-                {allMembers.map(m => (
-                  <option key={m} value={m}>
-                    {m.toLowerCase() === (address ?? '').toLowerCase() ? 'You' : shortAddr(m)}
-                  </option>
-                ))}
-              </select>
-              {/* Remove */}
-              <button
-                onClick={() => removeExpenseRow(i)}
-                disabled={expenses.length === 1}
-                className="flex items-center justify-center w-9 h-9 rounded-xl transition-colors hover:bg-red-500/10 disabled:opacity-20"
-                style={{ color: 'var(--danger, #ef4444)' }}
-              >
-                <Trash2 size={14} />
+              <button type="button" onClick={addMember} aria-label="Add participant"
+                      className="w-11 min-h-[44px] rounded-lg flex items-center justify-center hover:bg-[var(--surface-hover)]"
+                      style={{ border: '1px solid var(--border-strong)', color: 'var(--ink-2)' }}>
+                <Plus size={16} aria-hidden="true" />
               </button>
             </div>
-          ))}
-        </div>
+            {allMembers.length > 0 && (
+              <ul className="flex flex-col gap-1.5">
+                {allMembers.map(m => {
+                  const isYou = m.toLowerCase() === (address ?? '').toLowerCase()
+                  return (
+                    <li key={m} className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg"
+                        style={{ background: isYou ? 'var(--accent-muted)' : 'var(--surface-muted)' }}>
+                      <span className="text-xs font-mono truncate" style={{ color: isYou ? 'var(--accent)' : 'var(--ink-2)' }}>
+                        {isYou ? `You (${shortAddr(m)})` : m}
+                      </span>
+                      {!isYou && (
+                        <button type="button" onClick={() => removeMember(members.indexOf(m))} aria-label={`Remove ${shortAddr(m)}`}
+                                className="w-9 h-9 -mr-1 rounded-lg flex items-center justify-center hover:bg-[var(--danger-muted)] shrink-0" style={{ color: 'var(--muted)' }}>
+                          <XCircle size={15} aria-hidden="true" />
+                        </button>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        </Card>
 
-        {/* Add row */}
-        <button
-          onClick={addExpenseRow}
-          className="flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80"
-          style={{ color: 'var(--accent)' }}
-        >
-          <Plus size={14} /> Add another expense
-        </button>
+        {/* 2. Expenses */}
+        <Card className="p-5 flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>2. Expenses</h2>
+            <span className="text-xs" style={{ color: 'var(--muted)' }}>Split equally among {allMembers.length} participant{allMembers.length !== 1 ? 's' : ''}</span>
+          </div>
+          <ul className="flex flex-col gap-3">
+            {expenses.map((e, i) => (
+              <li key={i} className="grid grid-cols-2 sm:grid-cols-[1fr_130px_140px_44px] gap-2 p-3 rounded-lg" style={{ background: 'var(--surface-muted)' }}>
+                <input
+                  value={e.description} onChange={ev => updateExpense(i, { description: ev.target.value })}
+                  placeholder="What was it for? Hotel, dinner…" aria-label={`Expense ${i + 1} description`}
+                  className={`${fieldClass} col-span-2 sm:col-span-1`} style={fieldStyle}
+                />
+                <input
+                  type="number" min="0" step="0.01" inputMode="decimal"
+                  value={e.amount} onChange={ev => updateExpense(i, { amount: ev.target.value })}
+                  placeholder="0.00" aria-label={`Expense ${i + 1} amount in USDC`}
+                  className={`${fieldClass} tabular-nums`} style={fieldStyle}
+                />
+                <select
+                  value={e.paidBy} onChange={ev => updateExpense(i, { paidBy: ev.target.value })}
+                  aria-label={`Expense ${i + 1} paid by`} className={fieldClass} style={fieldStyle}
+                >
+                  <option value="">Who paid?</option>
+                  {allMembers.map(m => (
+                    <option key={m} value={m}>{m.toLowerCase() === (address ?? '').toLowerCase() ? 'You' : shortAddr(m)}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={() => removeExpenseRow(i)} disabled={expenses.length === 1}
+                        aria-label={`Remove expense ${i + 1}`}
+                        className="col-span-2 sm:col-span-1 min-h-[44px] rounded-lg flex items-center justify-center gap-2 text-sm hover:bg-[var(--danger-muted)] disabled:opacity-30"
+                        style={{ color: 'var(--danger)' }}>
+                  <Trash2 size={16} aria-hidden="true" /><span className="sm:hidden">Remove</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button type="button" onClick={addExpenseRow} className="self-start min-h-[40px] flex items-center gap-1.5 text-sm font-medium hover:underline" style={{ color: 'var(--accent)' }}>
+            <Plus size={15} aria-hidden="true" /> Add another expense
+          </button>
+        </Card>
+
+        {/* 3. Outstanding balances */}
+        {validExpenses.length > 0 && allMembers.length >= 1 && (
+          <Card className="overflow-hidden">
+            <div className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
+              <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>3. Who owes what</h2>
+              <span className="text-xs tabular-nums font-medium" style={{ color: 'var(--ink-2)' }}>{totalExpense.toFixed(2)} USDC total</span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[420px]">
+                <caption className="sr-only">Settlement preview per participant</caption>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                    {['Participant', 'Paid', 'Share', 'Balance'].map((h, i) => (
+                      <th key={h} scope="col" className={`px-5 py-2.5 text-xs font-medium ${i === 0 ? 'text-left' : 'text-right'}`} style={{ color: 'var(--muted)' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.map(row => {
+                    const isYou = row.addr.toLowerCase() === (address ?? '').toLowerCase()
+                    const owes = row.net < -0.005
+                    const owed = row.net > 0.005
+                    return (
+                      <tr key={row.addr} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td className="px-5 py-3 font-mono text-xs" style={{ color: isYou ? 'var(--accent)' : 'var(--ink)' }}>{isYou ? 'You' : shortAddr(row.addr)}</td>
+                        <td className="px-5 py-3 text-right tabular-nums" style={{ color: 'var(--muted)' }}>{row.paid.toFixed(2)}</td>
+                        <td className="px-5 py-3 text-right tabular-nums" style={{ color: 'var(--muted)' }}>{row.share.toFixed(2)}</td>
+                        <td className="px-5 py-3 text-right tabular-nums font-semibold" style={{ color: owed ? 'var(--success)' : owes ? 'var(--danger)' : 'var(--muted)' }}>
+                          {owed ? `Is owed ${row.net.toFixed(2)}` : owes ? `Owes ${Math.abs(row.net).toFixed(2)}` : 'Even'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="px-5 py-3 text-xs" style={{ color: 'var(--muted)' }}>Amounts in USDC. Settlement balances become final on-chain once the bill is finalized.</p>
+          </Card>
+        )}
       </div>
 
-      {/* ── Divider ── */}
-      <div style={{ borderTop: '1px solid var(--border)' }} />
+      {/* Summary and action */}
+      <div className="flex flex-col gap-4 lg:sticky lg:top-24">
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Summary</h2>
+          <dl className="flex flex-col text-sm">
+            {([
+              ['Participants', `${allMembers.length}`],
+              ['Expenses', `${validExpenses.length}`],
+              ['Total', `${totalExpense.toFixed(2)} USDC`],
+              ['Each pays', `${perPerson.toFixed(2)} USDC`],
+              ['Wallet confirmations', `${txCount}`],
+            ] as [string, string][]).map(([k, v]) => (
+              <div key={k} className="flex items-center justify-between gap-3 py-2" style={{ borderTop: '1px solid var(--border)' }}>
+                <dt style={{ color: 'var(--muted)' }}>{k}</dt>
+                <dd className="font-medium tabular-nums" style={{ color: 'var(--ink)' }}>{v}</dd>
+              </div>
+            ))}
+          </dl>
 
-      {/* ── Section 3: Preview ── */}
-      {validExpenses.length > 0 && allMembers.length >= 1 && (
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                 style={{ background: 'var(--surface-strong)', color: 'var(--ink)', border: '1px solid var(--border-strong)' }}>3</div>
-            <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Settlement preview</p>
-            <span className="text-xs ml-auto tabular-nums font-semibold" style={{ color: 'var(--accent)' }}>
-              {totalExpense.toFixed(2)} USDC total
+          <label className="flex items-start gap-3 cursor-pointer min-h-[44px]">
+            <input type="checkbox" checked={finalizeImmediately} onChange={e => setFinalizeImmediately(e.target.checked)}
+                   className="mt-0.5 w-5 h-5 shrink-0 accent-[var(--accent)]" />
+            <span>
+              <span className="block text-sm font-medium" style={{ color: 'var(--ink)' }}>Finalize immediately</span>
+              <span className="block text-xs mt-0.5" style={{ color: 'var(--muted)' }}>Locks the bill so no more expenses can be added and members can settle right away. You can also finalize later.</span>
             </span>
-          </div>
+          </label>
 
-          <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-            {/* Header */}
-            <div className="grid px-4 py-2 text-xs font-semibold uppercase tracking-wide"
-                 style={{ gridTemplateColumns: '1fr 70px 70px 80px', background: 'var(--surface-muted)', color: 'var(--subtle)', borderBottom: '1px solid var(--border)' }}>
-              <span>Member</span>
-              <span className="text-right">Paid</span>
-              <span className="text-right">Share</span>
-              <span className="text-right">Net</span>
-            </div>
-
-            {preview.map((row, i) => {
-              const isYou = row.addr.toLowerCase() === (address ?? '').toLowerCase()
-              return (
-                <div key={row.addr}
-                     className="grid px-4 py-3 items-center"
-                     style={{
-                       gridTemplateColumns: '1fr 70px 70px 80px',
-                       background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface-muted)',
-                     }}>
-                  <span className={`text-xs font-mono ${isYou ? 'font-semibold' : ''}`}
-                        style={{ color: isYou ? 'var(--accent)' : 'var(--ink-2)' }}>
-                    {isYou ? 'You' : shortAddr(row.addr)}
-                  </span>
-                  <span className="text-xs text-right tabular-nums" style={{ color: 'var(--muted)' }}>
-                    {row.paid.toFixed(2)}
-                  </span>
-                  <span className="text-xs text-right tabular-nums" style={{ color: 'var(--muted)' }}>
-                    {row.share.toFixed(2)}
-                  </span>
-                  <span className="text-xs text-right tabular-nums font-semibold"
-                        style={{ color: row.net > 0.005 ? 'var(--success)' : row.net < -0.005 ? 'var(--danger, #ef4444)' : 'var(--subtle)' }}>
-                    {row.net > 0.005 ? '+' : ''}{row.net.toFixed(2)} USDC
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-
-          <p className="text-xs px-1" style={{ color: 'var(--subtle)' }}>
-            Positive = creditor (will receive). Negative = debtor (must settle). Balances are calculated after finalization on-chain.
+          <PrimaryButton onClick={() => { void handleSubmit() }} disabled={!canSubmit}>
+            <Receipt size={15} aria-hidden="true" />
+            Create bill{finalizeImmediately ? ' and finalize' : ''}
+            <ArrowRight size={14} aria-hidden="true" />
+          </PrimaryButton>
+          {!canSubmit && (
+            <p className="text-xs" style={{ color: 'var(--muted)' }}>
+              {!billName.trim() ? 'Name the bill. ' : ''}{allMembers.length < 2 ? 'Add at least one other participant. ' : ''}{validExpenses.length === 0 ? 'Add an expense with an amount and who paid.' : ''}
+            </p>
+          )}
+          <p className="text-xs" style={{ color: 'var(--muted)' }}>
+            Your wallet will ask you to confirm {txCount} transaction{txCount !== 1 ? 's' : ''}, one after the other. Any participant can record expenses without on-chain proof of payment.
           </p>
-        </div>
-      )}
-
-      {/* ── Trust note ── */}
-      <p className="text-xs px-1" style={{ color: 'var(--warning)' }}>
-        Trust note: any member can record expenses without on-chain proof of payment.
-      </p>
-
-      {/* ── Finalize immediately checkbox ── */}
-      <label className="flex items-start gap-3 cursor-pointer select-none px-1">
-        <input
-          type="checkbox"
-          checked={finalizeImmediately}
-          onChange={e => setFinalizeImmediately(e.target.checked)}
-          className="mt-0.5 rounded accent-[var(--accent)] w-4 h-4 shrink-0"
-        />
-        <div>
-          <p className="text-sm font-medium" style={{ color: 'var(--ink)' }}>Finalize bill immediately</p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--subtle)' }}>
-            Locks the bill so no more expenses can be added. Members can settle right away. You can always finalize later from the bill card.
-          </p>
-        </div>
-      </label>
-
-      {/* ── Submit ── */}
-      <PrimaryButton
-        onClick={() => { void handleSubmit() }}
-        disabled={!billName.trim() || allMembers.length < 2 || validExpenses.length === 0}
-        className="w-full"
-      >
-        <Receipt size={15} className="mr-1.5" />
-        Create Bill &amp; Log {validExpenses.length} Expense{validExpenses.length !== 1 ? 's' : ''}
-        {finalizeImmediately && ' + Finalize'}
-        <ArrowRight size={14} className="ml-1.5" />
-      </PrimaryButton>
-
-      {allMembers.length < 2 && (
-        <p className="text-xs text-center" style={{ color: 'var(--subtle)' }}>
-          Add at least one other member to create a bill.
-        </p>
-      )}
+        </Card>
+      </div>
     </div>
   )
 }
@@ -604,8 +527,10 @@ function AddExpensePanel({ billId, onDone }: { billId: bigint; onDone: () => voi
   const [amount, setAmount] = useState('')
   const [desc, setDesc]     = useState('')
 
-  const { writeContract, data: txHash, isPending, reset } = useWriteContract()
+  const { writeContract, data: txHash, isPending, reset, error: addError } = useWriteContract()
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash })
+  const { address: payer } = useAccount()
+  useRecordTx({ address: payer, hash: txHash, confirmed: isSuccess, kind: 'Group expense', detail: `Logged expense on bill #${billId.toString()}` })
 
   const handleAdd = useCallback(() => {
     let raw: bigint
@@ -620,7 +545,7 @@ function AddExpensePanel({ billId, onDone }: { billId: bigint; onDone: () => voi
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center gap-3 py-4 rounded-xl"
-           style={{ background: 'var(--success-muted)', border: '1px solid rgba(94,207,138,0.2)' }}>
+           style={{ background: 'var(--success-muted)', border: '1px solid color-mix(in srgb, var(--success) 20%, transparent)' }}>
         <CheckCircle2 size={22} style={{ color: 'var(--success)' }} />
         <p className="text-sm font-medium" style={{ color: 'var(--success)' }}>Expense recorded</p>
         <button onClick={() => { reset(); setAmount(''); setDesc(''); onDone() }}
@@ -637,29 +562,15 @@ function AddExpensePanel({ billId, onDone }: { billId: bigint; onDone: () => voi
     <div className="flex flex-col gap-3 p-4 rounded-xl"
          style={{ background: 'var(--surface-muted)', border: '1px solid var(--border-strong)' }}>
       <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>Log an expense</p>
-      <div>
-        <Label>Amount you paid (USDC)</Label>
-        <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g. 30"
-               type="number" min="0" step="0.01"
-               className="w-full mt-1.5 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all"
-               style={{ background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-               onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-               onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')} />
-      </div>
-      <div>
-        <Label>Description</Label>
-        <input value={desc} onChange={e => setDesc(e.target.value)} placeholder="Hotel, dinner, transport…"
-               className="w-full mt-1.5 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all"
-               style={{ background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--border)' }}
-               onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-strong)')}
-               onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')} />
-      </div>
+      <Field label="Amount you paid (USDC)" value={amount} onChange={setAmount} placeholder="e.g. 30" />
+      <Field label="Description" value={desc} onChange={setDesc} placeholder="Hotel, dinner, transport…" />
       <div className="flex gap-2">
         <PrimaryButton onClick={handleAdd} loading={busy} className="flex-1">
           {isPending ? 'Confirm…' : isConfirming ? 'Recording…' : 'Add Expense'}
         </PrimaryButton>
         <GhostButton onClick={onDone}>Cancel</GhostButton>
       </div>
+      {addError && <TxStatus isError errorMsg={friendlyTxError(addError)} />}
     </div>
   )
 }
@@ -680,10 +591,12 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
   const { data: claimData, refetch: refetchClaim }       = useReadContract({ address: BILL_SPLITTER_ADDRESS, abi: BILL_SPLITTER_ABI, functionName: 'claimsOf', args: [id, walletAddress], query: { enabled: expanded } })
   const { data: usdcAllowance, refetch: refetchAllowance } = useReadContract({ address: USDC_ADDRESS, abi: ERC20_ABI, functionName: 'allowance', args: [walletAddress, BILL_SPLITTER_ADDRESS], query: { enabled: expanded } })
 
-  const { writeContract: writeApprove, data: approveTx, isPending: approving } = useWriteContract()
+  const { writeContract: writeApprove, data: approveTx, isPending: approving, error: approveError } = useWriteContract()
   const { isLoading: approveConfirming, isSuccess: approveSuccess } = useWaitForTransactionReceipt({ hash: approveTx })
-  const { writeContract: writeAction,  data: actionTx,  isPending: actioning  } = useWriteContract()
+  const { writeContract: writeAction,  data: actionTx,  isPending: actioning, error: actionError } = useWriteContract()
   const { isLoading: actionConfirming, isSuccess: actionSuccess   } = useWaitForTransactionReceipt({ hash: actionTx })
+  useRecordTx({ address: walletAddress, hash: actionTx, confirmed: actionSuccess, kind: 'Group expense', detail: `Bill #${id.toString()} update` })
+  useRecordTx({ address: walletAddress, hash: approveTx, confirmed: approveSuccess, kind: 'Group expense', detail: `Allowed USDC for bill #${id.toString()}` })
 
   const reload = useCallback(() => {
     void refetchBill(); void refetchExpenses(); void refetchStatus()
@@ -757,10 +670,10 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
         {/* Header: expand area (div) + action buttons sit OUTSIDE it to avoid nested <button> */}
         <div className="flex items-center">
           {/* Clickable expand zone */}
-          <div role="button" tabIndex={0}
+          <div role="button" tabIndex={0} aria-expanded={expanded} aria-label={`${name}, bill ${id.toString()}. ${expanded ? 'Collapse' : 'Expand'} details`}
                onClick={() => setExpanded(e => !e)}
                onKeyDown={e => e.key === 'Enter' && setExpanded(v => !v)}
-               className="flex-1 flex items-center justify-between px-4 py-3.5 transition-colors hover:bg-white/[0.03] cursor-pointer text-left min-w-0">
+               className="flex-1 flex items-center justify-between px-4 py-3.5 transition-colors hover:bg-[var(--surface-hover)] cursor-pointer text-left min-w-0">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                    style={{ background: 'var(--accent-glow)', border: '1px solid var(--border-strong)' }}>
@@ -783,16 +696,16 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
           {/* Action buttons, siblings of expand zone, never descendants */}
           <div className="flex items-center gap-0.5 pr-3 shrink-0">
             <button onClick={() => setQrOpen(true)}
-                    title="QR code & invite"
-                    className="p-1.5 rounded-lg transition-colors hover:bg-white/10"
-                    style={{ color: 'var(--subtle)' }}>
-              <QrCode size={13} />
+                    title="QR code & invite" aria-label="Show QR code and invite"
+                    className="w-11 h-11 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--surface-hover)]"
+                    style={{ color: 'var(--muted)' }}>
+              <QrCode size={16} aria-hidden="true" />
             </button>
             <button onClick={() => copyShareLink(id)}
-                    title="Copy share link"
-                    className="p-1.5 rounded-lg transition-colors hover:bg-white/10"
-                    style={{ color: 'var(--subtle)' }}>
-              <Copy size={13} />
+                    title="Copy share link" aria-label="Copy share link"
+                    className="w-11 h-11 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--surface-hover)]"
+                    style={{ color: 'var(--muted)' }}>
+              <Copy size={16} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -804,16 +717,16 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
             {/* My balance banner */}
             {finalized && myRemaining !== null && myRemaining > 0n && (
               <div className="mt-3 rounded-xl px-4 py-3 flex items-center justify-between"
-                   style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                   style={{ background: 'color-mix(in srgb, var(--danger) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)' }}>
                 <div>
                   <p className="text-xs" style={{ color: 'var(--muted)' }}>You still owe</p>
                   <p className="font-display font-bold text-xl tabular-nums"
-                     style={{ color: 'var(--danger, #ef4444)', letterSpacing: '-0.02em' }}>
+                     style={{ color: 'var(--danger)', letterSpacing: '-0.02em' }}>
                     {formatUsdc(myRemaining)} USDC
                   </p>
                 </div>
                 <button onClick={() => setQrOpen(true)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:bg-white/10"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:bg-[var(--surface-hover)]"
                         style={{ border: '1px solid var(--border-strong)', color: 'var(--ink-2)' }}>
                   <QrCode size={13} /> Share
                 </button>
@@ -822,7 +735,7 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
             {/* Pending claim banner */}
             {finalized && (pendingClaim ?? 0n) > 0n && (
               <div className="mt-3 rounded-xl px-4 py-3 flex items-center justify-between"
-                   style={{ background: 'var(--success-muted)', border: '1px solid rgba(94,207,138,0.2)' }}>
+                   style={{ background: 'var(--success-muted)', border: '1px solid color-mix(in srgb, var(--success) 20%, transparent)' }}>
                 <div>
                   <p className="text-xs" style={{ color: 'var(--muted)' }}>Claimable balance</p>
                   <p className="font-display font-bold text-xl tabular-nums"
@@ -838,17 +751,23 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
             {/* Expiry badge */}
             {isExpired && !finalized && (
               <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-xl"
-                   style={{ background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.25)' }}>
-                <span className="text-xs font-semibold" style={{ color: '#fb923c' }}>Bill expired, anyone can force-finalize it.</span>
+                   style={{ background: 'color-mix(in srgb, var(--warning) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--warning) 25%, transparent)' }}>
+                <span className="text-xs font-semibold" style={{ color: 'var(--warning)' }}>Bill expired, anyone can force-finalize it.</span>
               </div>
             )}
 
             {/* Members table */}
             {statusData && (() => {
               const [sMembers, sBalances, sSettled] = statusData as [`0x${string}`[], bigint[], boolean[]]
+              const owing = sBalances.filter(b => b < 0n).length
+              const owingSettled = sBalances.filter((b, i) => b < 0n && sSettled[i]).length
+              const everyoneSettled = finalized && (owing === 0 || owingSettled === owing)
               return (
                 <div className="mt-3">
-                  <Label>Members</Label>
+                  <div className="flex items-center justify-between gap-3">
+                    <Label>Members</Label>
+                    {finalized && <StatusBadge status={everyoneSettled ? 'settled' : 'outstanding'} label={everyoneSettled ? 'Fully settled' : `${owingSettled} of ${owing} settled`} />}
+                  </div>
                   <ul className="flex flex-col gap-1 mt-2">
                     {sMembers.map((m, i) => {
                       const bal = sBalances[i] ?? 0n  // int256: negative=owes, positive=owed
@@ -869,9 +788,12 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
                             {fullySettled && <CheckCircle2 size={12} style={{ color: 'var(--success)' }} />}
                           </div>
                           {finalized && (
-                            <span className="text-xs font-semibold tabular-nums"
-                                  style={{ color: isSettledAlready ? 'var(--success)' : isDebtorMember ? 'var(--danger, #ef4444)' : isCreditorMember ? 'var(--success)' : 'var(--subtle)' }}>
-                              {isSettledAlready ? 'settled' : isDebtorMember ? `-${formatUsdc(-bal)}` : isCreditorMember ? `+${formatUsdc(bal)}` : 'even'} USDC
+                            <span className="flex items-center gap-2">
+                              <span className="text-xs font-semibold tabular-nums"
+                                    style={{ color: isSettledAlready ? 'var(--muted)' : isDebtorMember ? 'var(--danger)' : isCreditorMember ? 'var(--success)' : 'var(--muted)' }}>
+                                {isSettledAlready ? '' : isDebtorMember ? `Owes ${formatUsdc(-bal)} USDC` : isCreditorMember ? `Is owed ${formatUsdc(bal)} USDC` : 'Even'}
+                              </span>
+                              {isSettledAlready && <StatusBadge status="settled" />}
                             </span>
                           )}
                         </li>
@@ -911,7 +833,7 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
                 ? <AddExpensePanel billId={id} onDone={() => { setShowExpense(false); reload() }} />
                 : (
                   <button onClick={() => setShowExpense(true)}
-                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-white/5"
+                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-[var(--surface-hover)]"
                           style={{ border: '1.5px dashed var(--border-strong)', color: 'var(--muted)' }}>
                     <Plus size={14} /> Log another expense
                   </button>
@@ -936,8 +858,9 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
                 </PrimaryButton>
               )}
               {myAction === 'settle' && myRemaining !== null && (
-                <PrimaryButton onClick={handleSettle} loading={actioning || actionConfirming} className="flex-1">
-                  {actioning ? 'Confirm…' : actionConfirming ? 'Settling…' : `Settle ${formatUsdc(myRemaining)} USDC`}
+                // Duplicate guard: once a settlement is confirmed the button stays off until the page has re-read the bill.
+                <PrimaryButton onClick={handleSettle} loading={actioning || actionConfirming} disabled={actionSuccess} className="flex-1">
+                  {actioning ? 'Confirm…' : actionConfirming ? 'Settling…' : actionSuccess ? 'Settlement confirmed' : `Settle ${formatUsdc(myRemaining)} USDC`}
                 </PrimaryButton>
               )}
               {myAction === 'done' && (
@@ -951,6 +874,21 @@ function BillCard({ id, walletAddress, refetch, defaultExpanded = false }: {
                 </div>
               )}
             </div>
+
+            {(myAction === 'settle' || myAction === 'approve_settle') && statusData != null && (() => {
+              const [m, b] = statusData as [`0x${string}`[], bigint[], boolean[]]
+              const creditors = m.map((addr, i) => ({ addr, bal: b[i] ?? 0n })).filter(x => x.bal > 0n)
+              if (creditors.length === 0) return null
+              return (
+                <p className="text-xs" style={{ color: 'var(--muted)' }}>
+                  Your payment is held by the bill contract and credited to the people owed money. They withdraw it themselves:{' '}
+                  {creditors.map(c => `${shortAddr(c.addr)} (${formatUsdc(c.bal)} USDC)`).join(', ')}.
+                </p>
+              )
+            })()}
+            {(actionError || approveError) && <TxStatus isError errorMsg={friendlyTxError(actionError ?? approveError)} />}
+            {(approving || actioning) && !actionError && !approveError && <TxStatus isPending />}
+            {(approveConfirming || actionConfirming) && <TxStatus isConfirming hash={actionConfirming ? actionTx : approveTx} explorerUrl={explorerTx} />}
 
             {actionTx && (
               <a href={explorerTx(actionTx)} target="_blank" rel="noreferrer"
@@ -1054,31 +992,29 @@ export default function SplitPage() {
 
   return (
     <ChainGuard>
-      <div className="flex flex-col gap-6 max-w-2xl mx-auto">
-        <PageHeader icon={Users} title="Bill Splitter" subtitle="Split group expenses and settle in USDC, no mental math needed." />
+      <div className="flex flex-col gap-6 max-w-5xl mx-auto">
+        <PageHeader icon={Users} title="Bill Split" subtitle="Split a bill with friends and settle in USDC. The app works out who owes whom." />
 
-        {/* Tab bar */}
-        <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)' }}>
+        <BillSplitStats />
+
+        {/* Tabs */}
+        <div role="tablist" aria-label="Bill Split" className="flex items-center gap-1" style={{ borderBottom: '1px solid var(--border)' }}>
           {(['bills', 'create'] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)}
-                    className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
-                    style={{
-                      background: tab === t ? 'var(--surface-strong)' : 'transparent',
-                      color: tab === t ? 'var(--ink)' : 'var(--muted)',
-                      border: tab === t ? '1px solid var(--border-strong)' : '1px solid transparent',
-                    }}>
-              {t === 'create' ? 'Create Bill' : 'My Bills'}
+            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
+                    className="px-4 min-h-[44px] text-sm font-medium -mb-px transition-colors"
+                    style={{ color: tab === t ? 'var(--accent)' : 'var(--muted)', borderBottom: `2px solid ${tab === t ? 'var(--accent)' : 'transparent'}` }}>
+              {t === 'create' ? 'Create bill' : 'My bills'}
             </button>
           ))}
         </div>
 
         {/* Panel */}
-        <Card strong className="p-5">
+        <div role="tabpanel">
           {tab === 'create'
             ? <CreateBillPanel onCreated={handleCreated} />
             : address && <MyBillsPanel key={refreshKey} walletAddress={address} highlightId={highlightId} />
           }
-        </Card>
+        </div>
       </div>
     </ChainGuard>
   )

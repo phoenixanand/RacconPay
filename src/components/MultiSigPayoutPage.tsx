@@ -1,32 +1,31 @@
 /**
- * MultiSigPayout v2, per-proposal co-signer model.
+ * Approval requests (MultiSigPayout v2, per-proposal co-signer model). Shown as the Approvals tab on the Payouts page.
  *
- * Any wallet can create a proposal naming two co-signers.
- * Both co-signers must approve before anyone executes.
- * No global signer registry.
+ * A request names two co-signers. Both must approve before the proposer executes.
+ * Requests are created on the Payouts page by choosing "Require approval".
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useAccount, useReadContract, useReadContracts, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { isAddress } from 'viem'
+import { useReadContract, useReadContracts, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { toast } from 'sonner'
-import Papa from 'papaparse'
 import {
   Users, ShieldCheck, CheckCircle2, Clock, XCircle,
-  ChevronDown, ChevronUp, Upload, Plus, Trash2, Send, Play, Ban, AlertCircle,
+  ChevronDown, ChevronUp, Send, Play, Ban,
   Copy, Link2,
 } from 'lucide-react'
 import {
-  Card, PageHeader, PrimaryButton, GhostButton,
-  Input, Label, Badge, TxStatus,
+  Card, PrimaryButton, GhostButton,
+  Badge, TxStatus, AlertBox, StatCard,
 } from './ui'
-import ChainGuard from './ChainGuard'
+import { Select } from './kit/Fields'
+import { StatusBadge, type Status } from './kit/StatusBadge'
+import { friendlyTxError } from '../lib/txError'
+import { useRecordTx } from '../lib/txlog'
 import { MULTISIG_ADDRESS, USDC_ADDRESS, BATCH_PAYOUT_ADDRESS, explorerTx, explorerAddr } from '../constants'
 import { MULTISIG_ABI, ERC20_ABI } from '../abis'
-import { formatUsdc, parseUsdc, shortAddr } from '../utils'
+import { formatUsdc, shortAddr } from '../utils'
 
 /* ── Types ─────────────────────────────────────────────── */
-interface Recipient { addr: string; amount: string }
 interface ProposalData {
   id: bigint
   proposer: string
@@ -42,8 +41,6 @@ interface ProposalData {
   expired: boolean
 }
 
-const STATUS_LABEL = ['Pending', 'Executed', 'Cancelled'] as const
-const STATUS_VARIANT = ['warning', 'success', 'danger'] as const
 
 /* ── Helpers ────────────────────────────────────────────── */
 const EXPIRY_MS = 7 * 24 * 60 * 60 * 1000
@@ -81,7 +78,7 @@ function ExpiryCountdown({ createdAt, expired }: { createdAt: bigint; expired: b
 
   return (
     <span className="text-xs font-medium flex items-center gap-1"
-      style={{ color: isExpired ? 'var(--error)' : isUrgent ? '#fb923c' : 'var(--muted)' }}>
+      style={{ color: isExpired ? 'var(--danger)' : isUrgent ? 'var(--warning)' : 'var(--muted)' }}>
       <Clock size={12} /> {label}
     </span>
   )
@@ -105,7 +102,7 @@ function ApprovalRow({
       <div className="flex items-center gap-3 flex-wrap">
         {/* Co-signer 1 */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-          style={{ background: approved1 ? 'rgba(74,163,101,0.1)' : 'var(--surface-strong)', border: `1px solid ${approved1 ? 'var(--success)' : 'var(--border)'}` }}>
+          style={{ background: approved1 ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--surface-strong)', border: `1px solid ${approved1 ? 'var(--success)' : 'var(--border)'}` }}>
           <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
             style={{ background: approved1 ? 'var(--success)' : 'var(--surface-muted)' }}>
             {approved1
@@ -123,7 +120,7 @@ function ApprovalRow({
 
         {/* Co-signer 2 */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-          style={{ background: approved2 ? 'rgba(74,163,101,0.1)' : 'var(--surface-strong)', border: `1px solid ${approved2 ? 'var(--success)' : 'var(--border)'}` }}>
+          style={{ background: approved2 ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--surface-strong)', border: `1px solid ${approved2 ? 'var(--success)' : 'var(--border)'}` }}>
           <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
             style={{ background: approved2 ? 'var(--success)' : 'var(--surface-muted)' }}>
             {approved2
@@ -141,7 +138,7 @@ function ApprovalRow({
 
         {both && (
           <span className="text-xs font-bold px-2 py-1 rounded-full"
-            style={{ background: 'rgba(74,163,101,0.15)', color: 'var(--success)' }}>
+            style={{ background: 'color-mix(in srgb, var(--success) 15%, transparent)', color: 'var(--success)' }}>
             ✓ Ready to execute
           </span>
         )}
@@ -225,7 +222,7 @@ function CopyShareLink({ proposalId }: { proposalId: bigint }) {
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
-    const url = `${window.location.origin}/multisig?proposal=${String(proposalId)}`
+    const url = `${window.location.origin}/pay?tab=approvals&proposal=${String(proposalId)}`
     void navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       toast.success('Invite link copied!')
@@ -238,7 +235,7 @@ function CopyShareLink({ proposalId }: { proposalId: bigint }) {
       onClick={handleCopy}
       className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium transition-all"
       style={{
-        background: copied ? 'rgba(74,163,101,0.1)' : 'var(--surface-strong)',
+        background: copied ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--surface-strong)',
         color: copied ? 'var(--success)' : 'var(--accent)',
         border: `1px solid ${copied ? 'var(--success)' : 'var(--border)'}`,
       }}
@@ -283,6 +280,7 @@ function ProposalCard({
   const canCancel     = isPending && (isProposer || p.expired)
 
   const { writeContractAsync } = useWriteContract()
+  const [signing, setSigning] = useState(false)
 
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: USDC_ADDRESS,
@@ -333,66 +331,80 @@ function ProposalCard({
     }
   }, [rejectConfirmed, onRefresh])
 
+  useRecordTx({ address: connectedAddr, hash: approveTx, confirmed: approveConfirmed, kind: 'Approval', detail: `Approved proposal #${p.id.toString()}` })
+  useRecordTx({ address: connectedAddr, hash: executeTx, confirmed: executeConfirmed, kind: 'Approval', detail: `Executed proposal #${p.id.toString()}`, amountRaw: p.totalAmount, token: 'USDC' })
+  useRecordTx({ address: connectedAddr, hash: cancelTx, confirmed: cancelConfirmed, kind: 'Approval', detail: `Cancelled proposal #${p.id.toString()}` })
+  useRecordTx({ address: connectedAddr, hash: rejectTx, confirmed: rejectConfirmed, kind: 'Approval', detail: `Rejected proposal #${p.id.toString()}` })
+
   async function handleApprove() {
     try {
+      setSigning(true)
       const hash = await writeContractAsync({
         address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'approve', args: [p.id],
       })
+      setSigning(false)
       setApproveTx(hash)
       toast.info('Approval submitted…')
-    } catch (e: unknown) { toast.error((e as Error).message?.slice(0, 80) || 'Approve failed') }
+    } catch (e: unknown) { setSigning(false); toast.error(friendlyTxError(e)) }
   }
 
   async function handleApprovePull() {
     try {
+      setSigning(true)
       await writeContractAsync({
         address: USDC_ADDRESS, abi: ERC20_ABI, functionName: 'approve',
         args: [MULTISIG_ADDRESS, p.totalAmount],
       })
+      setSigning(false)
       toast.info('Approving USDC…')
       const interval = setInterval(() => { void refetchAllowance() }, 2000)
       setTimeout(() => clearInterval(interval), 30000)
-    } catch (e: unknown) { toast.error((e as Error).message?.slice(0, 80) || 'USDC approve failed') }
+    } catch (e: unknown) { setSigning(false); toast.error(friendlyTxError(e)) }
   }
 
   async function handleExecute() {
     try {
+      setSigning(true)
       const hash = await writeContractAsync({
         address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'execute', args: [p.id],
       })
+      setSigning(false)
       setExecuteTx(hash)
       toast.info('Executing payout…')
-    } catch (e: unknown) { toast.error((e as Error).message?.slice(0, 80) || 'Execute failed') }
+    } catch (e: unknown) { setSigning(false); toast.error(friendlyTxError(e)) }
   }
 
   async function handleCancel() {
     try {
+      setSigning(true)
       const hash = await writeContractAsync({
         address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'cancel', args: [p.id],
       })
+      setSigning(false)
       setCancelTx(hash)
       toast.info('Cancelling proposal…')
-    } catch (e: unknown) { toast.error((e as Error).message?.slice(0, 80) || 'Cancel failed') }
+    } catch (e: unknown) { setSigning(false); toast.error(friendlyTxError(e)) }
   }
 
   async function handleReject() {
     try {
+      setSigning(true)
       const hash = await writeContractAsync({
         address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'reject', args: [p.id],
       })
+      setSigning(false)
       setRejectTx(hash)
       toast.info('Rejecting proposal…')
-    } catch (e: unknown) { toast.error((e as Error).message?.slice(0, 80) || 'Reject failed') }
+    } catch (e: unknown) { setSigning(false); toast.error(friendlyTxError(e)) }
   }
 
-  const statusLabel = p.expired && p.status === 0 ? 'Expired' : STATUS_LABEL[p.status]
-  const statusVariant = p.expired && p.status === 0 ? 'danger' : STATUS_VARIANT[p.status]
+  const badgeStatus: Status = p.expired && p.status === 0 ? 'expired' : (['pending', 'executed', 'cancelled'] as const)[p.status] ?? 'pending'
 
   return (
-    <div ref={cardRef} className="rounded-2xl overflow-hidden transition-shadow" style={{
+    <div ref={cardRef} className="rounded-xl overflow-hidden transition-shadow" style={{
       border: `1px solid ${highlighted ? 'var(--accent)' : 'var(--border)'}`,
       background: 'var(--surface)',
-      boxShadow: highlighted ? '0 0 0 3px rgba(var(--accent-rgb, 180,120,60),0.15)' : undefined,
+      boxShadow: highlighted ? '0 0 0 3px var(--accent-glow)' : undefined,
     }}>
       {/* Card header, colored top strip */}
       <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
@@ -402,7 +414,7 @@ function ProposalCard({
             <span className="font-mono font-bold text-base" style={{ color: 'var(--accent)' }}>
               #{String(p.id)}
             </span>
-            <Badge variant={statusVariant}>{statusLabel}</Badge>
+            <StatusBadge status={badgeStatus} />
             {isProposer   && <Badge variant="default">You proposed</Badge>}
             {isCoSigner1  && <Badge variant="default">Co-signer 1</Badge>}
             {isCoSigner2  && <Badge variant="default">Co-signer 2</Badge>}
@@ -412,11 +424,12 @@ function ProposalCard({
             <ExpiryCountdown createdAt={p.createdAt} expired={p.expired} />
             <button
               onClick={() => setExpanded(v => !v)}
-              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
-              style={{ background: 'var(--surface-strong)', color: 'var(--muted)' }}
-              aria-label="Toggle details"
+              className="w-11 h-11 -mr-2 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--surface-hover)]"
+              style={{ color: 'var(--muted)' }}
+              aria-label={expanded ? 'Hide proposal details' : 'Show proposal details'}
+              aria-expanded={expanded}
             >
-              {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {expanded ? <ChevronUp size={16} aria-hidden="true" /> : <ChevronDown size={16} aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -429,7 +442,7 @@ function ProposalCard({
         {/* Rejected banner, shown to proposer when a co-signer rejected */}
         {isProposer && p.status === 2 && (
           <div className="mt-3 flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm"
-               style={{ background: 'var(--danger-muted)', border: '1px solid rgba(232,109,122,0.25)', color: 'var(--danger)' }}>
+               style={{ background: 'var(--danger-muted)', border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)', color: 'var(--danger)' }}>
             <XCircle size={14} className="shrink-0" />
             <span>This proposal was rejected by a co-signer and has been cancelled.</span>
           </div>
@@ -439,7 +452,7 @@ function ProposalCard({
       {/* Stats row */}
       <div className="px-5 py-3 flex flex-wrap gap-6" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface-muted)' }}>
         <div>
-          <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: 'var(--muted)' }}>Total</p>
+          <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: 'var(--muted)' }}>Requested amount</p>
           <p className="font-bold font-mono" style={{ color: 'var(--ink)' }}>{formatUsdc(p.totalAmount)} <span className="text-xs font-sans font-normal" style={{ color: 'var(--muted)' }}>USDC</span></p>
         </div>
         <div>
@@ -447,7 +460,7 @@ function ProposalCard({
           <p className="font-bold" style={{ color: 'var(--ink)' }}>{String(p.recipientCount)}</p>
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: 'var(--muted)' }}>Proposer</p>
+          <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: 'var(--muted)' }}>Requested by</p>
           <a href={explorerAddr(p.proposer)} target="_blank" rel="noreferrer"
              className="font-mono text-sm hover:underline"
              style={{ color: isProposer ? 'var(--accent)' : 'var(--ink-2)' }}>
@@ -511,7 +524,10 @@ function ProposalCard({
 
       {/* Action buttons */}
       {isParticipant && isPending && (
-        <div className="px-5 py-4 flex flex-wrap gap-2">
+        <div className="px-5 py-4 flex flex-wrap items-center gap-2">
+          {!canApprove && !canExecute && !canReject && !canCancel && (
+            <p className="text-sm" style={{ color: 'var(--muted)' }}>Nothing for you to do on this proposal right now.</p>
+          )}
           {canApprove && (
             <PrimaryButton onClick={() => { void handleApprove() }} loading={!!approveTx && !approveConfirmed}>
               <ShieldCheck size={15} /> Approve Proposal
@@ -541,8 +557,9 @@ function ProposalCard({
       )}
 
       {/* Tx status */}
-      {(approveTx || executeTx || cancelTx || rejectTx) && (
-        <div className="px-5 pb-4 space-y-2">
+      {(signing || approveTx || executeTx || cancelTx || rejectTx) && (
+        <div className="px-5 pb-4 space-y-2" aria-live="polite">
+          {signing && <TxStatus isPending />}
           {approveTx && (
             <TxStatus hash={approveTx} isConfirming={!approveConfirmed} isSuccess={approveConfirmed} explorerUrl={explorerTx} className="mt-0" />
           )}
@@ -561,315 +578,6 @@ function ProposalCard({
   )
 }
 
-/* ── Step indicator ──────────────────────────────────────── */
-function StepIndicator({ steps, current }: { steps: string[]; current: number }) {
-  return (
-    <div className="flex items-center w-full mb-6" style={{ minWidth: 0 }}>
-      {steps.map((label, i) => (
-        <div key={label} className="flex items-center min-w-0"
-          style={{ flex: i < steps.length - 1 ? '1 1 0%' : '0 0 auto' }}>
-          {/* Circle + label */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all"
-              style={{
-                background: i <= current ? 'var(--accent)' : 'var(--surface-strong)',
-                color: i <= current ? '#fff' : 'var(--muted)',
-                border: i <= current ? 'none' : '1px solid var(--border)',
-              }}
-            >
-              {i < current ? '✓' : i + 1}
-            </div>
-            <span
-              className="text-sm font-medium whitespace-nowrap"
-              style={{ color: i === current ? 'var(--ink)' : 'var(--muted)' }}
-            >
-              {label}
-            </span>
-          </div>
-          {/* Connector line, stretches between items */}
-          {i < steps.length - 1 && (
-            <div
-              className="h-px mx-3 transition-all duration-300"
-              style={{
-                flex: '1 1 0%',
-                minWidth: 12,
-                background: i < current ? 'var(--accent)' : 'var(--border)',
-              }}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-/* ── Create Proposal form ────────────────────────────────── */
-function CreateProposalForm({ onCreated }: { onCreated: () => void }) {
-  const { address } = useAccount()
-  const [coSigner1,   setCoSigner1]   = useState('')
-  const [coSigner2,   setCoSigner2]   = useState('')
-  const [description, setDescription] = useState('')
-  const [recipients,  setRecipients]  = useState<Recipient[]>([{ addr: '', amount: '' }])
-  const [step,        setStep]        = useState<'form' | 'propose'>('form')
-  const [proposeTx,   setProposeTx]   = useState<`0x${string}` | undefined>()
-  const [isDone,      setIsDone]      = useState(false)
-
-  const { writeContractAsync } = useWriteContract()
-
-  const total = recipients.reduce((s, r) => {
-    const n = parseFloat(r.amount)
-    return s + (isNaN(n) ? 0 : n)
-  }, 0)
-  const validRecipients = recipients.filter(r => isAddress(r.addr) && parseFloat(r.amount) > 0)
-  const canSubmit = isAddress(coSigner1) && isAddress(coSigner2) &&
-    coSigner1.toLowerCase() !== coSigner2.toLowerCase() &&
-    coSigner1.toLowerCase() !== address?.toLowerCase() &&
-    coSigner2.toLowerCase() !== address?.toLowerCase() &&
-    validRecipients.length > 0 && description.trim().length > 0
-
-
-
-  const { isSuccess: proposeConfirmed } = useWaitForTransactionReceipt({ hash: proposeTx })
-  const proposeRef = useRef(false)
-  useEffect(() => {
-    if (proposeConfirmed && !proposeRef.current) {
-      proposeRef.current = true
-      setIsDone(true)
-      onCreated()
-    }
-  }, [proposeConfirmed, onCreated])
-
-  function handleCSV(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    Papa.parse<string[]>(file, {
-      skipEmptyLines: true,
-      complete(res) {
-        const parsed: Recipient[] = res.data
-          .filter((row): row is string[] => Array.isArray(row) && row.length >= 2)
-          .map(row => ({ addr: row[0].trim(), amount: row[1].trim() }))
-          .filter(r => isAddress(r.addr) && !isNaN(parseFloat(r.amount)))
-        if (parsed.length > 0) setRecipients(parsed)
-        else toast.error('No valid rows found in CSV')
-      },
-    })
-  }
-
-  async function handlePropose() {
-    try {
-      setStep('propose')
-      const recs = validRecipients.map(r => ({
-        addr:   r.addr as `0x${string}`,
-        amount: parseUsdc(r.amount),
-      }))
-      const hash = await writeContractAsync({
-        address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'propose',
-        args: [recs, coSigner1 as `0x${string}`, coSigner2 as `0x${string}`, description],
-      })
-      setProposeTx(hash)
-      toast.info('Submitting proposal…')
-    } catch (e: unknown) {
-      toast.error((e as Error).message?.slice(0, 80) || 'Propose failed')
-      setStep('form')
-    }
-  }
-
-  function reset() {
-    setCoSigner1(''); setCoSigner2(''); setDescription('')
-    setRecipients([{ addr: '', amount: '' }])
-    setStep('form'); setProposeTx(undefined)
-    setIsDone(false); proposeRef.current = false
-  }
-
-  const stepIdx = step === 'form' ? 0 : 1
-
-  if (isDone) {
-    return (
-      <Card>
-        <div className="flex flex-col items-center gap-4 py-10 text-center">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(74,163,101,0.15)' }}>
-            <CheckCircle2 size={36} style={{ color: 'var(--success)' }} />
-          </div>
-          <div>
-            <p className="font-bold text-xl" style={{ color: 'var(--ink)' }}>Proposal created!</p>
-            <p className="text-sm mt-1 max-w-sm" style={{ color: 'var(--muted)' }}>
-              Your two co-signers can now approve the proposal. Once both approve, anyone can execute the payout.
-            </p>
-          </div>
-          {proposeTx && (
-            <a href={explorerTx(proposeTx)} target="_blank" rel="noreferrer"
-               className="text-xs font-mono px-3 py-1.5 rounded-lg hover:underline"
-               style={{ background: 'var(--surface-strong)', color: 'var(--accent)' }}>
-              View tx: {shortAddr(proposeTx)}
-            </a>
-          )}
-          <PrimaryButton onClick={reset}>Create another</PrimaryButton>
-        </div>
-      </Card>
-    )
-  }
-
-  return (
-    <div
-      className="rounded-2xl box-border w-full"
-      style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        padding: 'clamp(16px, 4vw, 32px)',
-      }}
-    >
-      <StepIndicator steps={['Build', 'Propose']} current={stepIdx} />
-
-      <div className="space-y-6">
-        {/* Description */}
-        <div>
-          <Label>Description</Label>
-          <div className="mt-2">
-            <Input placeholder="e.g. October payroll" value={description} onChange={v => setDescription(v)} />
-          </div>
-        </div>
-
-        {/* Co-signers */}
-        <div>
-          <Label>Co-signers, both must approve before payout executes</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-            <div>
-              <p className="text-xs mb-1" style={{ color: 'var(--muted)' }}>Co-signer 1</p>
-              <Input
-                placeholder="0x..."
-                value={coSigner1}
-                onChange={v => setCoSigner1(v.trim())}
-                className={coSigner1 && !isAddress(coSigner1) ? 'border-red-400' : ''}
-              />
-              {coSigner1 && !isAddress(coSigner1) && (
-                <p className="text-xs mt-1 flex items-center gap-1" style={{ color: 'var(--error)' }}>
-                  <AlertCircle size={11} /> Invalid address
-                </p>
-              )}
-              {coSigner1 && isAddress(coSigner1) && coSigner1.toLowerCase() === address?.toLowerCase() && (
-                <p className="text-xs mt-1 flex items-center gap-1" style={{ color: 'var(--error)' }}>
-                  <AlertCircle size={11} /> Cannot be your own address
-                </p>
-              )}
-            </div>
-            <div>
-              <p className="text-xs mb-1" style={{ color: 'var(--muted)' }}>Co-signer 2</p>
-              <Input
-                placeholder="0x..."
-                value={coSigner2}
-                onChange={v => setCoSigner2(v.trim())}
-                className={coSigner2 && !isAddress(coSigner2) ? 'border-red-400' : ''}
-              />
-              {coSigner2 && !isAddress(coSigner2) && (
-                <p className="text-xs mt-1 flex items-center gap-1" style={{ color: 'var(--error)' }}>
-                  <AlertCircle size={11} /> Invalid address
-                </p>
-              )}
-              {coSigner2 && isAddress(coSigner2) && coSigner2.toLowerCase() === coSigner1.toLowerCase() && (
-                <p className="text-xs mt-1 flex items-center gap-1" style={{ color: 'var(--error)' }}>
-                  <AlertCircle size={11} /> Must differ from co-signer 1
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Recipients */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <Label>Recipients</Label>
-            <label className="cursor-pointer flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
-              style={{ background: 'var(--surface-strong)', color: 'var(--accent)', border: '1px solid var(--border)' }}>
-              <Upload size={12} /> Upload CSV
-              <input type="file" accept=".csv" className="hidden" onChange={handleCSV} />
-            </label>
-          </div>
-
-          {/* Table header, col widths match the row grid exactly */}
-          <div className="hidden sm:grid grid-cols-[1fr_160px_40px] gap-3 mb-2 px-0">
-            <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Wallet address</span>
-            <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Amount (USDC)</span>
-            <span />
-          </div>
-
-          {/* Rows */}
-          <div className="space-y-2">
-            {recipients.map((r, i) => (
-              <div key={i} className="grid grid-cols-[1fr_160px_40px] gap-3 items-center">
-                <Input
-                  placeholder="0x..."
-                  value={r.addr}
-                  onChange={v => {
-                    const next = [...recipients]; next[i] = { ...next[i], addr: v.trim() }; setRecipients(next)
-                  }}
-                  className={r.addr && !isAddress(r.addr) ? 'border-red-400' : ''}
-                />
-                <Input
-                  placeholder="0.00"
-                  type="number"
-                  value={r.amount}
-                  onChange={v => {
-                    const next = [...recipients]; next[i] = { ...next[i], amount: v }; setRecipients(next)
-                  }}
-                />
-                <button
-                  onClick={() => setRecipients(recipients.filter((_, j) => j !== i))}
-                  disabled={recipients.length === 1}
-                  className="flex items-center justify-center rounded-lg hover:opacity-70 disabled:opacity-30 transition-opacity"
-                  style={{ width: 40, height: 44, background: 'var(--surface-strong)', color: 'var(--error)', flexShrink: 0 }}
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={() => setRecipients([...recipients, { addr: '', amount: '' }])}
-            className="mt-3 flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg font-medium transition-colors"
-            style={{ background: 'var(--surface-strong)', color: 'var(--accent)', border: '1px solid var(--border)' }}
-          >
-            <Plus size={12} /> Add row
-          </button>
-        </div>
-
-        {/* Summary box */}
-        {validRecipients.length > 0 && (
-          <div className="rounded-xl p-4 flex flex-wrap gap-6" style={{ background: 'var(--surface-strong)', border: '1px solid var(--border)' }}>
-            <div>
-              <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: 'var(--muted)' }}>Valid recipients</p>
-              <p className="font-bold text-lg" style={{ color: 'var(--ink)' }}>{validRecipients.length}</p>
-            </div>
-            <div>
-              <p className="text-[11px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: 'var(--muted)' }}>Total USDC</p>
-              <p className="font-bold text-lg font-mono" style={{ color: 'var(--accent)' }}>{total.toFixed(2)}</p>
-            </div>
-          </div>
-        )}
-
-        {/* CTA */}
-        <div className="pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
-          <PrimaryButton
-            onClick={() => { void handlePropose() }}
-            disabled={!canSubmit}
-            loading={step === 'propose' && !proposeConfirmed && !!proposeTx}
-            className="w-full justify-center"
-          >
-            <Send size={15} /> Create Proposal
-          </PrimaryButton>
-          {proposeTx && (
-            <div className="mt-3">
-              <TxStatus hash={proposeTx} isConfirming={!proposeConfirmed} isSuccess={proposeConfirmed} explorerUrl={explorerTx} className="mt-0" />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /* ── Proposals list ──────────────────────────────────────── */
 function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; refreshKey: number }) {
   const [searchParams] = useSearchParams()
@@ -878,6 +586,7 @@ function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; r
   const [proposals, setProposals] = useState<ProposalData[]>([])
   const [loaded,    setLoaded]    = useState(false)
   const [refresh,   setRefresh]   = useState(0)
+  const [filter, setFilter] = useState<'all' | 'action' | 'pending' | 'executed' | 'closed'>('all')
 
   const { data: countData } = useReadContract({
     address: MULTISIG_ADDRESS, abi: MULTISIG_ABI, functionName: 'proposalCount',
@@ -938,7 +647,7 @@ function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; r
           </div>
           <div>
             <p className="font-semibold" style={{ color: 'var(--ink)' }}>No proposals yet</p>
-            <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>Create the first one using the "+ New Proposal" tab above.</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>Create one from the New payout tab by choosing Require approval.</p>
           </div>
         </div>
       </Card>
@@ -959,7 +668,7 @@ function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; r
           <div>
             <p className="font-semibold" style={{ color: 'var(--ink)' }}>No proposals for your wallet</p>
             <p className="text-sm mt-1 max-w-xs" style={{ color: 'var(--muted)' }}>
-              Proposals you create or are invited to co-sign will appear here. Create one using the "+ New Proposal" tab above, or ask someone to add your wallet as a co-signer.
+              Proposals you create or are invited to co-sign will appear here. Create one from the New payout tab, or ask someone to add your wallet as a co-signer.
             </p>
           </div>
         </div>
@@ -967,15 +676,44 @@ function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; r
     )
   }
 
+  const me = connectedAddr.toLowerCase()
+  const needsMe = (p: ProposalData) => p.status === 0 && !p.expired && (
+    (p.coSigner1.toLowerCase() === me && !p.approved1) || (p.coSigner2.toLowerCase() === me && !p.approved2) ||
+    (p.approved1 && p.approved2 && p.proposer.toLowerCase() === me)
+  )
+  const counts = {
+    action: myProposals.filter(needsMe).length,
+    pending: myProposals.filter(p => p.status === 0 && !p.expired).length,
+    executed: myProposals.filter(p => p.status === 1).length,
+  }
+  const shown = myProposals.filter(p =>
+    filter === 'all' ? true
+      : filter === 'action' ? needsMe(p)
+      : filter === 'pending' ? p.status === 0 && !p.expired
+      : filter === 'executed' ? p.status === 1
+      : p.status === 2 || (p.status === 0 && p.expired))
+
   return (
-    <div className="space-y-3">
-      <p className="text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-2" style={{ color: 'var(--muted)' }}>
-        <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--accent)' }} />
-        Your proposals ({myProposals.length})
-      </p>
-      {myProposals.map(p => (
-        <ProposalCard key={String(p.id)} p={p} connectedAddr={connectedAddr} onRefresh={handleRefresh} highlighted={highlightId === p.id} />
-      ))}
+    <div className="flex flex-col gap-4">
+      <section aria-label="Approval summary" className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-3">
+        <StatCard label="Needs your action" value={counts.action.toString()} sub="Approve, execute or review" icon={ShieldCheck} />
+        <StatCard label="Pending requests" value={counts.pending.toString()} sub="Waiting for approvals" icon={Clock} />
+        <StatCard label="Executed" value={counts.executed.toString()} sub="Payments sent" icon={CheckCircle2} />
+      </section>
+      <div className="max-w-xs">
+        <Select label="Show" value={filter} onChange={v => setFilter(v as typeof filter)} options={[
+          { value: 'all', label: `All requests (${myProposals.length})` },
+          { value: 'action', label: `Needs your action (${counts.action})` },
+          { value: 'pending', label: `Pending (${counts.pending})` },
+          { value: 'executed', label: `Executed (${counts.executed})` },
+          { value: 'closed', label: 'Cancelled or expired' },
+        ]} />
+      </div>
+      {shown.length === 0
+        ? <Card><p className="py-8 text-center text-sm" style={{ color: 'var(--muted)' }}>No requests match this filter.</p></Card>
+        : shown.map(p => (
+          <ProposalCard key={String(p.id)} p={p} connectedAddr={connectedAddr} onRefresh={handleRefresh} highlighted={highlightId === p.id} />
+        ))}
     </div>
   )
 }
@@ -983,7 +721,7 @@ function ProposalsList({ connectedAddr, refreshKey }: { connectedAddr: string; r
 /* ── How it works panel ──────────────────────────────────── */
 function HowItWorks() {
   const steps = [
-    { icon: <Send size={18} />,        title: 'Propose',      desc: 'Any wallet creates a proposal with a recipient list and two co-signer addresses.' },
+    { icon: <Send size={18} />,        title: 'Request',      desc: 'On the New payout tab, choose Require approval and name two co-signers.' },
     { icon: <ShieldCheck size={18} />, title: 'Both approve', desc: 'Both named co-signers approve on-chain. No approval = no payout.' },
     { icon: <Play size={18} />,        title: 'Execute',      desc: 'Once both co-signers approve, only the proposer can execute the payout.' },
     { icon: <Clock size={18} />,       title: 'Auto-expires', desc: 'Proposals expire after 7 days. Anyone can cancel an expired proposal.' },
@@ -1025,59 +763,15 @@ function HowItWorks() {
   )
 }
 
-/* ── Page ────────────────────────────────────────────────── */
-export default function MultiSigPayoutPage() {
-  const { address, isConnected } = useAccount()
-  const [searchParams] = useSearchParams()
-  const hasProposalParam = !!searchParams.get('proposal')
-  const [tab,        setTab]        = useState<'create' | 'proposals'>(hasProposalParam ? 'proposals' : 'proposals')
-  const [refreshKey, setRefreshKey] = useState(0)
-
-  function handleCreated() { setTab('proposals'); setRefreshKey(k => k + 1) }
-
-  // suppress unused icons warning
-  void XCircle
-
+/* ── Approvals panel (shown as a tab on the Payouts page) ── */
+export function ApprovalsPanel({ connectedAddr }: { connectedAddr: string }) {
   return (
-    <ChainGuard>
-      <PageHeader
-        title="Multi-Sig Payout"
-        subtitle="Create a payout proposal with two required co-signers. Both must approve before funds move."
-      />
-
-      <div className="mt-6 space-y-6">
-        <HowItWorks />
-
-        {/* Tab bar */}
-        <div className="flex gap-1 p-1 rounded-xl w-fit mb-2" style={{ background: 'var(--surface-strong)', border: '1px solid var(--border)' }}>
-          {(['proposals', 'create'] as const).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className="px-5 py-2 rounded-lg text-sm font-semibold transition-all"
-              style={{
-                background: tab === t ? 'var(--accent)' : 'transparent',
-                color:      tab === t ? '#fff' : 'var(--muted)',
-              }}
-            >
-              {t === 'proposals' ? 'Proposals' : '+ New Proposal'}
-            </button>
-          ))}
-        </div>
-
-        {tab === 'create' && isConnected && <CreateProposalForm onCreated={handleCreated} />}
-        {tab === 'create' && !isConnected && (
-          <Card>
-            <div className="flex flex-col items-center gap-3 py-10 text-center">
-              <AlertCircle size={32} style={{ color: 'var(--muted)' }} />
-              <p style={{ color: 'var(--muted)' }}>Connect your wallet to create a proposal.</p>
-            </div>
-          </Card>
-        )}
-        {tab === 'proposals' && (
-          <ProposalsList connectedAddr={address ?? ''} refreshKey={refreshKey} />
-        )}
-      </div>
-    </ChainGuard>
+    <div className="flex flex-col gap-5">
+      <AlertBox variant="info">
+        Approving, rejecting, cancelling and executing a request each send a transaction, so your wallet asks you to sign. Viewing requests never needs a signature.
+      </AlertBox>
+      <HowItWorks />
+      <ProposalsList connectedAddr={connectedAddr} refreshKey={0} />
+    </div>
   )
 }
