@@ -13,6 +13,8 @@ import { endpointById, isSolanaAddress, routeTokens, type BridgeEndpoint, type B
 import { withAddChainFallback } from './withAddChainFallback'
 import { detectSolanaWallet, withAddress } from './solana'
 import { recordTx } from '../lib/txlog'
+import { addPending, removePending, usePendingTransfers, type PendingTransfer } from './pending'
+import { usePendingStatus } from './useIris'
 import { parseToken } from '../utils'
 
 const kit = new AppKit()
@@ -74,6 +76,10 @@ export function useBridge(direction: Direction) {
   const [result, setResult] = useState<BridgeResult<string> | null>(null)
   const [error, setError] = useState<string | null>(null)
   const adapters = useRef<{ from?: Adapter | SolAdapter; to?: Adapter | SolAdapter }>({})
+  const pending = usePendingTransfers(address)
+  const pendingStatus = usePendingStatus(pending)
+  const [recovering, setRecovering] = useState<string | null>(null)
+  const [recoverMessage, setRecoverMessage] = useState<{ burnTx: string; text: string } | null>(null)
 
   const activeToken: BridgeToken = tokens.includes(token) ? token : 'USDC'
   /** Solana recipients default to the connected Solana wallet; EVM recipients to the connected EVM wallet. */
@@ -170,6 +176,7 @@ export function useBridge(direction: Direction) {
     if (!burn?.txHash) return
     const mint = res.steps.find(st => /mint/i.test(st.name))
     const minted = mint?.state === 'success'
+    if (res.state === 'success' && minted) removePending(rv.account, burn.txHash)
     recordTx(rv.account, {
       hash: burn.txHash as `0x${string}`, kind: 'Bridge',
       detail: `${rv.amount} ${rv.token}: ${rv.from.label} to ${rv.to.label}`,
@@ -188,6 +195,23 @@ export function useBridge(direction: Direction) {
     const handler = (payload: unknown) => {
       const p = payload as { method?: string; values?: { txHash?: string } }
       if (p.method) setEvents(prev => [...prev, { name: p.method!.replace(/^bridge\./, ''), txHash: p.values?.txHash }])
+      // The burn is final once confirmed. Save it now so a reload cannot lose track of the funds in transit.
+      if (p.method && /burn/i.test(p.method) && p.values?.txHash) {
+        const burnTx = p.values.txHash
+        addPending({
+          burnTx, account: review.account, fromId: review.from.id, toId: review.to.id,
+          token: review.token, amount: review.amount, speed: review.speed, mode: review.mode, recipient: review.recipient,
+          sourceAddress: review.from.family === 'solana' ? (solAddress ?? review.account) : review.account,
+          createdAt: Date.now(),
+        })
+        recordTx(review.account, {
+          hash: burnTx as `0x${string}`, kind: 'Bridge',
+          detail: `${review.amount} ${review.token}: ${review.from.label} to ${review.to.label}`,
+          amountRaw: parseToken(review.amount, 6).toString(), token: review.token, decimals: 6,
+          chainId: review.from.chainId, network: `${review.from.label} to ${review.to.label}`, url: review.from.explorerTx(burnTx),
+          counterChainId: review.to.chainId, status: 'pending',
+        })
+      }
     }
     kit.on('*', handler)
     try {
@@ -220,7 +244,63 @@ export function useBridge(direction: Direction) {
     } catch (e) { setError(bridgeErrorMessage(e)) } finally { setBridging(false) }
   }
 
+  /**
+   * Finish a transfer found in storage after a reload. The burn already happened, so this rebuilds the transfer from
+   * its saved details and asks the kit to continue from the burn: get Circle's attestation, then mint.
+   */
+  const recover = async (pt: PendingTransfer) => {
+    setRecovering(pt.burnTx); setRecoverMessage(null)
+    try {
+      const src = endpointById(pt.fromId)
+      const dst = endpointById(pt.toId)
+      const chains = kit.getSupportedChains('bridge')
+      const srcDef = chains.find(c => String(c.chain) === src.kitChain)
+      const dstDef = chains.find(c => String(c.chain) === dst.kitChain)
+      if (!srcDef || !dstDef) throw new Error('This route is no longer supported.')
+
+      const needEvm = src.family === 'evm' || (dst.family === 'evm' && pt.mode !== 'forwarder')
+      const needSol = src.family === 'solana' || (dst.family === 'solana' && pt.mode === 'wallet')
+      if (needEvm && address?.toLowerCase() !== pt.account.toLowerCase()) throw new Error('Connect the wallet that started this transfer.')
+      const evmAdapter = needEvm ? await getEvmAdapter() : undefined
+      const solAdapter = needSol ? getSolAdapter() : undefined
+      const fromAdapter = src.family === 'evm' ? evmAdapter : solAdapter
+      const toAdapter = pt.mode === 'forwarder' ? undefined : dst.family === 'evm' ? evmAdapter : solAdapter
+      if (!fromAdapter) throw new Error('Connect the wallet that started this transfer.')
+
+      const rebuilt: BridgeResult<string> = {
+        amount: pt.amount, token: pt.token, state: 'pending', config: { transferSpeed: pt.speed },
+        provider: 'CCTPV2BridgingProvider',
+        source: { address: pt.sourceAddress, chain: srcDef },
+        destination: { address: pt.recipient, chain: dstDef, recipientAddress: pt.recipient, useForwarder: pt.mode === 'forwarder' },
+        steps: [
+          { name: 'approve', state: 'noop' },
+          { name: 'burn', state: 'success', txHash: pt.burnTx, explorerUrl: src.explorerTx(pt.burnTx) },
+        ],
+      }
+      const done = await kit.retryBridge(rebuilt, { from: fromAdapter, to: toAdapter })
+      const mint = done.steps.find(st => /mint/i.test(st.name))
+      if (done.state === 'success' && mint?.state === 'success') {
+        removePending(pt.account, pt.burnTx)
+        recordTx(pt.account, {
+          hash: pt.burnTx as `0x${string}`, kind: 'Bridge',
+          detail: `${pt.amount} ${pt.token}: ${src.label} to ${dst.label}`,
+          amountRaw: parseToken(pt.amount, 6).toString(), token: pt.token, decimals: 6,
+          chainId: src.chainId, network: `${src.label} to ${dst.label}`, url: src.explorerTx(pt.burnTx),
+          counterHash: mint.txHash ? (mint.txHash as `0x${string}`) : undefined,
+          counterChainId: dst.chainId, counterUrl: mint.txHash ? dst.explorerTx(mint.txHash) : undefined,
+          status: 'confirmed',
+        })
+        setRecoverMessage({ burnTx: pt.burnTx, text: `Done. ${pt.amount} ${pt.token} has arrived on ${dst.label}.` })
+      } else {
+        setRecoverMessage({ burnTx: pt.burnTx, text: 'Circle has not finished confirming this transfer yet. Your funds are safe. Try again in a few minutes.' })
+      }
+    } catch (e) {
+      setRecoverMessage({ burnTx: pt.burnTx, text: bridgeErrorMessage(e) })
+    } finally { setRecovering(null) }
+  }
+
   return {
+    pending, pendingStatus, recovering, recoverMessage, recover,
     from, to, tokens, token: activeToken, amount, speed, recipientInput, recipient, recipientValid, solAddress, needsSolanaWallet,
     review, reviewing, bridging, events, result, error, address,
     setToken: (t: BridgeToken) => { setTokenState(t); reset() },

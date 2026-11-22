@@ -1485,3 +1485,36 @@
 {"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1795319769177}
 {"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1795320036539}
 {"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1795320232994}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1795322350180}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1795339763899}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795339861509}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795339861510}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/AcrossPanel.tsx","timestamp":1795339861510}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/GatewayPanel.tsx","timestamp":1795339861510}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795339883430}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795339883430}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1795339894544}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795339894544}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/AcrossPanel.tsx","timestamp":1795339894545}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/GatewayPanel.tsx","timestamp":1795339894545}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795339971195}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795339971195}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/AcrossPanel.tsx","timestamp":1795339971195}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/GatewayPanel.tsx","timestamp":1795339971195}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/PendingTransfers.tsx","timestamp":1795339972175}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795339972175}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795339973177}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795339973177}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1795339981209}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795339981209}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/AcrossPanel.tsx","timestamp":1795339981209}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/GatewayPanel.tsx","timestamp":1795339981209}
+{"level":"log","message":"[vite] server connection lost. Polling for restart...","timestamp":1795340217112}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795340277503}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795340277503}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/AcrossPanel.tsx","timestamp":1795340277503}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/GatewayPanel.tsx","timestamp":1795340277503}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/CctpPanel.tsx","timestamp":1795340297183}
+{"level":"debug","message":"[vite] hot updated: /src/index.css","timestamp":1795340297183}
+{"level":"debug","message":"(previous line repeated 1× more)","timestamp":1795340404995}
+{"level":"debug","message":"[vite] hot updated: /src/components/bridge/FindTransfer.tsx","timestamp":1795340404995}

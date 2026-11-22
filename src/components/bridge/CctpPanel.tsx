@@ -9,6 +9,8 @@ import { Loader2, RotateCcw, Waypoints } from 'lucide-react'
 import { Chip, Row, Timeline, type StepState, type TimelineStep } from './parts'
 import { Card, PrimaryButton, GhostButton, AlertBox, Divider } from '../ui'
 import DirectionPicker from './DirectionPicker'
+import PendingTransfers from './PendingTransfers'
+import FindTransfer from './FindTransfer'
 import type { Direction } from '../../bridge/chains'
 import { useBridge } from '../../bridge/useBridge'
 import { formatToken, parseToken, shortAddr } from '../../utils'
@@ -56,7 +58,15 @@ export default function CctpPanel({ direction, onDirection }: { direction: Direc
   const statusLabel = finished ? 'Completed' : anyFailed ? 'Not completed' : b.bridging ? 'In progress' : b.result ? 'Not completed' : review ? 'Ready to send' : 'Not started'
   const statusColor = finished ? 'var(--success)' : anyFailed || (b.result && !finished) ? 'var(--danger)' : b.bridging ? 'var(--accent)' : 'var(--muted)'
 
+  // A transfer shown in the summary below is not listed twice.
+  const liveBurn = b.result?.steps.find(st => /burn/i.test(st.name))?.txHash?.toLowerCase()
+    ?? b.events.find(e => /burn/i.test(e.name))?.txHash?.toLowerCase()
+  const inProgress = b.pending.filter(t => t.burnTx.toLowerCase() !== liveBurn)
+
   return (
+  <div className="flex flex-col gap-5">
+  <PendingTransfers items={inProgress} statuses={b.pendingStatus} recovering={b.recovering} message={b.recoverMessage} onFinish={t => void b.recover(t)} />
+  {b.address && <FindTransfer account={b.address} />}
   <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-5 items-start">
   <Card className="p-4 sm:p-5 flex flex-col gap-4 w-full">
     {!b.address ? (
@@ -216,10 +226,11 @@ export default function CctpPanel({ direction, onDirection }: { direction: Direc
       <ul className="text-xs flex flex-col gap-1.5 list-disc pl-4" style={{ color: 'var(--muted)' }}>
         <li>Transfers are final. A wrong address or chain can mean permanent loss.</li>
         <li>Standard speed can take 15 minutes or more. Fast is usually quicker but can cost more.</li>
-        <li>Keep this page open until the destination step shows Done.</li>
+        <li>Keep this page open until the destination step shows Done. If you close it, come back here and use Finish transfer.</li>
       </ul>
     </Card>
   </aside>
+  </div>
   </div>
   )
 }
