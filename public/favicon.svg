@@ -1,0 +1,11 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3157d5"/>
+      <stop offset="100%" stop-color="#1f3a9e"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#g)"/>
+  <text x="16" y="16" dy="0.35em" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" fill="#ffffff">R</text>
+  <rect x="0.56" y="0.56" width="30.88" height="30.88" rx="6.44" fill="none" stroke="#ffffff" stroke-width="1.12"/>
+</svg>
